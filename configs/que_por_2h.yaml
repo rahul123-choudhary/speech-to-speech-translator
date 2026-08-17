@@ -1,0 +1,16 @@
+# Separate direct Quechua-speech → Portuguese-speech experiment.
+# Supply aligned human-approved Portuguese references and licensed Portuguese target audio;
+# do not create this training data by translating through Spanish.
+experiment_name: que_por_direct_s2st_2h
+source_language: que
+target_language: pt
+sample_rate: 16000
+max_seconds: 15
+encoder_model: facebook/wav2vec2-xls-r-300m
+codec_bandwidth: 6.0
+lora: {rank: 8, alpha: 16, dropout: 0.05}
+training: {epochs: 60, batch_size: 2, gradient_accumulation: 8, learning_rate: 0.0001, early_stopping_patience: 8, augment_train: true, seed: 17}
+data:
+  train_manifest: data/manifests_pt/train.jsonl
+  validation_manifest: data/manifests_pt/validation.jsonl
+  test_manifest: data/manifests_pt/test.jsonl

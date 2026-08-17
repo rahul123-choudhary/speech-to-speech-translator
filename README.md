@@ -13,16 +13,27 @@ kept for a separately labelled unconstrained encoder-adaptation experiment.
 
 ## Output languages
 
-The live API accepts Spanish (`es`) or English (`en`) as the target language.
-They are separate direct models: Quechua speech → Spanish speech and Quechua
-speech → English speech. The system must never translate via Spanish text or
-speech to produce English.
+The live API lets the user select one of five target languages: Spanish (`es`),
+English (`en`), Hindi (`hi`), French (`fr`), or Portuguese (`pt`). Each is a
+separate direct model: Quechua speech → selected-language speech. The system
+must not translate through Spanish text or speech to produce any other output.
 
-The included IWSLT corpus supports Spanish only. Before training English,
-obtain aligned Quechua speech + English references, create licensed English
-target speech, complete native/community review, and create manifests under
-`data/manifests_en/`. The English configuration is
-`configs/que_eng_2h.yaml`.
+Call `GET /v1/languages` before creating a session. It returns `ready` only
+when that language has its own trained checkpoint; otherwise it reports
+`setup_required`. Select the output language when creating the session:
+
+```json
+POST /v1/sessions
+{
+  "consented_audio_processing": true,
+  "target_language": "fr"
+}
+```
+
+The included IWSLT corpus supports Spanish only. English, Hindi, French, and
+Portuguese each need aligned Quechua speech + human-approved target-language
+references, licensed target speech, review records, and a separately trained
+checkpoint before their status can be `ready`.
 
 Create the English reference-review template from the existing 823 Quechua
 source utterances:
@@ -50,6 +61,32 @@ python -m s2st.prepare `
 
 `s2st.english` never translates Spanish references automatically. This avoids
 mistaking machine-generated English for a community-approved translation.
+
+For Hindi, French, or Portuguese, create the same review-gated material with
+the general target-language workflow (replace `fr` with `hi` or `pt`):
+
+```powershell
+python -m s2st.target_language --target-language fr `
+  --reference-template data/manifests_fr/target_references.tsv
+
+# After human translation and review:
+python -m s2st.target_language --target-language fr `
+  --target-references data/manifests_fr/target_references.tsv `
+  --target-audio-dir data/targets/iwslt_que_fra_2h `
+  --target-speech-generator "<licensed French voice and version>" `
+  --consent-id "<approved consent record>"
+
+python -m s2st.prepare `
+  --input data/manifests_fr/candidates.jsonl `
+  --approvals data/manifests_fr/native_review.csv `
+  --output data/manifests_fr `
+  --sync-atlas
+```
+
+Use `configs/que_eng_2h.yaml`, `configs/que_hin_2h.yaml`,
+`configs/que_fra_2h.yaml`, or `configs/que_por_2h.yaml` to train the matching
+model. Set the matching `S2ST_CHECKPOINT_<LANGUAGE>` value in `.env` to make
+the selected language available in the live API.
 
 For a non-commercial research draft only, you can generate a separate TSV of
 offline Spanish-to-English machine drafts with NLLB-200. These rows are marked

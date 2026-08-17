@@ -2,6 +2,7 @@ import base64
 import os
 import time
 import uuid
+from pathlib import Path
 
 import numpy as np
 import soundfile
@@ -46,6 +47,15 @@ class HumanEvaluation(BaseModel):
     comments: str | None = None
 
 
+def checkpoint_for(target_language: str) -> Path | None:
+    """Return the configured checkpoint, including the legacy Spanish setting."""
+    checkpoint = getattr(settings, f"s2st_checkpoint_{target_language}", None)
+    if checkpoint is None and target_language == "es":
+        legacy_checkpoint = os.environ.get("S2ST_CHECKPOINT")
+        checkpoint = Path(legacy_checkpoint) if legacy_checkpoint else None
+    return checkpoint
+
+
 @app.post("/v1/sessions")
 def create_session(request: CreateSession, user: dict = Depends(authenticated_user)) -> dict:
     if not request.consented_audio_processing:
@@ -70,7 +80,7 @@ def list_target_languages() -> dict:
     """List selectable target languages and whether each direct model is deployable."""
     languages = []
     for code, metadata in TARGET_LANGUAGES.items():
-        checkpoint = getattr(settings, f"s2st_checkpoint_{code}")
+        checkpoint = checkpoint_for(code)
         ready = bool(checkpoint and checkpoint.is_file())
         languages.append(
             {
@@ -96,13 +106,11 @@ def runtime(target_language: TargetLanguage) -> tuple:
     if target_language not in TARGET_LANGUAGES:
         raise ValueError(f"Unsupported target language: {target_language}")
     if target_language not in _runtime:
-        checkpoint = getattr(settings, f"s2st_checkpoint_{target_language}")
-        # Keep an existing Spanish-only deployment working while it migrates.
-        if checkpoint is None and target_language == "es":
-            checkpoint = os.environ.get("S2ST_CHECKPOINT")
-        if not checkpoint:
+        checkpoint = checkpoint_for(target_language)
+        if checkpoint is None or not checkpoint.is_file():
             language = TARGET_LANGUAGES[target_language]["name"]
-            raise RuntimeError(f"Set S2ST_CHECKPOINT_{target_language.upper()} to a trained {language} best.pt file")
+            variable = f"S2ST_CHECKPOINT_{target_language.upper()}"
+            raise RuntimeError(f"Set {variable} to an existing trained {language} best.pt file")
         device = torch.device(settings.device if torch.cuda.is_available() else "cpu")
         _runtime[target_language] = (load_model(str(checkpoint), device), NeuralCodec(str(device)), device)
     return _runtime[target_language]
@@ -122,6 +130,11 @@ async def translate_turn(websocket: WebSocket, session_id: str, token: str = Que
     chunks: list[bytes] = []
     received_samples = 0
     target_language = store.session_target_language(session_id)
+    if target_language not in TARGET_LANGUAGES:
+        store.update_session(session_id, "failed", error="Unsupported saved target language")
+        await websocket.send_json({"error": "Unsupported target language for this session"})
+        await websocket.close(code=4400)
+        return
     try:
         store.update_session(session_id, "listening")
         while True:

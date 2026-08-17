@@ -12,6 +12,7 @@ import whisper
 
 from .codec import NeuralCodec
 from .data import load_mono
+from .languages import TARGET_LANGUAGES
 from .manifest import read_manifest
 from .model import DirectS2ST, ModelConfig
 from .settings import get_settings
@@ -33,7 +34,12 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def run(checkpoint_path: str, manifest_path: str, output_dir: str = "artifacts/evaluation") -> dict:
+def run(
+    checkpoint_path: str,
+    manifest_path: str,
+    output_dir: str = "artifacts/evaluation",
+    target_language: str | None = None,
+) -> dict:
     settings = get_settings()
     device = torch.device(settings.device if torch.cuda.is_available() else "cpu")
     model = load_model(checkpoint_path, device)
@@ -44,7 +50,15 @@ def run(checkpoint_path: str, manifest_path: str, output_dir: str = "artifacts/e
     store = ResearchStore(settings)
     run_id = str(uuid.uuid4())
     hypotheses, references, latencies = [], [], []
+    evaluated_language = target_language
     for record in read_manifest(manifest_path):
+        record_language = record.extra.get("target_language", "es")
+        selected_language = evaluated_language or record_language
+        if selected_language not in TARGET_LANGUAGES:
+            raise ValueError(f"Unsupported target language in evaluation: {selected_language}")
+        if record_language != selected_language:
+            raise ValueError("A test manifest must contain exactly one target language")
+        evaluated_language = selected_language
         source = load_mono(record.source_audio).unsqueeze(0).to(device)
         started = time.perf_counter()
         codes = model.generate(source, torch.tensor([source.shape[1]], device=device))
@@ -52,7 +66,11 @@ def run(checkpoint_path: str, manifest_path: str, output_dir: str = "artifacts/e
         latency_ms = (time.perf_counter() - started) * 1000
         wav_path = destination / f"{record.id}.wav"
         soundfile.write(wav_path, waveform, 24_000)
-        transcription = asr.transcribe(str(wav_path), language="es", fp16=device.type == "cuda")["text"].strip()
+        transcription = asr.transcribe(
+            str(wav_path),
+            language=TARGET_LANGUAGES[selected_language]["asr_language"],
+            fp16=device.type == "cuda",
+        )["text"].strip()
         hypotheses.append(transcription)
         references.append(record.reference_translation)
         latencies.append(latency_ms)
@@ -62,6 +80,7 @@ def run(checkpoint_path: str, manifest_path: str, output_dir: str = "artifacts/e
                 "utterance_id": record.id,
                 "checkpoint": checkpoint_path,
                 "asr_model": settings.asr_model,
+                "target_language": selected_language,
                 "reference_translation": record.reference_translation,
                 "asr_hypothesis": transcription,
                 "latency_ms": latency_ms,
@@ -76,6 +95,7 @@ def run(checkpoint_path: str, manifest_path: str, output_dir: str = "artifacts/e
         "run_id": run_id,
         "metric": "ASR-BLEU",
         "asr_model": settings.asr_model,
+        "target_language": evaluated_language or "es",
         "bleu": bleu.score,
         "signature": str(bleu.signature),
         "mean_latency_ms": sum(latencies) / len(latencies),
@@ -93,5 +113,6 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--output", default="artifacts/evaluation")
+    parser.add_argument("--target-language", choices=sorted(TARGET_LANGUAGES))
     arguments = parser.parse_args()
-    run(arguments.checkpoint, arguments.manifest, arguments.output)
+    run(arguments.checkpoint, arguments.manifest, arguments.output, arguments.target_language)
