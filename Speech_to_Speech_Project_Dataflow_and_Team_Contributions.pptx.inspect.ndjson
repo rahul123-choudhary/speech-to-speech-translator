@@ -1,0 +1,212 @@
+{"kind":"deck","id":"pr/5zshwx","name":"Deck"}
+{"kind":"layout","layoutId":"311d934a-39a4-4242-be88-b74eb246fd8a","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"7ad82acd-2aa0-435e-8dbb-59f5b219bef9","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/d39gra","slide":1,"title":"Speech-to-Speech Translator","textShapes":6}
+{"kind":"textbox","id":"sh/6dkbid0f","slide":1,"name":"cover-title","text":"Speech-to-Speech Translator\nfor Oral-Tradition Languages","textPreview":"Speech-to-Speech Translator | for Oral-Tradition Languages","textChars":56,"textLines":2,"bbox":[62,105,660,155]}
+{"kind":"textbox","id":"sh/tgbutsz6","slide":1,"name":"cover-subtitle","text":"Quechua → Spanish • datasets, dataflow, team work, and pilot plan","textPreview":"Quechua → Spanish • datasets, dataflow, team work, and pilot plan","textChars":65,"textLines":1,"bbox":[64,300,610,55]}
+{"kind":"shape","id":"sh/sf2tknyl","slide":1,"name":"source","bbox":[790,170,145,90]}
+{"kind":"shape","id":"sh/fitcvihw","slide":1,"name":"model","bbox":[1010,170,145,90]}
+{"kind":"shape","id":"sh/ehkbmdgr","slide":1,"name":"output","bbox":[900,365,145,90]}
+{"kind":"shape","id":"sh/14vuxsz2","slide":1,"bbox":[935,215,75,0]}
+{"kind":"shape","id":"sh/03mtonyh","slide":1,"bbox":[900,215,255,195]}
+{"kind":"textbox","id":"sh/n6dcz2h8","slide":1,"name":"source-t","text":"QUECHUA\nSPEECH","textPreview":"QUECHUA | SPEECH","textChars":14,"textLines":2,"bbox":[810,190,105,45]}
+{"kind":"textbox","id":"sh/254bqxgn","slide":1,"name":"model-t","text":"DIRECT\nMODEL","textPreview":"DIRECT | MODEL","textChars":12,"textLines":2,"bbox":[1030,190,105,45]}
+{"kind":"textbox","id":"sh/kj69w3a5","slide":1,"name":"output-t","text":"SPANISH\nSPEECH","textPreview":"SPANISH | SPEECH","textChars":14,"textLines":2,"bbox":[920,385,105,45]}
+{"kind":"textbox","id":"sh/lkfq58bq","slide":1,"name":"cover-footer","text":"Team plan for 4 members","textPreview":"Team plan for 4 members","textChars":23,"textLines":1,"bbox":[64,610,300,26]}
+{"kind":"notes","id":"nt/d39gra","slide":1,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nAudience: project team and academic supervisor."}
+{"kind":"slide","id":"sl/b10akc","slide":2,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":11}
+{"kind":"textbox","id":"sh/ah8f6hc3","slide":2,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/xkje1wvu","slide":2,"name":"title","text":"What this project will build","textPreview":"What this project will build","textChars":28,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/wjax8ru9","slide":2,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/jm1w3md0","slide":2,"name":"page","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/ilsfa1cf","slide":2,"name":"input","bbox":[75,248,260,140]}
+{"kind":"shape","id":"sh/5oje5wvq","slide":2,"name":"model","bbox":[510,248,260,140]}
+{"kind":"shape","id":"sh/knaxcru5","slide":2,"name":"result","bbox":[945,248,260,140]}
+{"kind":"shape","id":"sh/zqhwr2dg","slide":2,"bbox":[335,318,175,0]}
+{"kind":"shape","id":"sh/ypovyxcv","slide":2,"bbox":[770,318,175,0]}
+{"kind":"textbox","id":"sh/gzy98zux","slide":2,"name":"input-l","text":"INPUT","textPreview":"INPUT","textChars":5,"textLines":1,"bbox":[98,270,210,22]}
+{"kind":"textbox","id":"sh/h07qh4vi","slide":2,"name":"input-t","text":"Live Quechua\nspeech","textPreview":"Live Quechua | speech","textChars":19,"textLines":2,"bbox":[98,305,210,48]}
+{"kind":"textbox","id":"sh/uxgr6pcr","slide":2,"name":"model-l","text":"DIRECT MODEL","textPreview":"DIRECT MODEL","textChars":12,"textLines":1,"bbox":[533,270,210,22]}
+{"kind":"textbox","id":"sh/vyp8fudc","slide":2,"name":"model-t","text":"Speech goes straight\nto speech","textPreview":"Speech goes straight | to speech","textChars":30,"textLines":2,"bbox":[533,305,210,48]}
+{"kind":"textbox","id":"sh/43i9czu9","slide":2,"name":"result-l","text":"RESULT","textPreview":"RESULT","textChars":6,"textLines":1,"bbox":[968,270,210,22]}
+{"kind":"textbox","id":"sh/54rql4vu","slide":2,"name":"result-t","text":"Spanish speech\nresponse","textPreview":"Spanish speech | response","textChars":23,"textLines":2,"bbox":[968,305,210,48]}
+{"kind":"textbox","id":"sh/i10ra9c3","slide":2,"name":"important","text":"Important: the live system does not use a text step in the middle.","textPreview":"Important: the live system does not use a text step in the middle.","textChars":66,"textLines":1,"bbox":[155,490,970,36]}
+{"kind":"textbox","id":"sh/3298judo","slide":2,"name":"explain","text":"Text is used only before training (to prepare safe target audio) and after testing (for ASR-BLEU scoring).","textPreview":"Text is used only before training (to prepare safe target audio) and after testing (for ASR-BLEU scoring).","textChars":106,"textLines":1,"bbox":[130,548,1020,28]}
+{"kind":"notes","id":"nt/b10akc","slide":2,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nThe model design in the repository uses a direct speech encoder and speech codec decoder."}
+{"kind":"slide","id":"sl/yy9ltl","slide":3,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":9}
+{"kind":"textbox","id":"sh/b2d4vap0","slide":3,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/w3m5of65","slide":3,"name":"title","text":"Datasets used in this project","textPreview":"Datasets used in this project","textChars":29,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/x4fmxk7q","slide":3,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/md4ni583","slide":3,"name":"page","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/ned4rapo","slide":3,"name":"main-dataset","bbox":[55,166,540,238]}
+{"kind":"textbox","id":"sh/ofm5kf69","slide":3,"name":"main-dataset-label","text":"MAIN DATASET — WE USE THIS","textPreview":"MAIN DATASET — WE USE THIS","textChars":26,"textLines":1,"bbox":[73,182,504,24]}
+{"kind":"textbox","id":"sh/90vmt07u","slide":3,"name":"main-dataset-body","text":"IWSLT 2024 constrained Quechua–Spanish corpus\n• 1 hour 40 minutes\n• 823 Quechua audio clips\n• Spanish reference translations\nUsed for the main small-data experiment.","textPreview":"IWSLT 2024 constrained Quechua–Spanish corpus | • 1 hour 40 minutes | • 823 Quechua audio clips | • Spanish reference translations | Used...","textChars":165,"textLines":5,"bbox":[73,218,504,172]}
+{"kind":"shape","id":"sh/e9knel87","slide":3,"name":"extra-dataset","bbox":[685,166,540,238]}
+{"kind":"textbox","id":"sh/zat4nqps","slide":3,"name":"extra-dataset-label","text":"EXTRA DATA — OPTIONAL","textPreview":"EXTRA DATA — OPTIONAL","textChars":21,"textLines":1,"bbox":[703,182,504,24]}
+{"kind":"textbox","id":"sh/7yh87aps","slide":3,"name":"extra-dataset-body","text":"Huqariq synthetic translation corpus\n• About 8 hours of Quechua audio\n• Spanish translations are machine-generated and post-edited\nUse only in a clearly labelled unconstrained experiment.","textPreview":"Huqariq synthetic translation corpus | • About 8 hours of Quechua audio | • Spanish translations are machine-generated and post-edited | ...","textChars":187,"textLines":4,"bbox":[703,218,504,172]}
+{"kind":"shape","id":"sh/6xo7y5o7","slide":3,"name":"support-dataset","bbox":[215,450,850,135]}
+{"kind":"textbox","id":"sh/t0zq9k7i","slide":3,"name":"support-dataset-label","text":"SUPPORT DATA — NOT LIVE TRANSLATION INPUT","textPreview":"SUPPORT DATA — NOT LIVE TRANSLATION INPUT","textChars":41,"textLines":1,"bbox":[233,466,814,24]}
+{"kind":"textbox","id":"sh/szq90f6x","slide":3,"name":"support-dataset-body","text":"Quechua audio + transcripts: helps adapt the speech encoder\nJW300 + Kallpa text pairs: reference / optional research support\nThese are not used as a text step in the live translator.","textPreview":"Quechua audio + transcripts: helps adapt the speech encoder | JW300 + Kallpa text pairs: reference / optional research support | These ar...","textChars":182,"textLines":3,"bbox":[233,502,814,69]}
+{"kind":"shape","id":"sh/f2h8bu5o","slide":3,"bbox":[0,0,0,0]}
+{"kind":"notes","id":"nt/yy9ltl","slide":3,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nDataset inventory is based on the files available in data/raw and DATASETS.md."}
+{"kind":"slide","id":"sl/dhdmw7","slide":4,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":11}
+{"kind":"textbox","id":"sh/x8fq14r2","slide":4,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/a54r6psb","slide":4,"name":"title","text":"Dataflow: how our data moves through the project","textPreview":"Dataflow: how our data moves through the project","textChars":48,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/b6x8zu9w","slide":4,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/kv69cjat","slide":4,"name":"page","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/lwfa54re","slide":4,"name":"n1","bbox":[45,290,185,122]}
+{"kind":"shape","id":"sh/ytora9sn","slide":4,"name":"n2","bbox":[274,290,185,122]}
+{"kind":"shape","id":"sh/juxs3e98","slide":4,"name":"n3","bbox":[503,290,185,122]}
+{"kind":"shape","id":"sh/szq9gjap","slide":4,"name":"n4","bbox":[732,290,185,122]}
+{"kind":"shape","id":"sh/t0za9ora","slide":4,"name":"n5","bbox":[961,290,230,122]}
+{"kind":"shape","id":"sh/lgzy58jy","slide":4,"bbox":[230,351,44,0]}
+{"kind":"shape","id":"sh/0vqxc3id","slide":4,"bbox":[459,351,44,0]}
+{"kind":"shape","id":"sh/zuhg3y1s","slide":4,"bbox":[688,351,44,0]}
+{"kind":"shape","id":"sh/ytofat0n","slide":4,"bbox":[917,351,44,0]}
+{"kind":"textbox","id":"sh/9kzy98ja","slide":4,"name":"n1t","text":"1. DATASET\nQuechua source audio\n+ Spanish reference","textPreview":"1. DATASET | Quechua source audio | + Spanish reference","textChars":51,"textLines":3,"bbox":[58,311,160,70]}
+{"kind":"textbox","id":"sh/8jqxg3ip","slide":4,"name":"n2t","text":"2. PREPARE\nCreate Spanish target audio\nNative-speaker review","textPreview":"2. PREPARE | Create Spanish target audio | Native-speaker review","textChars":60,"textLines":3,"bbox":[286,311,160,70]}
+{"kind":"textbox","id":"sh/nihg7y14","slide":4,"name":"n3t","text":"3. SAVE\nApproved audio pairs\n+ JSONL manifests","textPreview":"3. SAVE | Approved audio pairs | + JSONL manifests","textChars":46,"textLines":3,"bbox":[516,311,160,70]}
+{"kind":"textbox","id":"sh/mh8fed0j","slide":4,"name":"n4t","text":"4. TRAIN\nLoRA direct S2ST model","textPreview":"4. TRAIN | LoRA direct S2ST model","textChars":31,"textLines":2,"bbox":[745,322,160,55]}
+{"kind":"textbox","id":"sh/pofyxojq","slide":4,"name":"n5t","text":"5. CHECK + USE\nASR-BLEU • human ratings\nLive Spanish speech","textPreview":"5. CHECK + USE | ASR-BLEU • human ratings | Live Spanish speech","textChars":59,"textLines":3,"bbox":[978,311,196,70]}
+{"kind":"textbox","id":"sh/on6x4ji5","slide":4,"name":"offline","text":"Offline preparation","textPreview":"Offline preparation","textChars":19,"textLines":1,"bbox":[274,235,414,24]}
+{"kind":"textbox","id":"sh/g7qxkjq1","slide":4,"name":"live","text":"Live direct speech-to-speech translation","textPreview":"Live direct speech-to-speech translation","textChars":40,"textLines":1,"bbox":[731,235,410,24]}
+{"kind":"textbox","id":"sh/h8jytorm","slide":4,"name":"flow-note","text":"The review gate is essential: only licensed, approved target Spanish speech can enter training.","textPreview":"The review gate is essential: only licensed, approved target Spanish speech can enter training.","textChars":95,"textLines":1,"bbox":[70,530,1100,34]}
+{"kind":"notes","id":"nt/dhdmw7","slide":4,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nThe project currently provides candidate manifests and review CSVs; real target Spanish audio and native approval are still required before training."}
+{"kind":"slide","id":"sl/z332yd","slide":5,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":10}
+{"kind":"textbox","id":"sh/fedkni9g","slide":5,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/gfmlgnq1","slide":5,"name":"title","text":"How we train and check the model","textPreview":"How we train and check the model","textChars":32,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/10v2psr6","slide":5,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/21o3ix8r","slide":5,"name":"page","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/32xkr2pc","slide":5,"name":"train","bbox":[70,190,330,210]}
+{"kind":"textbox","id":"sh/o36lk7qx","slide":5,"name":"train-label","text":"TRAIN","textPreview":"TRAIN","textChars":5,"textLines":1,"bbox":[88,206,294,24]}
+{"kind":"textbox","id":"sh/p4f2tc7i","slide":5,"name":"train-body","text":"Use approved speech pairs.\nAdd small speed/noise changes only to source training audio.\nFine-tune with LoRA.","textPreview":"Use approved speech pairs. | Add small speed/noise changes only to source training audio. | Fine-tune with LoRA.","textChars":108,"textLines":3,"bbox":[88,242,294,144]}
+{"kind":"shape","id":"sh/q5o3mx83","slide":5,"name":"validate","bbox":[475,190,330,210]}
+{"kind":"textbox","id":"sh/b6x4v2po","slide":5,"name":"validate-label","text":"VALIDATE","textPreview":"VALIDATE","textChars":8,"textLines":1,"bbox":[493,206,294,24]}
+{"kind":"textbox","id":"sh/3q587u9s","slide":5,"name":"validate-body","text":"Do not change validation audio.\nCheck loss after each training stage.\nKeep the best checkpoint.","textPreview":"Do not change validation audio. | Check loss after each training stage. | Keep the best checkpoint.","textChars":95,"textLines":3,"bbox":[493,242,294,144]}
+{"kind":"shape","id":"sh/2pw7e987","slide":5,"name":"test","bbox":[880,190,330,210]}
+{"kind":"textbox","id":"sh/psnq94ri","slide":5,"name":"test-label","text":"TEST","textPreview":"TEST","textChars":4,"textLines":1,"bbox":[898,206,294,24]}
+{"kind":"textbox","id":"sh/orepgzqd","slide":5,"name":"test-body","text":"Generate Spanish speech.\nUse frozen Spanish ASR for ASR-BLEU.\nAsk people to rate quality and measure latency.","textPreview":"Generate Spanish speech. | Use frozen Spanish ASR for ASR-BLEU. | Ask people to rate quality and measure latency.","textChars":109,"textLines":3,"bbox":[898,242,294,144]}
+{"kind":"shape","id":"sh/f2l83u9g","slide":5,"bbox":[400,295,75,0]}
+{"kind":"shape","id":"sh/e1c7ap8v","slide":5,"bbox":[805,295,75,0]}
+{"kind":"textbox","id":"sh/1o3q54rm","slide":5,"name":"report","text":"We report: ASR-BLEU, naturalness, intelligibility, translation quality, cultural appropriateness, and latency.","textPreview":"We report: ASR-BLEU, naturalness, intelligibility, translation quality, cultural appropriateness, and latency.","textChars":110,"textLines":1,"bbox":[82,500,1110,48]}
+{"kind":"notes","id":"nt/z332yd","slide":5,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nThe current evaluator stores ASR-BLEU inputs, output-audio hashes, and latency in MongoDB Atlas."}
+{"kind":"slide","id":"sl/l1ouod","slide":6,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":8}
+{"kind":"textbox","id":"sh/mtofe1cr","slide":6,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/9wzypgvi","slide":6,"name":"title","text":"How the four members work together","textPreview":"How the four members work together","textChars":34,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/ov6xgbux","slide":6,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/zqxgj6d0","slide":6,"name":"page","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/epofa1cv","slide":6,"name":"m1","bbox":[55,255,250,135]}
+{"kind":"shape","id":"sh/1sfylwv6","slide":6,"name":"m2","bbox":[345,255,250,135]}
+{"kind":"shape","id":"sh/0r6xcbul","slide":6,"name":"m3","bbox":[635,255,250,135]}
+{"kind":"shape","id":"sh/jmhgvqdk","slide":6,"name":"m4","bbox":[925,255,250,135]}
+{"kind":"shape","id":"sh/yl8fmlcz","slide":6,"bbox":[305,322.5,40,0]}
+{"kind":"shape","id":"sh/szmlwrmd","slide":6,"bbox":[595,322.5,40,0]}
+{"kind":"shape","id":"sh/t0vm5w3y","slide":6,"bbox":[885,322.5,40,0]}
+{"kind":"textbox","id":"sh/6x43u147","slide":6,"name":"m1t","text":"MEMBER 1\nPrepare data","textPreview":"MEMBER 1 | Prepare data","textChars":21,"textLines":2,"bbox":[77,285,205,58]}
+{"kind":"textbox","id":"sh/7yd436ls","slide":6,"name":"m2t","text":"MEMBER 2\nTrain model","textPreview":"MEMBER 2 | Train model","textChars":20,"textLines":2,"bbox":[367,285,205,58]}
+{"kind":"textbox","id":"sh/kbmlsrm1","slide":6,"name":"m3t","text":"MEMBER 3\nTest quality","textPreview":"MEMBER 3 | Test quality","textChars":21,"textLines":2,"bbox":[657,285,205,58]}
+{"kind":"textbox","id":"sh/5wvm1wnm","slide":6,"name":"m4t","text":"MEMBER 4\nRun live pilot","textPreview":"MEMBER 4 | Run live pilot","textChars":23,"textLines":2,"bbox":[947,285,205,58]}
+{"kind":"textbox","id":"sh/i9k3qh4v","slide":6,"name":"team-handoff","text":"Simple handoff: approved data → trained model → result report → community pilot","textPreview":"Simple handoff: approved data → trained model → result report → community pilot","textChars":79,"textLines":1,"bbox":[150,480,980,34]}
+{"kind":"notes","id":"nt/l1ouod","slide":6,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nReplace Member 1–4 with your team members’ actual names."}
+{"kind":"slide","id":"sl/8z63y2","slide":7,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":12}
+{"kind":"textbox","id":"sh/gz2t4z6l","slide":7,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/fetsbu50","slide":7,"name":"title","text":"Member 1: Prepare the data","textPreview":"Member 1: Prepare the data","textChars":26,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/udkb29of","slide":7,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/p4vahon2","slide":7,"name":"page","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/43mt8jmx","slide":7,"name":"banner","bbox":[48,146,1184,64]}
+{"kind":"textbox","id":"sh/32dsfe5c","slide":7,"name":"member-name","text":"MEMBER 1","textPreview":"MEMBER 1","textChars":8,"textLines":1,"bbox":[72,157,230,28]}
+{"kind":"textbox","id":"sh/214b69or","slide":7,"name":"member-summary","text":"Makes safe and usable speech pairs for the project","textPreview":"Makes safe and usable speech pairs for the project","textChars":50,"textLines":1,"bbox":[342,157,820,28]}
+{"kind":"shape","id":"sh/d8falone","slide":7,"name":"work","bbox":[60,255,345,240]}
+{"kind":"textbox","id":"sh/c76tcjmt","slide":7,"name":"work-label","text":"WHAT THIS MEMBER DOES","textPreview":"WHAT THIS MEMBER DOES","textChars":21,"textLines":1,"bbox":[78,271,309,24]}
+{"kind":"textbox","id":"sh/mxgfelc3","slide":7,"name":"work-body","text":"• Check the IWSLT audio files\n• Clean and segment clips\n• Put Spanish target audio beside every Quechua clip\n• Ask a native speaker to review the pair\n• Keep consent and source details","textPreview":"• Check the IWSLT audio files | • Clean and segment clips | • Put Spanish target audio beside every Quechua clip | • Ask a native speaker...","textChars":184,"textLines":5,"bbox":[78,307,309,174]}
+{"kind":"shape","id":"sh/nypg7qdo","slide":7,"name":"tools","bbox":[468,255,345,240]}
+{"kind":"textbox","id":"sh/8zyxgvu9","slide":7,"name":"tools-label","text":"TOOLS / FILES USED","textPreview":"TOOLS / FILES USED","textChars":18,"textLines":1,"bbox":[486,271,309,24]}
+{"kind":"textbox","id":"sh/907y90bu","slide":7,"name":"tools-body","text":"• IWSLT constrained dataset\n• Python + torchaudio\n• candidates.jsonl\n• native_review.csv\n• MongoDB Atlas corpus metadata","textPreview":"• IWSLT constrained dataset | • Python + torchaudio | • candidates.jsonl | • native_review.csv | • MongoDB Atlas corpus metadata","textChars":120,"textLines":5,"bbox":[486,307,309,174]}
+{"kind":"shape","id":"sh/u1gfi5cf","slide":7,"name":"handover","bbox":[876,255,345,240]}
+{"kind":"textbox","id":"sh/v2pgbqt0","slide":7,"name":"handover-label","text":"WHAT THEY HAND OVER","textPreview":"WHAT THEY HAND OVER","textChars":19,"textLines":1,"bbox":[894,271,309,24]}
+{"kind":"textbox","id":"sh/w3ixkvul","slide":7,"name":"handover-body","text":"• Approved Spanish target audio\n• train.jsonl / validation.jsonl / test.jsonl\n• Speaker-safe data split\n• Provenance, consent, and review record","textPreview":"• Approved Spanish target audio | • train.jsonl / validation.jsonl / test.jsonl | • Speaker-safe data split | • Provenance, consent, and ...","textChars":144,"textLines":4,"bbox":[894,307,309,174]}
+{"kind":"shape","id":"sh/h4ryd0bq","slide":7,"bbox":[405,375,63,0]}
+{"kind":"shape","id":"sh/q5wf61cb","slide":7,"bbox":[813,375,63,0]}
+{"kind":"textbox","id":"sh/b65gz6dg","slide":7,"name":"handoff-note","text":"This output becomes the input for the next member.","textPreview":"This output becomes the input for the next member.","textChars":50,"textLines":1,"bbox":[60,545,800,30]}
+{"kind":"notes","id":"nt/8z63y2","slide":7,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nMember 1 role and tools are based on the current project implementation."}
+{"kind":"slide","id":"sl/1q0r28","slide":8,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":12}
+{"kind":"textbox","id":"sh/ofapcbyt","slide":8,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/ne1o36ho","slide":8,"name":"title","text":"Member 2: Train the speech model","textPreview":"Member 2: Train the speech model","textChars":32,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/2d8na1g3","slide":8,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/1cz61wzi","slide":8,"name":"page","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/0rq58ryx","slide":8,"name":"banner","bbox":[48,146,1184,64]}
+{"kind":"textbox","id":"sh/fqhozmhc","slide":8,"name":"member-name","text":"MEMBER 2","textPreview":"MEMBER 2","textChars":8,"textLines":1,"bbox":[72,157,230,28]}
+{"kind":"textbox","id":"sh/ep8n6hgr","slide":8,"name":"member-summary","text":"Builds a direct model that converts speech to speech","textPreview":"Builds a direct model that converts speech to speech","textChars":52,"textLines":1,"bbox":[342,157,820,28]}
+{"kind":"shape","id":"sh/l836d0fm","slide":8,"name":"work","bbox":[60,255,345,240]}
+{"kind":"textbox","id":"sh/k7upkvy1","slide":8,"name":"work-label","text":"WHAT THIS MEMBER DOES","textPreview":"WHAT THIS MEMBER DOES","textChars":21,"textLines":1,"bbox":[78,271,309,24]}
+{"kind":"textbox","id":"sh/e5gvu5wn","slide":8,"name":"work-body","text":"• Set up the direct S2ST model\n• Add LoRA adapters to reduce training cost\n• Train with approved audio pairs\n• Watch validation loss\n• Stop early if the model starts overfitting","textPreview":"• Set up the direct S2ST model | • Add LoRA adapters to reduce training cost | • Train with approved audio pairs | • Watch validation los...","textChars":177,"textLines":5,"bbox":[78,307,309,174]}
+{"kind":"shape","id":"sh/f6pwnqxs","slide":8,"name":"tools","bbox":[468,255,345,240]}
+{"kind":"textbox","id":"sh/g7ydwved","slide":8,"name":"tools-label","text":"TOOLS / FILES USED","textPreview":"TOOLS / FILES USED","textChars":18,"textLines":1,"bbox":[486,271,309,24]}
+{"kind":"textbox","id":"sh/187ep0vy","slide":8,"name":"tools-body","text":"• PyTorch + torchaudio\n• XLS-R multilingual encoder\n• PEFT / LoRA\n• EnCodec speech units\n• que_spa_2h.yaml config","textPreview":"• PyTorch + torchaudio | • XLS-R multilingual encoder | • PEFT / LoRA | • EnCodec speech units | • que_spa_2h.yaml config","textChars":113,"textLines":5,"bbox":[486,307,309,174]}
+{"kind":"shape","id":"sh/61wvqlwb","slide":8,"name":"handover","bbox":[876,255,345,240]}
+{"kind":"textbox","id":"sh/725wjqxw","slide":8,"name":"handover-label","text":"WHAT THEY HAND OVER","textPreview":"WHAT THEY HAND OVER","textChars":19,"textLines":1,"bbox":[894,271,309,24]}
+{"kind":"textbox","id":"sh/s3ydsveh","slide":8,"name":"handover-body","text":"• best.pt trained checkpoint\n• Training configuration\n• Validation-loss record\n• Notes on overfitting and changes made","textPreview":"• best.pt trained checkpoint | • Training configuration | • Validation-loss record | • Notes on overfitting and changes made","textChars":118,"textLines":4,"bbox":[894,307,309,174]}
+{"kind":"shape","id":"sh/t47el0f2","slide":8,"bbox":[405,375,63,0]}
+{"kind":"shape","id":"sh/qx0f2pwv","slide":8,"bbox":[813,375,63,0]}
+{"kind":"textbox","id":"sh/by9wvad0","slide":8,"name":"handoff-note","text":"This output becomes the input for the next member.","textPreview":"This output becomes the input for the next member.","textChars":50,"textLines":1,"bbox":[60,545,800,30]}
+{"kind":"notes","id":"nt/1q0r28","slide":8,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nMember 2 role and tools are based on the current project implementation."}
+{"kind":"slide","id":"sl/8g4wkv","slide":9,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":12}
+{"kind":"textbox","id":"sh/14bihw32","slide":9,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/e1kj6hkr","slide":9,"name":"title","text":"Member 3: Test the quality","textPreview":"Member 3: Test the quality","textChars":26,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/z2t0fmlw","slide":9,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/cf214r2l","slide":9,"name":"page","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/dgbidw36","slide":9,"name":"banner","bbox":[48,146,1184,64]}
+{"kind":"textbox","id":"sh/qdkj2hkf","slide":9,"name":"member-name","text":"MEMBER 3","textPreview":"MEMBER 3","textChars":8,"textLines":1,"bbox":[72,157,230,28]}
+{"kind":"textbox","id":"sh/ret0bml0","slide":9,"name":"member-summary","text":"Shows whether the model is accurate, understandable, and fast","textPreview":"Shows whether the model is accurate, understandable, and fast","textChars":61,"textLines":1,"bbox":[342,157,820,28]}
+{"kind":"shape","id":"sh/wbm1gb2p","slide":9,"name":"work","bbox":[60,255,345,240]}
+{"kind":"textbox","id":"sh/xcf2pg3a","slide":9,"name":"work-label","text":"WHAT THIS MEMBER DOES","textPreview":"WHAT THIS MEMBER DOES","textChars":21,"textLines":1,"bbox":[78,271,309,24]}
+{"kind":"textbox","id":"sh/d83ydwrq","slide":9,"name":"work-body","text":"• Run the held-out test set\n• Turn generated Spanish speech into text using ASR\n• Calculate ASR-BLEU\n• Collect 1–5 human ratings\n• List translation and speech problems","textPreview":"• Run the held-out test set | • Turn generated Spanish speech into text using ASR | • Calculate ASR-BLEU | • Collect 1–5 human ratings | ...","textChars":167,"textLines":5,"bbox":[78,307,309,174]}
+{"kind":"shape","id":"sh/c7uxkrq5","slide":9,"name":"tools","bbox":[468,255,345,240]}
+{"kind":"textbox","id":"sh/b6lgbm9k","slide":9,"name":"tools-label","text":"TOOLS / FILES USED","textPreview":"TOOLS / FILES USED","textChars":18,"textLines":1,"bbox":[486,271,309,24]}
+{"kind":"textbox","id":"sh/q5cfih8z","slide":9,"name":"tools-body","text":"• OpenAI Whisper ASR\n• sacreBLEU\n• s2st.evaluate\n• Human rating form / API\n• MongoDB Atlas evaluation records","textPreview":"• OpenAI Whisper ASR | • sacreBLEU | • s2st.evaluate | • Human rating form / API | • MongoDB Atlas evaluation records","textChars":109,"textLines":5,"bbox":[486,307,309,174]}
+{"kind":"shape","id":"sh/p43y9cre","slide":9,"name":"handover","bbox":[876,255,345,240]}
+{"kind":"textbox","id":"sh/o3uxg7qt","slide":9,"name":"handover-label","text":"WHAT THEY HAND OVER","textPreview":"WHAT THEY HAND OVER","textChars":19,"textLines":1,"bbox":[894,271,309,24]}
+{"kind":"textbox","id":"sh/32lg729o","slide":9,"name":"handover-body","text":"• ASR-BLEU score\n• Naturalness, intelligibility, and adequacy scores\n• Mean / p50 / p95 latency\n• Error-analysis report","textPreview":"• ASR-BLEU score | • Naturalness, intelligibility, and adequacy scores | • Mean / p50 / p95 latency | • Error-analysis report","textChars":119,"textLines":4,"bbox":[894,307,309,174]}
+{"kind":"shape","id":"sh/21sfex83","slide":9,"bbox":[405,375,63,0]}
+{"kind":"shape","id":"sh/90nylg7y","slide":9,"bbox":[813,375,63,0]}
+{"kind":"textbox","id":"sh/8zehsbqd","slide":9,"name":"handoff-note","text":"This output becomes the input for the next member.","textPreview":"This output becomes the input for the next member.","textChars":50,"textLines":1,"bbox":[60,545,800,30]}
+{"kind":"notes","id":"nt/8g4wkv","slide":9,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nMember 3 role and tools are based on the current project implementation."}
+{"kind":"slide","id":"sl/fog7k3","slide":10,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":12}
+{"kind":"textbox","id":"sh/n2t0bydg","slide":10,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/on2h43u1","slide":10,"name":"title","text":"Member 4: Run the live pilot","textPreview":"Member 4: Run the live pilot","textChars":28,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/povidovm","slide":10,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/exkze9cz","slide":10,"name":"page","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/fytg7edk","slide":10,"name":"banner","bbox":[48,146,1184,64]}
+{"kind":"textbox","id":"sh/0z2hgju5","slide":10,"name":"member-name","text":"MEMBER 4","textPreview":"MEMBER 4","textChars":8,"textLines":1,"bbox":[72,157,230,28]}
+{"kind":"textbox","id":"sh/10bi9ova","slide":10,"name":"member-summary","text":"Makes the model usable for researchers and community testers","textPreview":"Makes the model usable for researchers and community testers","textChars":60,"textLines":1,"bbox":[342,157,820,28]}
+{"kind":"shape","id":"sh/yt4zadc3","slide":10,"name":"work","bbox":[60,255,345,240]}
+{"kind":"textbox","id":"sh/zud0jido","slide":10,"name":"work-label","text":"WHAT THIS MEMBER DOES","textPreview":"WHAT THIS MEMBER DOES","textChars":21,"textLines":1,"bbox":[78,271,309,24]}
+{"kind":"textbox","id":"sh/fi90r2dc","slide":10,"name":"work-body","text":"• Build the live speech streaming flow\n• Require sign-in and clear audio consent\n• Send Quechua audio to the model\n• Return Spanish WAV audio\n• Collect pilot feedback and monitor sessions","textPreview":"• Build the live speech streaming flow | • Require sign-in and clear audio consent | • Send Quechua audio to the model | • Return Spanish...","textChars":187,"textLines":5,"bbox":[78,307,309,174]}
+{"kind":"shape","id":"sh/uh0jyxwr","slide":10,"name":"tools","bbox":[468,255,345,240]}
+{"kind":"textbox","id":"sh/hkbitcv2","slide":10,"name":"tools-label","text":"TOOLS / FILES USED","textPreview":"TOOLS / FILES USED","textChars":18,"textLines":1,"bbox":[486,271,309,24]}
+{"kind":"textbox","id":"sh/gj2107ex","slide":10,"name":"tools-body","text":"• FastAPI + WebSocket\n• Firebase Authentication\n• Firestore / FCM notifications\n• MongoDB Atlas\n• 16 kHz audio input","textPreview":"• FastAPI + WebSocket | • Firebase Authentication | • Firestore / FCM notifications | • MongoDB Atlas | • 16 kHz audio input","textChars":116,"textLines":5,"bbox":[486,307,309,174]}
+{"kind":"shape","id":"sh/3mt0vmd8","slide":10,"name":"handover","bbox":[876,255,345,240]}
+{"kind":"textbox","id":"sh/2lkj2hwn","slide":10,"name":"handover-label","text":"WHAT THEY HAND OVER","textPreview":"WHAT THEY HAND OVER","textChars":19,"textLines":1,"bbox":[894,271,309,24]}
+{"kind":"textbox","id":"sh/pobixcve","slide":10,"name":"handover-body","text":"• Secure live translation API\n• Firebase session state\n• Pilot logs and feedback\n• Latency records and notification flow","textPreview":"• Secure live translation API | • Firebase session state | • Pilot logs and feedback | • Latency records and notification flow","textChars":120,"textLines":4,"bbox":[894,307,309,174]}
+{"kind":"shape","id":"sh/4n2147et","slide":10,"bbox":[405,375,63,0]}
+{"kind":"shape","id":"sh/rad0zmdk","slide":10,"bbox":[813,375,63,0]}
+{"kind":"textbox","id":"sh/q9kj6hwz","slide":10,"name":"handoff-note","text":"This output becomes the input for the next member.","textPreview":"This output becomes the input for the next member.","textChars":50,"textLines":1,"bbox":[60,545,800,30]}
+{"kind":"notes","id":"nt/fog7k3","slide":10,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nMember 4 role and tools are based on the current project implementation."}
+{"kind":"slide","id":"sl/ht8xqv","slide":11,"title":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textShapes":8}
+{"kind":"textbox","id":"sh/zuh87qhg","slide":11,"name":"eyebrow","text":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textPreview":"QUECHUA → SPANISH SPEECH-TO-SPEECH PROJECT","textChars":42,"textLines":1,"bbox":[48,28,500,20]}
+{"kind":"textbox","id":"sh/0vqpgbi1","slide":11,"name":"title","text":"Final project handoff","textPreview":"Final project handoff","textChars":21,"textLines":1,"bbox":[48,60,1115,46]}
+{"kind":"shape","id":"sh/lwzq9gzm","slide":11,"name":"rule","bbox":[48,122,1184,2]}
+{"kind":"textbox","id":"sh/q5o7a10z","slide":11,"name":"page","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1180,28,52,20]}
+{"kind":"shape","id":"sh/b6h836hk","slide":11,"name":"s1","bbox":[72,260,235,155]}
+{"kind":"shape","id":"sh/c7qpcbip","slide":11,"name":"s2","bbox":[365,260,235,155]}
+{"kind":"shape","id":"sh/d8zq5gza","slide":11,"name":"s3","bbox":[658,260,235,155]}
+{"kind":"shape","id":"sh/u1srm503","slide":11,"name":"s4","bbox":[951,260,235,155]}
+{"kind":"shape","id":"sh/v218faho","slide":11,"bbox":[307,337.5,58,0]}
+{"kind":"shape","id":"sh/bitc36x0","slide":11,"bbox":[600,337.5,58,0]}
+{"kind":"shape","id":"sh/ahkvu1wf","slide":11,"bbox":[893,337.5,58,0]}
+{"kind":"textbox","id":"sh/xkbu5wf6","slide":11,"name":"s1t","text":"1\nApproved data","textPreview":"1 | Approved data","textChars":15,"textLines":2,"bbox":[95,290,190,80]}
+{"kind":"textbox","id":"sh/wj2dwrel","slide":11,"name":"s2t","text":"2\nBest trained model","textPreview":"2 | Best trained model","textChars":20,"textLines":2,"bbox":[388,290,190,80]}
+{"kind":"textbox","id":"sh/jmdc76dc","slide":11,"name":"s3t","text":"3\nClear test report","textPreview":"3 | Clear test report","textChars":19,"textLines":2,"bbox":[681,290,190,80]}
+{"kind":"textbox","id":"sh/ylkvy1wr","slide":11,"name":"s4t","text":"4\nSafe community pilot","textPreview":"4 | Safe community pilot","textChars":22,"textLines":2,"bbox":[974,290,190,80]}
+{"kind":"textbox","id":"sh/l8vu9gv2","slide":11,"name":"success","text":"Success means: a direct Quechua-speech → Spanish-speech system that is transparent, tested, and ready for community feedback.","textPreview":"Success means: a direct Quechua-speech → Spanish-speech system that is transparent, tested, and ready for community feedback.","textChars":125,"textLines":1,"bbox":[85,525,1110,50]}
+{"kind":"notes","id":"nt/ht8xqv","slide":11,"text":"[Sources]\n- Local project files: DATASETS.md, README.md, PROTOCOL.md, and the included IWSLT release README.\nFinal outcome should distinguish the constrained small-hours experiment from any optional unconstrained experiment."}
