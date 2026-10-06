@@ -1,0 +1,15 @@
+# Yorùbá→English direct speech-to-speech experiment template.
+# Create these manifests only after native-speaker review and authorization.
+experiment_name: yor_en_iwslt2026_reference
+source_language: yo
+target_language: en
+sample_rate: 16000
+max_seconds: 15
+encoder_model: facebook/wav2vec2-xls-r-300m
+codec_bandwidth: 6.0
+lora: {rank: 8, alpha: 16, dropout: 0.05}
+training: {epochs: 1, batch_size: 2, gradient_accumulation: 1, learning_rate: 0.0001, early_stopping_patience: 4, augment_train: false, seed: 42}
+data:
+  train_manifest: data/iwslt2026_yoruba/processed/approved/train.jsonl
+  validation_manifest: data/iwslt2026_yoruba/processed/approved/validation.jsonl
+  test_manifest: data/iwslt2026_yoruba/processed/approved/test.jsonl

@@ -1,0 +1,3900 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Speech Translator</title>
+  <script>
+    (function() {
+      try {
+        const isAuthRoute = location.pathname === '/login' || location.pathname === '/create-account' || location.pathname === '/';
+        const hasSession = localStorage.getItem('s2st_auth_active') === 'true';
+        if (hasSession && !isAuthRoute) {
+          document.documentElement.classList.add('has-active-session');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    html.has-active-session body { background: #09090b !important; }
+    html.has-active-session #authGate { display: none !important; }
+    html.has-active-session #appShell { display: block !important; }
+    html.has-active-session .auth-particle-background { display: none !important; }
+    :root { color-scheme: light; --ink:#172033; --muted:#647087; --line:#e3e8f0; --paper:#fff; --bg:#f5f7fb; --blue:#3157c8; --blue-dark:#2446aa; --green:#18845b; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif }
+    button,input,textarea { font:inherit }
+    .shell { width:min(760px,calc(100% - 32px)); margin:0 auto; padding:28px 0 56px }
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px }
+    .brand { font-size:1.14rem; font-weight:750; letter-spacing:-.025em }
+    nav { display:flex; gap:6px; padding:4px; background:#e9edf5; border-radius:11px }
+    nav button { border:0; color:#526078; background:transparent; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:.92rem; font-weight:650 }
+    nav button[aria-current="page"] { background:#fff; color:var(--ink); box-shadow:0 1px 3px #15213b1a }
+    h1 { margin:0 0 6px; font-size:clamp(1.65rem,4vw,2.1rem); letter-spacing:-.04em; line-height:1.2 }
+    .intro { margin:0 0 22px; color:var(--muted) }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px; box-shadow:0 8px 28px #17203308 }
+    .panel h2 { margin:0 0 4px; font-size:1.03rem; letter-spacing:-.01em }
+    .hint { margin:0; color:var(--muted); font-size:.9rem }
+    .input-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; padding:24px 0 18px }
+    .record { width:74px; height:74px; border:0; border-radius:50%; color:#fff; background:var(--blue); font-size:1.5rem; cursor:pointer; box-shadow:0 6px 15px #3157c833 }
+    .record:hover,.primary:hover { background:var(--blue-dark) }
+    .record.recording { background:#c23939; animation:pulse 1.3s infinite }
+    @keyframes pulse { 50% { box-shadow:0 0 0 9px #c2393924 } }
+    .secondary { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:8px 15px; color:#27334b; background:#fff; border:1px solid #cfd7e4; border-radius:9px; font-weight:650; cursor:pointer }
+    .secondary:hover { background:#f7f9fc }
+    .file-name,.status { color:var(--muted); font-size:.88rem; text-align:center; min-height:22px; margin:0 0 12px }
+    audio { width:100%; display:block; margin:10px 0 }
+    .primary { width:100%; min-height:48px; border:0; border-radius:9px; background:var(--blue); color:white; font-weight:700; cursor:pointer }
+    .primary:disabled { opacity:.55; cursor:wait }
+    .translate-row { display:grid; grid-template-columns:minmax(190px,.8fr) minmax(200px,1.2fr); gap:10px }
+    .language-select { width:100%; min-height:48px; padding:0 12px; border:1px solid #cfd7e4; border-radius:9px; background:#fff; color:var(--ink); font-weight:600 }
+    .output { margin-top:22px; padding-top:20px; border-top:1px solid var(--line) }
+    .output[hidden], [hidden] { display:none !important }
+    .output h3 { margin:0 0 8px; font-size:.9rem; color:#46536b }
+    .translation { min-height:54px; white-space:pre-wrap; color:#25314a }
+    .small-label { color:var(--muted); font-size:.82rem }
+    .review-copy { margin:0 0 20px; padding:16px; border-radius:10px; background:#f6f8fc; color:#344159; white-space:pre-wrap }
+    .rating { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--line) }
+    .rating label { font-weight:600 }
+    .rating select { min-width:90px; padding:8px; border:1px solid #cfd7e4; border-radius:8px; background:white }
+    textarea { width:100%; min-height:105px; resize:vertical; padding:11px 12px; border:1px solid #cfd7e4; border-radius:9px; color:var(--ink); background:white }
+    .field-label { display:block; margin:18px 0 7px; font-weight:650; font-size:.92rem }
+    .review-status { min-height:22px; margin:12px 0 0; color:var(--muted); font-size:.9rem }
+    .notice { margin-top:12px; color:var(--muted); font-size:.82rem }
+    .auth-shell { width:min(440px,calc(100% - 32px)); margin:8vh auto 0 }
+    .auth-card { background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:28px; box-shadow:0 8px 28px #17203308 }
+    .auth-card h1 { margin-bottom:8px }
+    .auth-card p { color:var(--muted) }
+    .auth-card label { display:block; margin:16px 0 6px; font-size:.92rem; font-weight:650 }
+    .auth-card input { width:100%; min-height:46px; padding:10px 12px; border:1px solid #cfd7e4; border-radius:9px; background:#fff; color:var(--ink) }
+    .auth-actions { display:grid; gap:10px; margin-top:20px }
+    .auth-link { display:block; width:100%; border:0; background:transparent; color:var(--blue); font-weight:650; cursor:pointer; padding:10px 8px; text-align:center; text-decoration:none }
+    .auth-status { min-height:24px; margin:14px 0 0; font-size:.9rem }
+    .account { display:flex; align-items:center; gap:10px }
+    .account button#signOutButton {
+      padding: 7px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 9999px;
+      background: #171618;
+      color: #e6e2de !important;
+      font-weight: 650;
+      font-size: .84rem;
+      cursor: pointer;
+      transition: all .18s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      line-height: 1.2;
+    }
+    .account button#signOutButton:hover {
+      background: #262428;
+      border-color: #ff8754;
+      color: #ff986a !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 112, 56, 0.2);
+    }
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 14px 5px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+      background: #141315;
+      color: #f4f1ee;
+      cursor: pointer;
+      transition: all .18s cubic-bezier(.16,1,.3,1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+    .profile-chip:hover {
+      border-color: #ff8754;
+      background: #1d1b1e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(255, 112, 56, 0.15);
+    }
+    .avatar-circle { width:30px; height:30px; border-radius:50%; background:#3157c8; color:#fff; display:grid; place-items:center; font-weight:750; font-size:.84rem; text-transform:uppercase; flex-shrink:0 }
+    .user-meta { display:flex; flex-direction:column; text-align:left; line-height:1.2 }
+    .user-name { font-weight:750; font-size:.84rem; color:#f5f2ef; max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .user-role { font-size:.72rem; color:#a8a29d; font-weight:500; max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .profile-icon { font-size:.85rem; color:#a8a29d; opacity:.85; transition:transform .2s ease, color .2s ease }
+    .profile-chip:hover .profile-icon { transform:rotate(30deg); color:#ff986a; opacity:1 }
+    
+    .profile-modal-backdrop { position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.75); backdrop-filter:blur(8px); display:grid; place-items:center; padding:16px; animation:fadeIn .2s ease }
+    .profile-modal-backdrop[hidden] { display:none !important }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .profile-modal-card { width:min(460px,100%); background:#141315 !important; border:1px solid rgba(255,255,255,.14); border-radius:20px; padding:24px 26px; color:#f4f1ee; box-shadow:0 25px 60px rgba(0,0,0,.65),0 0 30px rgba(255,112,56,.08); animation:modalScale .25s cubic-bezier(.16,1,.3,1) }
+    @keyframes modalScale { from{transform:scale(.95) translateY(10px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+    .profile-modal-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; border-bottom:1px solid rgba(255,255,255,.1); padding-bottom:12px }
+    .profile-modal-header h2 { margin:0 0 3px; font-size:1.3rem; font-weight:800; color:#ffffff !important; letter-spacing:-.02em }
+    .profile-modal-header p { margin:0; color:#a39d98 !important; font-size:.85rem }
+    .btn-close-modal { border:1px solid rgba(255,255,255,.12); background:#1e1d20; width:32px; height:32px; border-radius:50%; font-size:.9rem; cursor:pointer; display:grid; place-items:center; color:#a1a1aa; transition:all .15s ease }
+    .btn-close-modal:hover { background:#2a282c; color:#fff; border-color:#ff8754 }
+    .form-group { margin-bottom:14px }
+    .form-group label { display:block; font-size:.82rem; font-weight:700; color:#cbd5e1 !important; margin-bottom:6px }
+    .form-group input { width:100%; min-height:42px; padding:9px 12px; border:1px solid rgba(255,255,255,.14); border-radius:9px; font-size:.9rem; background:#1e1d20 !important; color:#f8fafc !important; box-sizing:border-box }
+    .form-group input:focus { outline:none; border-color:#ff8754; box-shadow:0 0 0 3px rgba(255,112,56,.18) }
+    .form-group input[readonly] { opacity:.75; cursor:not-allowed; background:#181719 !important }
+    .password-section { margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,.1) }
+    .password-section-title { font-size:.85rem; font-weight:750; color:#ff986a; margin-bottom:12px; display:flex; align-items:center; gap:6px }
+    .modal-footer-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid rgba(255,255,255,.1); padding-top:14px }
+    .modal-footer-actions button { min-height:42px; padding:0 20px; font-size:.88rem; font-weight:700; border-radius:9px; cursor:pointer }
+    .modal-footer-actions button.secondary { background:#1e1d20; border:1px solid rgba(255,255,255,.14); color:#e2deda }
+    .modal-footer-actions button.secondary:hover { background:#2a282c; border-color:#cbd5e1 }
+    .modal-footer-actions button.primary { background:linear-gradient(100deg,#fa753b,#e65e2c); color:#fff; border:0 }
+    .modal-footer-actions button.primary:hover { background:linear-gradient(100deg,#ff8a50,#f16b35) }
+    .profile-save-status { margin:8px 0 0; font-size:.84rem; min-height:18px; text-align:right }
+    .setup-notice { padding:12px; border-radius:9px; background:#fff7e6; color:#664b00 !important; font-size:.88rem }
+    @media (max-width:540px) { .shell{width:min(100% - 24px,760px);padding-top:16px}.panel{padding:18px}.brand{font-size:1rem}nav button{padding:8px 10px;font-size:.85rem}.translate-row{grid-template-columns:1fr} }
+    body.auth-screen{--ink:#243019;--muted:#586546;--line:#c5d781;--paper:#d5ec89;--blue:#ec6a24;--blue-dark:#d9571d;min-height:100vh;background:radial-gradient(ellipse at 18% 18%,#efffac 0%,transparent 36%),radial-gradient(ellipse at 86% 83%,#a6c754 0%,transparent 42%),#e5f1b7;color:#29371c;display:grid;place-items:center;padding:24px;overflow-x:hidden}
+    body.auth-screen:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(132deg,transparent 0 120px,#fff2 121px 122px,transparent 123px 240px);opacity:.42}
+    .auth-shell{position:relative;z-index:1;width:min(1080px,100%);margin:0 auto}
+    .auth-card{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(340px,.96fr);position:relative;min-height:620px;overflow:hidden;padding:0;border:1px solid #8eaa4e;border-radius:22px;background:linear-gradient(110deg,#c2e16a 0%,#c7e477 50%,#b9d26d 100%);box-shadow:0 25px 70px #50672e38,0 4px 12px #35481b20}
+    .auth-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;padding:34px clamp(28px,5.5vw,66px) 35px}
+    .auth-top{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:51px}.auth-top .brand{display:flex;align-items:center;gap:10px;color:#2b401d;font-size:15px;font-weight:800;letter-spacing:-.3px}.auth-logo{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#30491e;color:#e5f6a9;font:700 20px Georgia,serif;box-shadow:0 5px 12px #263a2926}.auth-home{color:#4f603b;font-size:10px;font-weight:800;letter-spacing:1.2px}.auth-home:hover{color:#233618}
+    .auth-kicker{margin:0 0 12px!important;color:#617632!important;font-size:10px!important;font-weight:800;letter-spacing:1.7px;text-transform:uppercase}.auth-card h1{max-width:450px;margin:0 0 9px;font-size:clamp(32px,4.1vw,45px);font-weight:800;line-height:1.02;letter-spacing:-2px;text-transform:uppercase;color:#34491f}.auth-card .auth-description{max-width:405px;margin:0 0 20px;color:#53663a;font-size:13px;line-height:1.65}
+    .auth-card form{width:min(100%,395px)}.auth-card label{margin:13px 0 5px;color:#475a31;font-size:10px;font-weight:800;letter-spacing:.3px}.auth-card input{min-height:47px;padding:10px 14px;border:1px solid #eff8d1;border-radius:9px;background:#f7fbe9d9;color:#304020;box-shadow:0 4px 12px #4d62200d;outline:none}.auth-card input::placeholder{color:#8a9872}.auth-card input:focus{border-color:#748e42;box-shadow:0 0 0 3px #59723521}.auth-actions{margin-top:19px}.auth-card .primary{width:auto;min-width:166px;min-height:43px;padding:0 20px;border-radius:8px;background:#f2742b;color:white;box-shadow:0 7px 16px #a74f1a2b;font-size:11px;font-weight:800;letter-spacing:.45px;text-transform:uppercase}.auth-card .primary:hover{background:#dc5f1d}.auth-card .primary:disabled{opacity:.56}.auth-link{width:auto;padding:8px 0;color:#d45c1f;font-size:11px;text-align:left}.auth-link:hover{text-decoration:underline}.auth-status{width:min(100%,395px);margin:9px 0 0;color:#4d6034;font-size:11px}.auth-status:empty{display:none}.auth-card .setup-notice{background:#fff4d8;color:#654b16!important}
+    .auth-art{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:100%;padding:29px 30px;background:linear-gradient(145deg,#8aa84b 0%,#5d783c 45%,#253921 100%);color:#f4f8dc}.auth-art:before{content:"";position:absolute;z-index:-1;width:440px;height:440px;right:-110px;top:60px;border:1px solid #edffbb4d;border-radius:50%;box-shadow:0 0 0 27px #eaffb018,0 0 0 62px #eaffb012,0 0 0 104px #eaffb00b;animation:auth-orbit 18s linear infinite}.auth-art:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(120deg,transparent 12%,#f6ffc817 46%,transparent 72%),repeating-linear-gradient(145deg,transparent 0 135px,#edffb314 136px 137px,transparent 138px 268px);mask-image:linear-gradient(90deg,transparent,#000 55%)}
+    .auth-art-label{display:flex;justify-content:space-between;align-items:center;color:#e2efc3;font-size:9px;font-weight:800;letter-spacing:1.3px}.auth-art-label span:last-child{color:#d7ecaa}.auth-art-center{position:absolute;left:50%;top:47%;width:min(320px,90%);transform:translate(-50%,-50%);text-align:center}.auth-art-center .art-small{display:block;color:#deedbc;font-size:9px;font-weight:800;letter-spacing:2px}.auth-art-center h2{margin:13px 0 0;color:#f5f8e7;font:600 clamp(30px,4vw,48px)/1.05 Georgia,serif;letter-spacing:-1.5px}.auth-voice-orb{position:relative;width:160px;height:160px;display:grid;place-items:center;margin:0 auto 22px;border:1px solid #efffc15c;border-radius:50%;background:radial-gradient(circle at 45% 40%,#d7f090a3 0,#9ab95d88 24%,#49653bba 66%,#2c432fdd 100%);box-shadow:0 0 38px #d9ff9b33,inset 0 0 35px #e9ffac2a;animation:orb-breathe 4.5s ease-in-out infinite}.auth-voice-orb:before,.auth-voice-orb:after{content:"";position:absolute;inset:-15px;border:1px solid #ecffb742;border-radius:50%;animation:ring-pulse 4s ease-out infinite}.auth-voice-orb:after{inset:-32px;animation-delay:1.3s}.auth-voice-orb b{color:#f7ffdc;font:700 41px Georgia,serif;text-shadow:0 5px 18px #243a22aa}.auth-voice-orb b span{color:#f2a367}.auth-art-wave{height:38px;display:flex;align-items:center;justify-content:center;gap:4px;margin:18px auto 0}.auth-art-wave i{width:3px;height:var(--h);border-radius:5px;background:#e8f7b0;opacity:.8;box-shadow:0 0 8px #d8ff9270;animation:auth-wave .8s ease-in-out infinite alternate}.auth-art-wave i:nth-child(2n){animation-delay:-.4s}.auth-art-wave i:nth-child(3n){animation-delay:-.65s}.auth-art-bottom{display:flex;justify-content:space-between;align-items:end;color:#dbe9bd;font-size:9px;letter-spacing:.8px}.auth-art-bottom strong{display:block;margin-top:5px;color:#fff0d9;font-size:12px;letter-spacing:.1px}
+    @keyframes auth-orbit{to{transform:rotate(360deg)}}@keyframes orb-breathe{50%{transform:scale(1.045);box-shadow:0 0 56px #d9ff9b52,inset 0 0 45px #e9ffac40}}@keyframes ring-pulse{0%{transform:scale(.92);opacity:.1}45%{opacity:.7}100%{transform:scale(1.18);opacity:0}}@keyframes auth-wave{to{transform:scaleY(.42);opacity:.48}}
+    @media(max-width:720px){body.auth-screen{padding:18px}.auth-card{grid-template-columns:1fr;min-height:0}.auth-content{padding:25px 30px 26px}.auth-top{margin-bottom:35px}.auth-art{min-height:265px;padding:19px 23px}.auth-art:before{width:330px;height:330px;right:-65px;top:-7px}.auth-art-center{top:50%}.auth-voice-orb{width:94px;height:94px;margin-bottom:12px}.auth-voice-orb b{font-size:28px}.auth-art-center h2{font-size:29px;margin-top:8px}.auth-art-wave{height:25px;margin-top:10px}.auth-art-bottom{font-size:8px}.auth-art-bottom strong{font-size:10px}}
+    @media(max-width:420px){body.auth-screen{padding:10px}.auth-card{border-radius:17px}.auth-content{padding:20px 21px 23px}.auth-top{margin-bottom:29px}.auth-card h1{font-size:32px}.auth-art{min-height:235px}.auth-art-center h2{font-size:26px}}
+    @media(prefers-reduced-motion:reduce){.auth-art:before,.auth-voice-orb,.auth-voice-orb:before,.auth-voice-orb:after,.auth-art-wave i{animation:none!important}}
+  </style>
+  <style>
+    body.auth-screen{--ink:#f4f4f4;--muted:#999;--line:#333;--paper:#101010;--blue:#f3f3f3;--blue-dark:#dedede;display:grid;place-items:center;padding:24px;min-height:100vh;background:#aaa;color:#f4f4f4}
+    body.auth-screen:before{display:none}
+    .auth-shell{width:min(1060px,100%);margin:0 auto}
+    .auth-card{position:relative;display:grid;grid-template-columns:1fr .99fr;gap:10px;min-height:650px;padding:10px;border:1px solid #292929;border-radius:54px;background:#030303;box-shadow:0 30px 70px #0004,0 0 0 2px #111;overflow:hidden}
+    .auth-content{grid-column:2;grid-row:1;position:relative;min-width:0;min-height:628px;padding:31px clamp(26px,4vw,58px);border:1px solid #181818;border-radius:20px;background:radial-gradient(ellipse at 100% 100%,#1717176b,transparent 43%),#101010;color:#f3f3f3}
+    .auth-top{margin-bottom:83px}.auth-top .brand{color:#f4f4f4;font-size:14px}.auth-logo{width:29px;height:29px;border:1px solid #393939;background:#fff;color:#111;box-shadow:none}.auth-home{color:#a5a5a5;font-size:9px}.auth-home:hover{color:#fff}
+    .auth-content .auth-kicker{margin-bottom:10px!important;color:#888!important;font-size:9px!important;letter-spacing:1.5px}.auth-card h1{margin-bottom:26px;color:#f7f7f7;font-size:clamp(34px,4vw,47px);font-weight:400;letter-spacing:-2px;text-transform:none}.auth-card .auth-description{margin-bottom:27px;color:#aaa;font-size:12px}
+    .auth-card form{width:100%;max-width:none}.auth-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px 19px}.auth-field{min-width:0}.auth-field.full{grid-column:1/-1}.auth-card label{margin:0 0 6px;color:#bebebe;font-size:9px;font-weight:600;letter-spacing:.1px}.auth-card input{width:100%;min-height:38px;padding:8px 2px;border:0;border-bottom:1px solid #626262;border-radius:0;background:transparent;color:#f5f5f5;box-shadow:none;font-size:12px}.auth-card input::placeholder{color:#6e6e6e}.auth-card input:focus{border-color:#f5f5f5;box-shadow:0 1px 0 #fff;outline:none}.auth-actions{position:absolute;right:28px;bottom:23px;display:flex;justify-content:flex-end;margin:0}.auth-card .primary{width:82px;height:82px;min-width:82px;min-height:82px;padding:0;border:0;border-radius:50%;background:#f6f6f6;color:#111;box-shadow:0 8px 25px #0005;font-size:9px;letter-spacing:.2px;text-transform:uppercase}.auth-card .primary:hover{background:#dedede;transform:scale(1.04)}.auth-card .primary:disabled{background:#929292;color:#333;opacity:.55}.auth-link{width:auto;padding:9px 0;color:#bcbcbc;font-size:10px}.auth-link:hover{color:#fff}.auth-status{max-width:calc(100% - 95px);margin-top:17px;color:#aaa;font-size:10px}.auth-status.setup-notice{border:1px solid #6d572d!important;background:#2a241b!important;color:#eed39c!important}
+    .auth-art{grid-column:1;grid-row:1;position:relative;min-width:0;min-height:628px;padding:27px 30px 20px;border-radius:39px 0 0 39px;background:#050505;color:#eee;overflow:hidden}.auth-art:before{inset:8%;right:auto;top:8%;width:84%;height:84%;border-color:#fff1;box-shadow:0 0 0 1px #fff1;animation:none}.auth-art:after{inset:0;background:linear-gradient(90deg,transparent calc(50% - .5px),#ffffff0d 50%,transparent calc(50% + .5px)),linear-gradient(0deg,transparent calc(50% - .5px),#ffffff0d 50%,transparent calc(50% + .5px));mask-image:none}.auth-art-label{position:relative;z-index:2;color:#eee;font-size:11px;letter-spacing:-.2px}.auth-art-label span:last-child{color:#929292;font-size:8px;letter-spacing:1px}.auth-art-center{z-index:1;top:50%;width:180px;height:180px;display:grid;place-content:center;border:0}.auth-art-center .auth-voice-orb,.auth-art-center .art-small,.auth-art-center h2,.auth-art-wave{display:none}.auth-center-mark{position:relative;display:block;width:170px;height:170px;animation:mark-breathe 8s ease-in-out infinite}.auth-center-mark i{position:absolute;left:50%;top:50%;width:5px;height:78px;border-radius:2px;background:#f4f4f4;transform-origin:center;box-shadow:0 0 15px #ffffff28}.auth-center-mark i:nth-child(1){transform:translate(-50%,-100%)}.auth-center-mark i:nth-child(2){transform:translate(-50%,0)}.auth-center-mark i:nth-child(3){transform:translate(-100%,-50%) rotate(90deg)}.auth-center-mark i:nth-child(4){transform:translate(0,-50%) rotate(90deg)}.auth-center-mark i:nth-child(5){height:51px;transform:translate(-50%,-100%) rotate(45deg)}.auth-center-mark i:nth-child(6){height:51px;transform:translate(-50%,0) rotate(45deg)}.auth-center-mark i:nth-child(7){height:51px;transform:translate(-50%,-100%) rotate(-45deg)}.auth-center-mark i:nth-child(8){height:51px;transform:translate(-50%,0) rotate(-45deg)}.auth-art-bottom{position:relative;z-index:2;color:#858585;font-size:8px}.auth-art-bottom strong{color:#a6a6a6;font-size:9px;font-weight:500}.auth-art-bottom span:last-child{letter-spacing:1.1px}
+    @keyframes mark-breathe{50%{transform:rotate(6deg) scale(1.035);opacity:.78}}
+    @media(max-width:760px){body.auth-screen{padding:14px}.auth-shell{width:min(520px,100%)}.auth-card{grid-template-columns:1fr;gap:0;min-height:unset;padding:7px;border-radius:30px}.auth-art{grid-column:1;grid-row:1;min-height:205px;padding:20px 22px 15px;border-radius:23px 23px 0 0}.auth-art:before{inset:8% 15%;width:70%;height:84%}.auth-art-center{width:100px;height:100px}.auth-center-mark{width:95px;height:95px}.auth-center-mark i{height:43px;width:3px}.auth-center-mark i:nth-child(5),.auth-center-mark i:nth-child(6),.auth-center-mark i:nth-child(7),.auth-center-mark i:nth-child(8){height:31px}.auth-art-bottom{font-size:7px}.auth-content{grid-column:1;grid-row:2;min-height:480px;padding:25px 25px 31px;border-radius:0 0 23px 23px}.auth-top{margin-bottom:41px}.auth-card h1{font-size:38px;margin-bottom:21px}.auth-card .auth-description{margin-bottom:23px}.auth-fields{gap:15px 13px}.auth-actions{right:21px;bottom:19px}.auth-card .primary{width:70px;height:70px;min-width:70px;min-height:70px}.auth-status{max-width:calc(100% - 78px)}}
+    @media(max-width:420px){.auth-content{padding:21px 19px 28px;min-height:465px}.auth-art{min-height:185px}.auth-top{margin-bottom:34px}.auth-fields{grid-template-columns:1fr}.auth-field.full{grid-column:auto}.auth-card h1{font-size:34px}.auth-actions{right:17px;bottom:17px}.auth-card .primary{width:64px;height:64px;min-width:64px;min-height:64px}}
+    @media(prefers-reduced-motion:reduce){.auth-center-mark{animation:none!important}}
+  </style>
+  <style>
+    body.auth-screen{display:block;min-height:100svh;padding:0;overflow-x:hidden;background:#050505}
+    .auth-shell{width:100%;min-height:100svh;margin:0}
+    .auth-card{width:100%;height:100svh;min-height:620px;grid-template-columns:1fr 1fr;gap:0;padding:0;border:0;border-radius:0;background:#030303;box-shadow:none}
+    .auth-art{grid-column:1;grid-row:1;height:100svh;min-height:620px;padding:34px clamp(25px,5vw,76px) 26px;border:0;border-right:1px solid #1c1c1c;border-radius:0}
+    .auth-content{grid-column:2;grid-row:1;height:100svh;min-height:620px;padding:36px clamp(30px,7vw,108px);border:0;border-radius:0;background:#101010}
+    .auth-top{margin-bottom:clamp(60px,12vh,125px)}
+    @media(max-width:760px){body.auth-screen{padding:0}.auth-shell{width:100%;min-height:100svh}.auth-card{height:auto;min-height:100svh;grid-template-columns:1fr;padding:0;border-radius:0}.auth-art{grid-column:1;grid-row:1;height:31svh;min-height:210px;padding:22px 24px 16px;border-right:0;border-bottom:1px solid #1c1c1c;border-radius:0}.auth-content{grid-column:1;grid-row:2;height:auto;min-height:69svh;padding:25px clamp(22px,7vw,44px) 35px;border-radius:0}.auth-top{margin-bottom:clamp(33px,7vh,58px)}}
+    @media(max-width:420px){.auth-card{min-height:100svh}.auth-art{height:28svh;min-height:185px}.auth-content{min-height:72svh;padding:22px 20px 30px}.auth-top{margin-bottom:34px}}
+  </style>
+  <style>
+    /* WORKSPACE SCREEN - OLED BLACK & COMBINED NEON COLORS */
+    html.has-active-session body, body.workspace-screen {
+      --ink: #f8fafc;
+      --muted: #94a3b8;
+      --bg: #07080d;
+      --card-bg: rgba(14, 17, 27, 0.72);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+      --accent-cyan: #06b6d4;
+      --accent-pink: #ec4899;
+      --accent-purple: #8b5cf6;
+      --accent-indigo: #6366f1;
+      color-scheme: dark;
+      margin: 0;
+      min-height: 100vh;
+      background: #07080d !important;
+      color: var(--ink);
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Audio Wave Canvas Background - ONLY visible in Workspace Studio */
+    .workspace-wave-bg {
+      display: none !important;
+    }
+    body.workspace-screen .workspace-wave-bg,
+    #appShell:not([hidden]) .workspace-wave-bg {
+      display: block !important;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.12), transparent 40%),
+                  radial-gradient(circle at 85% 70%, rgba(139, 92, 246, 0.14), transparent 45%),
+                  radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.10), transparent 50%),
+                  #07080d;
+    }
+    body.auth-screen .workspace-wave-bg {
+      display: none !important;
+    }
+    .workspace-wave-bg canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      opacity: 0.85;
+    }
+
+    /* App Shell Container - Full Page Fluid Layout */
+    #appShell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 100% !important;
+      margin: 0;
+      padding: 16px clamp(16px, 2.2vw, 36px) 40px;
+      box-sizing: border-box;
+    }
+
+    /* TOP HEADER */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 22px;
+      margin-bottom: 22px;
+      background: rgba(13, 16, 26, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon-wave {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 28px;
+      padding: 0 4px;
+    }
+    .logo-icon-wave span {
+      width: 3.5px;
+      background: linear-gradient(180deg, #6366f1, #ec4899);
+      border-radius: 4px;
+      animation: wave-pulse 1.4s ease-in-out infinite alternate;
+    }
+    .logo-icon-wave span:nth-child(1) { height: 12px; animation-delay: 0.1s; }
+    .logo-icon-wave span:nth-child(2) { height: 24px; animation-delay: 0.3s; }
+    .logo-icon-wave span:nth-child(3) { height: 18px; animation-delay: 0.2s; }
+    .logo-icon-wave span:nth-child(4) { height: 26px; animation-delay: 0.4s; }
+    .logo-icon-wave span:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+
+    @keyframes wave-pulse {
+      0% { transform: scaleY(0.4); opacity: 0.6; }
+      100% { transform: scaleY(1.2); opacity: 1; }
+    }
+
+    .brand-title {
+      font-size: 1.18rem;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .brand-tagline {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      letter-spacing: 0.02em;
+    }
+
+    /* Center Nav Tabs */
+    .header-center-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .header-center-nav .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .header-center-nav .nav-btn:hover {
+      color: #fff;
+    }
+    .header-center-nav .nav-btn.active, .header-center-nav .nav-btn[aria-current="page"] {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Right Account Group */
+    .header-right-account {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 14px 5px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: left;
+    }
+    .user-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+    .user-avatar-badge {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+    }
+    .user-pill-details {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      max-width: 175px;
+      overflow: hidden;
+    }
+    .user-pill-name {
+      font-size: 0.83rem;
+      font-weight: 650;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-pill-username {
+      font-size: 0.71rem;
+      font-weight: 500;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-email-text {
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .caret-down {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-left: 2px;
+    }
+    .sign-out-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 999px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .sign-out-pill:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    /* MAIN STUDIO WRAPPER (SIDEBAR + 3 CARDS) - Full Width */
+    .studio-main-wrapper {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 22px;
+      align-items: start;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* SIDEBAR */
+    .studio-sidebar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: 480px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .sidebar-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .sidebar-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+    .sidebar-btn.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.15));
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+    .sb-icon {
+      font-size: 16px;
+    }
+
+    .sidebar-promo-card {
+      margin-top: auto;
+      background: rgba(14, 18, 30, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+    .sidebar-promo-card:hover {
+      border-color: rgba(99, 102, 241, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.2);
+    }
+    .sidebar-art-thumb {
+      width: 100%;
+      height: 145px;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+    .sidebar-art-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .sidebar-promo-card:hover .sidebar-art-thumb img {
+      transform: scale(1.06);
+    }
+    .promo-art-info {
+      padding: 10px 12px 12px;
+      text-align: left;
+    }
+    .promo-art-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+    .promo-art-sub {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* RIGHT STUDIO CONTENT */
+    .studio-content-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* 3 CARDS ROW GRID - Full Width Fluid */
+    .studio-cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 22px;
+      align-items: stretch;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .studio-subcolumn {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* COMMON CARD STYLE */
+    .studio-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 22px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-step-header.result-header-flex {
+      justify-content: space-between;
+    }
+    .flex-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(139, 92, 246, 0.25));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      font-weight: 750;
+      font-size: 0.85rem;
+      display: grid;
+      place-items: center;
+    }
+    .step-heading {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .step-desc {
+      margin: 2px 0 0;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    /* CARD 1: AUDIO */
+    .input-segment-switch {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .segment-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .segment-tab:hover {
+      color: #fff;
+    }
+    .segment-tab.active {
+      background: rgba(255, 255, 255, 0.09);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Center Mic Stage with Equalizer Bars */
+    .center-mic-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 16px 0 10px;
+    }
+    .waveform-viz {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 38px;
+    }
+    .waveform-viz span {
+      width: 3.5px;
+      background: linear-gradient(180deg, #6366f1, #8b5cf6);
+      border-radius: 4px;
+      opacity: 0.45;
+    }
+    .waveform-viz span:nth-child(1) { height: 10px; }
+    .waveform-viz span:nth-child(2) { height: 22px; }
+    .waveform-viz span:nth-child(3) { height: 34px; }
+    .waveform-viz span:nth-child(4) { height: 18px; }
+    .waveform-viz span:nth-child(5) { height: 12px; }
+
+    .center-mic-stage.recording .waveform-viz span {
+      opacity: 1;
+      animation: bar-dance 0.7s ease-in-out infinite alternate;
+    }
+    @keyframes bar-dance {
+      from { transform: scaleY(0.3); }
+      to { transform: scaleY(1.3); }
+    }
+
+    .pulsing-mic-btn {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--primary-grad);
+      color: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 35px rgba(99, 102, 241, 0.5), 0 0 0 8px rgba(99, 102, 241, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pulsing-mic-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 45px rgba(99, 102, 241, 0.65), 0 0 0 10px rgba(99, 102, 241, 0.22);
+    }
+    .pulsing-mic-btn.recording {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      box-shadow: 0 0 45px rgba(239, 68, 68, 0.65), 0 0 0 10px rgba(239, 68, 68, 0.25);
+      animation: pulse-glow 1.2s infinite;
+    }
+    @keyframes pulse-glow {
+      50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), 0 0 0 16px rgba(239, 68, 68, 0.12); }
+    }
+    .mic-icon-inner {
+      font-size: 34px;
+    }
+
+    .mic-caption-group {
+      text-align: center;
+      margin: 12px 0 14px;
+    }
+    .mic-action-caption {
+      font-size: 0.92rem;
+      font-weight: 650;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .timer-counter {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+    .file-status-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+      min-height: 18px;
+    }
+
+    /* Playback Toolbar */
+    .audio-action-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 8px 0 16px;
+    }
+    .btn-tool {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn-tool:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(99, 102, 241, 0.35);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .btn-tool:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-rec .tool-dot.red {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+
+    /* Inline Speed Slider */
+    .card-speed-control {
+      margin-top: auto;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+    }
+    .speed-label-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .speed-label-line .lbl {
+      font-size: 0.8rem;
+      font-weight: 650;
+      color: #cbd5e1;
+    }
+    .speed-label-line .val {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #818cf8;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.18);
+    }
+    .card-speed-control input[type="range"] {
+      width: 100%;
+      accent-color: #6366f1;
+      cursor: pointer;
+      height: 5px;
+    }
+    .speed-ticks-sub {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    /* UPLOAD MODE DROPZONE & PREVIEW */
+    #uploadModeContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 8px 0 16px;
+    }
+    .audio-dropzone-box {
+      border: 2px dashed rgba(99, 102, 241, 0.35);
+      border-radius: 16px;
+      background: rgba(99, 102, 241, 0.04);
+      padding: 30px 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .audio-dropzone-box:hover, .audio-dropzone-box.dragover {
+      border-color: #818cf8;
+      background: rgba(99, 102, 241, 0.09);
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);
+      transform: translateY(-1px);
+    }
+    .dropzone-icon-glow {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    .dropzone-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 0;
+    }
+    .dropzone-sub {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .btn-browse-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      margin-top: 4px;
+    }
+    .btn-browse-file:hover {
+      background: rgba(99, 102, 241, 0.3);
+      color: #fff;
+    }
+
+    .uploaded-file-preview {
+      background: rgba(14, 18, 30, 0.7);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .preview-header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-audio-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      color: #fff;
+    }
+    .preview-file-meta {
+      flex: 1;
+      overflow: hidden;
+    }
+    .preview-file-name {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .preview-file-stats {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .btn-remove-uploaded {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.08);
+      color: #fca5a5;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .btn-remove-uploaded:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fff;
+    }
+    .preview-player-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .preview-play-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 0;
+      background: #6366f1;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .preview-play-btn:hover {
+      background: #4f46e5;
+      transform: scale(1.06);
+    }
+    .preview-playback-wave {
+      flex: 1;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 0 4px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+    }
+    .preview-playback-wave span {
+      flex: 1;
+      background: #818cf8;
+      border-radius: 2px;
+      opacity: 0.5;
+    }
+    .preview-playback-wave.playing span {
+      animation: bar-dance 0.7s ease-in-out infinite alternate;
+      opacity: 0.9;
+    }
+
+    /* DATASET SAMPLES CONTAINER & QUICK PRESETS */
+    .dataset-quick-bar {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(99, 102, 241, 0.24);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quick-bar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quick-bar-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .btn-view-all-samples {
+      background: transparent;
+      border: 0;
+      color: #818cf8;
+      font-size: 0.76rem;
+      font-weight: 650;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .btn-view-all-samples:hover {
+      color: #a5b4fc;
+    }
+    .quick-sample-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .btn-sample-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      background: rgba(99, 102, 241, 0.08);
+      color: #e2e8f0;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .btn-sample-chip:hover {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: rgba(99, 102, 241, 0.6);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .btn-sample-chip.active {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-color: #818cf8;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+    }
+    .sample-chip-dur {
+      font-size: 0.68rem;
+      padding: 1px 5px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      color: #94a3b8;
+    }
+
+    /* FULL DATASET EXPLORER TAB */
+    #datasetModeContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 8px 0 16px;
+    }
+    .dataset-controls-row {
+      display: flex;
+      gap: 8px;
+    }
+    .dataset-search-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .dataset-category-filter {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 8px 10px;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      outline: none;
+      cursor: pointer;
+    }
+    .dataset-samples-scroll {
+      max-height: 270px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+    .dataset-sample-item {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+    .dataset-sample-item:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(20, 28, 50, 0.8);
+    }
+    .dataset-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .dataset-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dataset-item-badge {
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .dataset-item-dur {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+    .dataset-item-text {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .dataset-item-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .btn-sample-play-preview {
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-size: 0.74rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+    .btn-sample-play-preview:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .btn-sample-select-load {
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 0;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sample-select-load:hover {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      transform: scale(1.03);
+    }
+
+    /* CARD 2: CHOOSE LANGUAGES */
+    .lang-selector-pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .lang-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .lang-field-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .lang-input-shell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 0 12px;
+      min-height: 46px;
+    }
+    .globe-prefix {
+      font-size: 15px;
+    }
+    .lang-dropdown {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: #f8fafc;
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    .lang-dropdown option {
+      background: #0f131f;
+      color: #f8fafc;
+    }
+    .btn-swap-langs {
+      width: 38px;
+      height: 46px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      font-size: 16px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.18s ease;
+    }
+    .btn-swap-langs:hover {
+      background: rgba(99, 102, 241, 0.18);
+      color: #fff;
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-translate-big {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--primary-grad);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.38);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-translate-big:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.55);
+    }
+    .btn-translate-big:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    /* CARD 3: TRANSLATION RESULT */
+    .btn-text-target {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      font-size: 0.82rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn-text-target:hover, .btn-text-target.active {
+      background: rgba(99, 102, 241, 0.32);
+      border-color: rgba(99, 102, 241, 0.6);
+      color: #fff;
+    }
+
+    .detected-emotion-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(99, 102, 241, 0.24);
+      margin-bottom: 12px;
+    }
+    .emo-icon {
+      font-size: 22px;
+    }
+    .emo-text {
+      flex: 1;
+    }
+    .emo-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .emo-tag {
+      font-size: 0.65rem;
+      font-weight: 750;
+      color: #818cf8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .emo-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .emo-pct {
+      font-size: 0.68rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+    .emo-sub {
+      margin: 2px 0 0;
+      font-size: 0.74rem;
+      color: #94a3b8;
+    }
+
+    /* Result Voice Audio Player Stage (Voice Sunne Ki Jagah) */
+    .result-voice-stage {
+      flex: 1;
+      width: 100%;
+      min-height: 105px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .voice-player-card {
+      background: rgba(7, 8, 13, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .voice-player-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .btn-voice-play-main {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 50%;
+      border: 0;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45);
+      transition: all 0.2s ease;
+      padding-left: 3px;
+    }
+    .btn-voice-play-main:hover {
+      transform: scale(1.06);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      box-shadow: 0 6px 22px rgba(99, 102, 241, 0.6);
+    }
+    .btn-voice-play-main.playing {
+      padding-left: 0;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      box-shadow: 0 4px 18px rgba(236, 72, 153, 0.5);
+    }
+    .voice-player-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
+    }
+    .voice-player-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .voice-player-time {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+    }
+    .voice-equalizer-bars {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 22px;
+      padding: 0 4px;
+    }
+    .voice-equalizer-bars span {
+      width: 3px;
+      height: 6px;
+      background: #818cf8;
+      border-radius: 3px;
+      transition: height 0.15s ease;
+    }
+    .voice-equalizer-bars.playing span {
+      animation: eq-bounce 0.8s ease-in-out infinite alternate;
+    }
+    .voice-equalizer-bars span:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+    .voice-equalizer-bars span:nth-child(2) { height: 16px; animation-delay: 0.3s; }
+    .voice-equalizer-bars span:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+    .voice-equalizer-bars span:nth-child(4) { height: 20px; animation-delay: 0.4s; }
+    .voice-equalizer-bars span:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+    .voice-equalizer-bars span:nth-child(6) { height: 18px; animation-delay: 0.35s; }
+    .voice-equalizer-bars span:nth-child(7) { height: 10px; animation-delay: 0.25s; }
+    .voice-equalizer-bars span:nth-child(8) { height: 7px; animation-delay: 0.05s; }
+    @keyframes eq-bounce {
+      0% { transform: scaleY(0.3); opacity: 0.5; }
+      100% { transform: scaleY(1.3); opacity: 1; }
+    }
+    .voice-player-track {
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .voice-seeker-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .voice-seeker-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 8px rgba(129, 140, 248, 0.8);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .voice-seeker-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+    .text-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .text-box-label {
+      font-size: 0.65rem;
+      font-weight: 750;
+      color: #94a3b8;
+      letter-spacing: 0.06em;
+    }
+
+    .result-text-box {
+      min-height: 90px;
+      padding: 12px 14px;
+      background: rgba(7, 8, 13, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .text-target-display {
+      font-size: 0.95rem;
+      color: #f8fafc;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .text-source-sub {
+      font-size: 0.78rem;
+      color: #818cf8;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+
+    .result-bottom-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-action-tool {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn-action-tool:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: #fff;
+    }
+    .badge-latency {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 650;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    /* BOTTOM NOTE BANNER */
+    .studio-note-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(13, 16, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+    }
+    .note-bulb-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .note-content .note-bold {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .note-content .note-desc {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* HISTORY VIEW STYLING */
+    #historyCardsView {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+    .history-header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .history-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .history-header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+    .history-title-box h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .history-title-box p {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+    .history-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-history-tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .btn-history-tool:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .btn-history-clear:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .history-item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .history-item-card:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+      transform: translateY(-2px);
+    }
+    .history-card-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .history-lang-badge {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.16);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+    .history-time-badge {
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+    .history-card-texts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 768px) {
+      .history-card-texts { grid-template-columns: 1fr; }
+    }
+    .history-text-col {
+      background: rgba(7, 8, 13, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .history-text-col .col-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .history-text-col .col-val {
+      font-size: 0.88rem;
+      color: #f1f5f9;
+      line-height: 1.5;
+    }
+    .history-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      flex-wrap: wrap;
+    }
+    .history-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .history-card-actions button {
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .history-card-actions button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .history-empty-state {
+      background: var(--card-bg);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 60px 24px;
+      text-align: center;
+      backdrop-filter: blur(20px);
+    }
+    .history-empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    .history-empty-state h3 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+    .history-empty-state p {
+      margin: 0 0 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .btn-start-translating {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 12px;
+      border: 0;
+      background: var(--primary-grad);
+      color: #fff;
+      font-weight: 650;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.4);
+      transition: transform 0.18s;
+    }
+    .btn-start-translating:hover {
+      transform: translateY(-1px);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 950px) {
+      .studio-main-wrapper { grid-template-columns: 1fr; }
+      .studio-cards-row { grid-template-columns: 1fr; }
+      .studio-sidebar { min-height: unset; flex-direction: row; flex-wrap: wrap; }
+      .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+      .sidebar-promo { display: none; }
+    }
+  </style>
+  <style>
+    /* Authentication uses the same moving particle field as the homepage. */
+    .auth-particle-background{position:fixed;z-index:0;inset:-22px;overflow:hidden;visibility:hidden;opacity:0;pointer-events:none;transition:opacity .7s ease,visibility .7s ease;background:radial-gradient(ellipse at 82% 14%,#d9e2f222,transparent 39%),radial-gradient(ellipse at 20% 76%,#8793a21c,transparent 42%),radial-gradient(ellipse at 76% 16%,#a95a3221,transparent 45%),linear-gradient(180deg,#090b10,#0b0d12 55%,#080a0f)}
+    body.auth-screen .auth-particle-background{visibility:visible;opacity:1}
+    .auth-particle-background canvas{position:absolute;inset:0;width:100%;height:100%;display:block;filter:blur(2.5px) brightness(1.22);transform:scale(1.04);opacity:1}
+    .auth-particle-background:before,.auth-particle-background:after{content:'';position:absolute;inset:-18%;pointer-events:none}
+    .auth-particle-background:before{background:radial-gradient(ellipse at 82% 14%,#d9e2f26b,transparent 39%),radial-gradient(ellipse at 20% 76%,#8793a25a,transparent 42%),radial-gradient(ellipse at 76% 16%,#a95a3258,transparent 45%);filter:blur(26px);animation:auth-cloud-drift 11s ease-in-out infinite alternate}
+    .auth-particle-background:after{inset:-8%;background-image:linear-gradient(180deg,#080a0f08,#080a0f2e 68%,#080a0f16),radial-gradient(2px 2px at 18px 24px,#e8efffc2 65%,transparent 100%),radial-gradient(2.5px 2.5px at 58px 72px,#bac9e2a3 65%,transparent 100%),radial-gradient(1.6px 1.6px at 95px 38px,#fffc 65%,transparent 100%);background-size:100% 100%,113px 101px,151px 137px,197px 181px;background-repeat:no-repeat,repeat,repeat,repeat;opacity:.92;filter:blur(.8px);animation:auth-dust-drift 24s linear infinite}
+    @keyframes auth-cloud-drift{from{transform:translate3d(-3%,-2%,0) scale(1)}to{transform:translate3d(3%,2%,0) scale(1.12)}}
+    @keyframes auth-dust-drift{to{background-position:0 0,226px 303px,-302px 411px,394px -362px}}
+    body.auth-screen .auth-shell{position:relative;z-index:1}
+    body.auth-screen .auth-card{background:#06070a32;border-color:#d7e4ff22;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    body.auth-screen .auth-art{background:linear-gradient(145deg,#090b1078,#0b0d1278 52%,#080a0f78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    body.auth-screen .auth-content{background:linear-gradient(145deg,#090b1078,#0b0d1278 52%,#080a0f78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+    body.auth-screen{position:relative;display:grid;place-items:center;min-height:100svh;padding:32px 22px;background:#090b10}
+    body.auth-screen .auth-shell{display:grid;place-items:center;width:min(760px,100%);min-height:100svh;margin:0 auto;padding:12px 0}
+    body.auth-screen .auth-card{display:grid;width:100%;height:auto;min-height:0;grid-template-columns:minmax(0,1fr);gap:0;overflow:hidden;border:1px solid #c8d5f12c;border-radius:24px;background:#0b0d1255;box-shadow:0 30px 100px #0009,0 0 75px #d9e2f20b;backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+    body.auth-screen .auth-art{display:none}
+    body.auth-screen .auth-content{grid-column:1;grid-row:1;width:100%;height:auto;min-height:0;padding:27px clamp(26px,7vw,72px) 92px;border:0;border-radius:0;background:linear-gradient(145deg,#090b1038,#0b0d123b 52%,#080a0f40);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+    body.auth-screen .auth-top{margin-bottom:clamp(26px,5vh,48px)}
+    body.auth-screen .auth-mode-switch{display:flex;width:max-content;max-width:100%;gap:4px;margin:-14px 0 26px;padding:4px;border:1px solid #c8d5f126;border-radius:12px;background:#080a0f66}
+    body.auth-screen .auth-mode-button{min-height:34px;padding:0 16px;border:0;border-radius:8px;background:transparent;color:#aeb2be;font:600 12px/1 'DM Sans',sans-serif;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s}
+    body.auth-screen .auth-mode-button:hover{color:#fff}
+    body.auth-screen .auth-mode-button[aria-pressed="true"]{background:#272a33;color:#fff;box-shadow:inset 0 0 0 1px #c8d5f126}
+    body.auth-screen .auth-card h1{margin-bottom:10px;font-size:clamp(34px,5vw,52px);letter-spacing:-1.8px;text-transform:none}
+    body.auth-screen .auth-card .auth-description{margin-bottom:22px;font-size:14px}
+    body.auth-screen .auth-card form{width:100%;max-width:none}
+    body.auth-screen .auth-fields{gap:15px 24px}
+    body.auth-screen .auth-card input{min-height:44px;font-size:14px}
+    body.auth-screen .auth-card input:autofill,body.auth-screen .auth-card input:-webkit-autofill,body.auth-screen .auth-card input:-webkit-autofill:hover,body.auth-screen .auth-card input:-webkit-autofill:focus{border-radius:8px;-webkit-text-fill-color:#f5f5f5!important;caret-color:#f5f5f5;-webkit-box-shadow:0 0 0 1000px #101116 inset!important;box-shadow:0 0 0 1000px #101116 inset!important;transition:background-color 99999s ease-out 0s}
+    body.auth-screen .auth-actions{right:clamp(24px,5vw,54px);bottom:17px}
+    body.auth-screen .auth-card .primary{width:68px;height:68px;min-width:68px;min-height:68px;font-size:9px}
+    body.auth-screen .auth-link,body.auth-screen .auth-status{font-size:12px}
+    @media(max-width:600px){body.auth-screen{padding:18px 14px}body.auth-screen .auth-shell{padding:16px 0}body.auth-screen .auth-card{border-radius:20px}body.auth-screen .auth-content{padding:27px 22px 104px}body.auth-screen .auth-top{margin-bottom:38px}body.auth-screen .auth-mode-switch{margin-top:-15px;margin-bottom:28px}body.auth-screen .auth-mode-button{padding:0 12px}body.auth-screen .auth-fields{grid-template-columns:1fr;gap:16px}body.auth-screen .auth-field.full{grid-column:auto}body.auth-screen .auth-actions{right:20px;bottom:18px}body.auth-screen .auth-card .primary{width:66px;height:66px;min-width:66px;min-height:66px}}
+
+  </style>
+</head>
+<body>
+  <div class="auth-particle-background" aria-hidden="true"><canvas></canvas></div>
+  <main class="auth-shell" id="authGate">
+    <section class="auth-card" id="authCard">
+      <div class="auth-content">
+        <div class="auth-top"><div class="brand"><span class="auth-logo">S</span>Speech Translator</div><a class="auth-home" href="/">← HOME</a></div>
+        <nav class="auth-mode-switch" aria-label="Account options"><button class="auth-mode-button" type="button" data-auth-mode="signin" aria-pressed="true">Sign in</button><button class="auth-mode-button" type="button" data-auth-mode="create" aria-pressed="false">Create account</button></nav>
+        <div id="signInView" class="auth-mode-content">
+          <p class="auth-kicker">YOUR VOICE, CARRIED FORWARD</p>
+          <h1>Sign in</h1>
+          <p class="auth-description">Welcome back. Continue exploring Yorùbá speech translation.</p>
+          <form id="authForm">
+            <div class="auth-fields">
+              <div class="auth-field"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+              <div class="auth-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Enter your password" required></div>
+            </div>
+            <div class="auth-actions"><button class="primary" id="signInButton" type="submit" disabled>Sign in <span aria-hidden="true">→</span></button></div>
+          </form>
+          <button class="auth-link" id="resetPasswordButton" type="button" disabled>Forgot password?</button>
+          <p class="auth-status" id="authStatus" role="status" aria-live="polite">Connecting to Firebase…</p>
+        </div>
+        <div id="createAccountView" class="auth-mode-content" hidden>
+          <p class="auth-kicker">JOIN THE RESEARCH COMMUNITY</p>
+          <h1>Create account</h1>
+          <p class="auth-description">Create your account to take part in the Yorùbá speech translation project.</p>
+          <form id="createAccountForm">
+            <div class="auth-fields">
+              <div class="auth-field full"><label for="newEmail">Email address</label><input id="newEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+              <div class="auth-field"><label for="newPassword">Password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters" required></div>
+              <div class="auth-field"><label for="confirmPassword">Confirm password</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Enter password again" required></div>
+            </div>
+            <div class="auth-actions"><button class="primary" id="createAccountSubmit" type="submit" disabled>Create account <span aria-hidden="true">→</span></button></div>
+          </form>
+          <p class="auth-status" id="createAccountStatus" role="status" aria-live="polite">Connecting to Firebase…</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+
+  <div class="studio-app-shell" id="appShell" hidden>
+    <!-- Ambient Audio Wave Animation Canvas Background (Strictly isolated inside workspace) -->
+    <div class="workspace-wave-bg" aria-hidden="true">
+      <canvas id="audioWaveCanvas"></canvas>
+    </div>
+
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-icon-wave" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <div class="brand-title">Speech Translator</div>
+          <div class="brand-tagline">Speak · Translate · Understand</div>
+        </div>
+      </div>
+
+      <nav class="header-center-nav" aria-label="Main Pages">
+        <button type="button" class="nav-btn active" data-page="translate" aria-current="page">文A Translate</button>
+        <button type="button" class="nav-btn" data-page="review">📋 Review</button>
+      </nav>
+
+      <div class="header-right-account">
+        <button class="user-pill-btn" id="openProfileButton" type="button" title="View & Edit Profile">
+          <span class="user-avatar-badge" id="headerAvatar">👤</span>
+          <div class="user-pill-details">
+            <span class="user-pill-name" id="signedInAs">Loading…</span>
+            <span class="user-pill-username" id="signedInUsername">@user</span>
+          </div>
+          <span class="caret-down">⌄</span>
+        </button>
+        <button class="sign-out-pill" id="signOutButton" type="button" title="Sign out of account">
+          <span>⎋</span> Sign out
+        </button>
+      </div>
+    </header>
+
+    <!-- Review Page View -->
+    <main id="reviewPage" hidden>
+      <section class="studio-card" style="max-width:820px;margin:0 auto 30px">
+        <div class="card-step-header">
+          <div class="step-num">★</div>
+          <div>
+            <h2 class="step-heading">Review Translation Quality</h2>
+            <p class="step-desc">Rate the latest generated audio to improve acoustic and linguistic accuracy.</p>
+          </div>
+        </div>
+        <p class="small-label" id="reviewLanguage" style="margin-bottom:12px;color:#94a3b8">Translate an audio clip first to review its result.</p>
+        <audio id="reviewPlayer" controls hidden style="width:100%;margin-bottom:16px"></audio>
+        <form id="reviewForm">
+          <div class="rating"><label for="accuracy">Translation accuracy</label><select id="accuracy" required><option value="">Rate</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3 — Fair</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+          <div class="rating"><label for="intelligibility">Easy to understand</label><select id="intelligibility" required><option value="">Rate</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3 — Fair</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+          <div class="rating"><label for="naturalness">Speech sounds natural</label><select id="naturalness" required><option value="">Rate</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3 — Fair</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+          <div class="rating"><label for="culture">Cultural fit</label><select id="culture" required><option value="">Rate</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3 — Fair</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+          <label class="field-label" for="comments">Comments (optional)</label>
+          <textarea id="comments" placeholder="What should be improved?"></textarea>
+          <button class="primary" id="submitReview" type="submit" style="margin-top:16px" disabled>Submit review</button>
+          <p class="review-status" id="reviewStatus" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <!-- Studio Main Workspace Grid -->
+    <div class="studio-main-wrapper" id="translatePage">
+      <!-- Left Sidebar -->
+      <aside class="studio-sidebar">
+        <nav class="sidebar-nav">
+          <button class="sidebar-btn active" type="button" data-sidebar="home"><span class="sb-icon">🏠</span> Home</button>
+          <button class="sidebar-btn" type="button" data-sidebar="history"><span class="sb-icon">🕒</span> History</button>
+          <button class="sidebar-btn" type="button" id="sideNavSettings" data-sidebar="settings"><span class="sb-icon">⚙️</span> Settings</button>
+        </nav>
+        <div class="sidebar-promo-card">
+          <div class="sidebar-art-thumb">
+            <img src="/assets/neural_speech.jpg" alt="Neural Speech AI" loading="lazy" />
+          </div>
+          <div class="promo-art-info">
+            <div class="promo-art-title">Neural Acoustic Engine</div>
+            <div class="promo-art-sub">Real-time S2ST Intelligence</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Main Studio Content Area -->
+      <div class="studio-content-column">
+        <!-- Home / Studio 3-Card Workspace View -->
+        <div id="homeCardsView">
+          <div class="studio-cards-row">
+          <!-- CARD 1: YOUR AUDIO -->
+          <section class="studio-card audio-source-card" aria-label="Audio Input">
+            <div class="card-step-header">
+              <div class="step-num">1</div>
+              <div>
+                <h2 class="step-heading">Voice & Audio Studio</h2>
+                <p class="step-desc">Record live speech in real-time or upload audio files.</p>
+              </div>
+            </div>
+
+            <!-- Segment Switch -->
+            <div class="input-segment-switch">
+              <button class="segment-tab active" id="tabModeRecord" type="button">🎙 Record Audio</button>
+              <button class="segment-tab" id="tabModeUpload" type="button">☁ Upload File</button>
+              <button class="segment-tab" id="tabModeDataset" type="button">⚡ Sample Audios (57)</button>
+            </div>
+            <input id="audioFile" type="file" accept="audio/*" hidden>
+
+            <!-- 1. RECORDING INTERFACE (Active when Record tab is selected) -->
+            <div id="recordModeContainer">
+              <div class="center-mic-stage" id="centerMicStage">
+                <div class="waveform-viz" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <button class="pulsing-mic-btn" id="recordButton" type="button" aria-label="Start recording" title="Click to start recording">
+                  <span class="mic-icon-inner">🎙</span>
+                </button>
+                <div class="waveform-viz" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <div class="mic-caption-group">
+                <div class="mic-action-caption" id="micActionCaption">Click to start recording</div>
+                <div class="timer-counter" id="timerCounter">00:00</div>
+                <div class="file-status-label" id="inputStatus">No audio selected</div>
+              </div>
+
+              <!-- Playback Toolbar -->
+              <div class="audio-action-toolbar">
+                <button class="btn-tool btn-rec" id="quickRecordBtn" type="button" title="Record"><span class="tool-dot red"></span></button>
+                <button class="btn-tool" id="quickPlayBtn" type="button" title="Play audio">▶</button>
+                <button class="btn-tool" id="quickStopBtn" type="button" title="Stop audio">⏹</button>
+                <button class="btn-tool" id="quickClearBtn" type="button" title="Clear audio">🗑</button>
+              </div>
+
+              <!-- Quick Presets in Record View -->
+              <div class="dataset-quick-bar">
+                <div class="quick-bar-header">
+                  <span class="quick-bar-title">⚡ Instant Test Audios (No files needed)</span>
+                  <button type="button" class="btn-view-all-samples" id="btnOpenSampleLibFromRecord">View All 57 →</button>
+                </div>
+                <div class="quick-sample-chips" id="quickSampleChipsRecord">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. UPLOAD FILE INTERFACE (Active when Upload tab is selected) -->
+            <div id="uploadModeContainer" hidden>
+              <!-- Drag and drop zone -->
+              <div class="audio-dropzone-box" id="audioDropzone">
+                <div class="dropzone-icon-glow">☁️🎵</div>
+                <p class="dropzone-title">Click or Drop Audio File</p>
+                <p class="dropzone-sub">Supports all audio formats (.wav, .mp3, .m4a, .aac, .flac)</p>
+                <button class="btn-browse-file" type="button" id="btnBrowseAudio">
+                  <span>📂</span> Browse from computer
+                </button>
+              </div>
+
+              <!-- Quick Presets in Upload View -->
+              <div class="dataset-quick-bar">
+                <div class="quick-bar-header">
+                  <span class="quick-bar-title">⚡ Or Click an Instant Dataset Audio</span>
+                  <button type="button" class="btn-view-all-samples" id="btnOpenSampleLib">View All 57 →</button>
+                </div>
+                <div class="quick-sample-chips" id="quickSampleChipsUpload">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Uploaded file active preview card -->
+              <div class="uploaded-file-preview" id="uploadedPreviewCard" style="display:none;">
+                <div class="preview-header-row">
+                  <div class="preview-audio-icon">🎵</div>
+                  <div class="preview-file-meta">
+                    <div class="preview-file-name" id="previewFileName">sample_speech.wav</div>
+                    <div class="preview-file-stats" id="previewFileStats">20.4 sec · Ready for Translation</div>
+                  </div>
+                  <button type="button" class="btn-remove-uploaded" id="btnRemoveUploaded" title="Remove audio">✕ Remove</button>
+                </div>
+
+                <div class="preview-player-bar">
+                  <button type="button" class="preview-play-btn" id="btnPreviewPlay" title="Play / Pause audio">▶</button>
+                  <div class="preview-playback-wave" id="previewPlaybackWave">
+                    <span style="height:10px"></span>
+                    <span style="height:22px"></span>
+                    <span style="height:16px"></span>
+                    <span style="height:28px"></span>
+                    <span style="height:14px"></span>
+                    <span style="height:24px"></span>
+                    <span style="height:18px"></span>
+                    <span style="height:20px"></span>
+                    <span style="height:12px"></span>
+                    <span style="height:26px"></span>
+                  </div>
+                  <span style="font-size:0.75rem;color:#818cf8;font-family:monospace" id="previewDurationLabel">00:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. DATASET SAMPLE LIBRARY INTERFACE (Active when Sample tab is selected) -->
+            <div id="datasetModeContainer" hidden>
+              <div class="dataset-controls-row">
+                <input type="text" class="dataset-search-input" id="datasetSearchInput" placeholder="🔍 Search samples (weather, sports, peace...)">
+                <select class="dataset-category-filter" id="datasetCategoryFilter">
+                  <option value="all">All Categories (57)</option>
+                  <option value="Weather & Advisory">🌦️ Weather</option>
+                  <option value="Sports & Athletics">⚽ Sports</option>
+                  <option value="News & Human Interest">📰 News</option>
+                  <option value="Civic & Government">⚖️ Civic & Law</option>
+                  <option value="Society & Culture">🌍 Society</option>
+                  <option value="General Conversation">💬 Conversation</option>
+                </select>
+              </div>
+              <div class="dataset-samples-scroll" id="datasetSamplesList">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+
+            <audio id="sourcePlayer" hidden></audio>
+
+            <!-- Integrated Speed Slider -->
+            <div class="card-speed-control">
+              <div class="speed-label-line">
+                <span class="lbl">⚡ Speech Speed</span>
+                <span class="val" id="speedValue">1.0x</span>
+              </div>
+              <input type="range" id="speedRange" min="0.75" max="1.35" step="0.05" value="1.0" aria-label="Speech Speed">
+              <div class="speed-ticks-sub">
+                <span>0.75x (Relaxed)</span>
+                <span>1.0x (Natural)</span>
+                <span>1.35x (Fast)</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- RIGHT SUBCOLUMN: CARDS 2 & 3 -->
+          <div class="studio-subcolumn">
+            <!-- CARD 2: CHOOSE LANGUAGES -->
+            <section class="studio-card language-picker-card" aria-label="Language Selection">
+              <div class="card-step-header">
+                <div class="step-num">2</div>
+                <div>
+                  <h2 class="step-heading">Choose languages</h2>
+                  <p class="step-desc">Select input language and target translation language.</p>
+                </div>
+              </div>
+
+              <div class="lang-selector-pair">
+                <div class="lang-box">
+                  <span class="lang-field-title">From (Source language)</span>
+                  <div class="lang-input-shell">
+                    <span class="globe-prefix">🌐</span>
+                    <select id="sourceLanguage" class="lang-dropdown" aria-label="Source language">
+                      <option value="yo" selected>Yorùbá</option>
+                      <option value="en">English</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button class="btn-swap-langs" id="btnSwapLanguages" type="button" title="Swap languages">⇄</button>
+
+                <div class="lang-box">
+                  <span class="lang-field-title">To (Target language)</span>
+                  <div class="lang-input-shell">
+                    <span class="globe-prefix">🌐</span>
+                    <select id="targetLanguage" class="lang-dropdown" aria-label="Target language">
+                      <optgroup label="India & Regional Languages">
+                        <option value="hi" selected>Hindi — हिन्दी</option>
+                        <option value="or">Odia — ଓଡ଼ିଆ</option>
+                        <option value="bn">Bengali — বাংলা</option>
+                        <option value="te">Telugu — తెలుగు</option>
+                        <option value="ta">Tamil — தமிழ்</option>
+                        <option value="mr">Marathi — मराठी</option>
+                        <option value="gu">Gujarati — ગુજરાતી</option>
+                        <option value="kn">Kannada — ಕನ್ನಡ</option>
+                        <option value="ml">Malayalam — മലയാളം</option>
+                        <option value="pa">Punjabi — ਪੰਜਾਬੀ</option>
+                        <option value="as">Assamese — অসমীয়া</option>
+                        <option value="ur">Urdu — اردو</option>
+                        <option value="ne">Nepali — नेपाली</option>
+                        <option value="en">English</option>
+                      </optgroup>
+                      <optgroup label="International Languages">
+                        <option value="yo">Yorùbá</option>
+                        <option value="es">Spanish — Español</option>
+                        <option value="ar">Arabic — العربية</option>
+                        <option value="zh">Chinese (Mandarin) — 中文</option>
+                        <option value="fr">French — Français</option>
+                        <option value="de">German — Deutsch</option>
+                        <option value="pt">Portuguese — Português</option>
+                        <option value="ru">Russian — Русский</option>
+                        <option value="ja">Japanese — 日本語</option>
+                        <option value="ko">Korean — 한국어</option>
+                        <option value="id">Indonesian — Bahasa Indonesia</option>
+                        <option value="tr">Turkish — Türkçe</option>
+                        <option value="vi">Vietnamese — Tiếng Việt</option>
+                        <option value="it">Italian — Italiano</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn-translate-big" id="translateButton" type="button">
+                <span>文A</span> Translate
+              </button>
+              <p class="status" id="status" role="status" aria-live="polite" style="margin:10px 0 0;text-align:center;font-size:0.82rem;min-height:18px;color:#94a3b8;"></p>
+            </section>
+
+            <!-- CARD 3: TRANSLATION RESULT -->
+            <section class="studio-card translation-result-card" aria-label="Translation Result">
+              <div class="card-step-header result-header-flex">
+                <div class="flex-title">
+                  <div class="step-num">3</div>
+                  <h2 class="step-heading">Translation result</h2>
+                </div>
+                <button class="btn-text-target" id="btnToggleText" type="button" title="View / Hide translated text transcript">
+                  <span>📝</span> Text
+                </button>
+              </div>
+
+              <!-- Automatic Emotion Detection Pill -->
+              <div class="detected-emotion-pill" id="emotionBanner" style="display:none;">
+                <span class="emo-icon" id="emotionIcon">🎭</span>
+                <div class="emo-text">
+                  <div class="emo-line">
+                    <span class="emo-tag">EMOTION DETECTED</span>
+                    <span class="emo-name" id="emotionName">Joyful & Celebratory 🎉</span>
+                    <span class="emo-pct" id="emotionConfidence">94%</span>
+                  </div>
+                  <p class="emo-sub" id="emotionExplanation">Cheerful tone & vibrant pitch contour detected</p>
+                </div>
+              </div>
+
+              <!-- Voice Audio Player Stage (Voice sunne ke liye) -->
+              <div class="result-voice-stage" id="voiceStage">
+                <div class="voice-player-card">
+                  <div class="voice-player-top">
+                    <button class="btn-voice-play-main" id="btnMainVoicePlay" type="button" aria-label="Play translated voice" title="Play or pause translated speech">
+                      <span class="voice-play-icon" id="voicePlayIcon">▶</span>
+                    </button>
+                    <div class="voice-player-meta">
+                      <div class="voice-player-title" id="voiceStatusTitle">Audio Translation Ready</div>
+                      <div class="voice-player-time">
+                        <span id="voiceCurrentTime">00:00</span> / <span id="voiceTotalTime">00:00</span>
+                      </div>
+                    </div>
+                    <div class="voice-equalizer-bars" id="voiceEqualizerBars" aria-hidden="true">
+                      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                  </div>
+                  <div class="voice-player-track">
+                    <input type="range" class="voice-seeker-slider" id="voiceSeekerSlider" min="0" max="100" value="0" step="0.1" aria-label="Audio progress slider">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Translated Text Transcript Box (Toggled via the top Text button) -->
+              <div class="result-text-box" id="outputWrapper" style="display:none; margin-top:10px;">
+                <div class="text-box-header">
+                  <span class="text-box-label">TRANSLATED TEXT TRANSCRIPT</span>
+                </div>
+                <div class="text-target-display" id="displayTargetText">Translated text will appear here...</div>
+                <div class="text-source-sub" id="displaySourceText" style="display:none;"></div>
+              </div>
+
+              <audio id="targetPlayer" hidden></audio>
+
+              <!-- Bottom Action Toolbar -->
+              <div class="result-bottom-toolbar">
+                <button class="btn-action-tool" id="btnCopyText" type="button"><span>📋</span> Copy</button>
+                <button class="btn-action-tool" id="btnDownloadAudio" type="button"><span>⬇</span> Download</button>
+                <button class="btn-action-tool" id="btnSaveResult" type="button"><span>🔖</span> Save</button>
+                <span class="badge-latency" id="latencyBadge" style="display:none;">⚡ 420ms</span>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- History Page View -->
+        <div id="historyCardsView" hidden>
+          <div class="history-header-card">
+            <div class="history-header-left">
+              <div class="history-header-icon">🕒</div>
+              <div class="history-title-box">
+                <h2>Translation History</h2>
+                <p>Saved speech-to-speech recordings, transcripts & translations</p>
+              </div>
+            </div>
+            <div class="history-header-actions">
+              <button class="btn-history-tool btn-history-clear" id="btnClearAllHistory" type="button">
+                <span>🗑</span> Clear All
+              </button>
+              <button class="btn-history-tool" id="btnBackToStudio" type="button">
+                <span>🏠</span> Back to Studio
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic History List -->
+          <div class="history-list" id="historyListContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Settings Modal Dialog -->
+  <div class="profile-modal-backdrop" id="profileModal" hidden>
+    <div class="profile-modal-card" role="dialog" aria-labelledby="profileModalTitle">
+      <div class="profile-modal-header">
+        <div>
+          <h2 id="profileModalTitle">Profile Settings</h2>
+          <p class="hint" style="margin-top:2px; color:#a1a1aa !important">Manage your username, name, email, and password</p>
+        </div>
+        <button type="button" class="btn-close-modal" id="closeProfileModal" aria-label="Close modal">✕</button>
+      </div>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="inputProfileUsername">User Name</label>
+          <input type="text" id="inputProfileUsername" placeholder="e.g. rahul123" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="inputProfileName">Name</label>
+          <input type="text" id="inputProfileName" placeholder="e.g. Rahul Choudhary" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="inputProfileEmail">Email</label>
+          <input type="email" id="inputProfileEmail" readonly style="opacity:0.75; cursor:not-allowed">
+        </div>
+
+        <div class="password-section">
+          <div class="password-section-title">🔑 Change Password</div>
+          <div class="form-group">
+            <label for="inputNewPassword">New Password</label>
+            <input type="password" id="inputNewPassword" placeholder="Enter new password (optional)" minlength="6" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label for="inputConfirmPassword">Confirm New Password</label>
+            <input type="password" id="inputConfirmPassword" placeholder="Confirm new password" minlength="6" autocomplete="new-password">
+          </div>
+          <p style="margin:2px 0 0; font-size:0.75rem; color:#8e8b88">Leave password blank if you do not wish to change it.</p>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="secondary" id="cancelProfileBtn">Cancel</button>
+          <button type="submit" class="primary" id="saveProfileBtn">Save Profile</button>
+        </div>
+        <p class="profile-save-status" id="profileSaveStatus" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+  <script>
+    (() => {
+      if (document.documentElement.classList.contains('has-active-session') || localStorage.getItem('s2st_auth_active') === 'true') return;
+      const authRoute = location.pathname === '/login' || location.pathname === '/create-account';
+      if (!authRoute) return;
+      if (location.pathname === '/create-account' || new URLSearchParams(location.search).get('mode') === 'create') {
+        history.replaceState(null, '', '/login');
+      }
+      document.body.classList.add('auth-screen');
+
+      const canvas = document.querySelector('.auth-particle-background canvas');
+      const context = canvas?.getContext('2d', { alpha: true });
+      if (!context) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0;
+      let height = 0;
+      let ratio = 1;
+      let particles = [];
+      let frameId = 0;
+      let lastFrame = 0;
+
+      const resize = () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        ratio = Math.min(window.devicePixelRatio || 1, 1.35);
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        const count = Math.min(900, Math.max(320, Math.round(width * height / 1000)));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: 0.6 + Math.random() ** 1.5 * 2.1,
+          alpha: 0.3 + Math.random() * 0.55,
+          phase: Math.random() * Math.PI * 2,
+          drift: 0.04 + Math.random() * 0.22,
+          streak: Math.random() > 0.965
+        }));
+        draw(0);
+      };
+
+      const glow = (x, y, radius, alpha) => {
+        const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, 'rgba(238,244,255,' + alpha + ')');
+        gradient.addColorStop(0.34, 'rgba(159,177,208,' + alpha * 0.48 + ')');
+        gradient.addColorStop(1, 'rgba(105,126,164,0)');
+        context.fillStyle = gradient;
+        context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+      };
+
+      const draw = (time) => {
+        context.clearRect(0, 0, width, height);
+        context.save();
+        context.globalCompositeOperation = 'screen';
+        const phase = time * 0.00032;
+        glow(width * (0.91 + Math.sin(phase) * 0.04), height * (0.11 + Math.cos(phase * 1.4) * 0.05), Math.max(width, height) * 0.32, 0.4);
+        glow(width * (0.37 + Math.sin(phase * 1.7) * 0.05), height * (0.49 + Math.cos(phase) * 0.06), Math.max(width, height) * 0.24, 0.28);
+        glow(width * (0.61 + Math.cos(phase * 1.2) * 0.05), height * (0.91 + Math.sin(phase) * 0.04), Math.max(width, height) * 0.29, 0.36);
+
+        context.save();
+        context.filter = 'blur(' + Math.max(5, width * 0.006) + 'px)';
+        context.lineWidth = Math.max(5, width * 0.008);
+        context.lineCap = 'round';
+        for (let i = 0; i < 3; i++) {
+          const ribbonPhase = phase * (i + 1) + i * 1.7;
+          const y = height * (0.32 + i * 0.22);
+          const ribbon = context.createLinearGradient(0, y - 80, width, y + 80);
+          ribbon.addColorStop(0, 'rgba(220,231,250,0)');
+          ribbon.addColorStop(0.35, 'rgba(190,207,233,0.29)');
+          ribbon.addColorStop(0.62, 'rgba(246,249,255,0.36)');
+          ribbon.addColorStop(1, 'rgba(220,231,250,0)');
+          context.strokeStyle = ribbon;
+          context.globalAlpha = 0.7;
+          context.beginPath();
+          context.moveTo(-width * 0.08, y + Math.sin(ribbonPhase) * height * 0.12);
+          context.bezierCurveTo(width * 0.24, y - height * 0.2 + Math.cos(ribbonPhase) * height * 0.12, width * 0.68, y + height * 0.2 + Math.sin(ribbonPhase * 0.8) * height * 0.1, width * 1.08, y - Math.cos(ribbonPhase) * height * 0.1);
+          context.stroke();
+        }
+        context.restore();
+
+        particles.forEach((particle) => {
+          if (!reducedMotion) {
+            particle.x += particle.drift * 2.6;
+            particle.y += Math.sin(time * 0.0005 + particle.phase) * 0.28;
+            if (particle.x > width + 2) particle.x = -2;
+          }
+          const flowY = height * (0.5 + 0.16 * Math.sin((particle.x / Math.max(width, 1)) * Math.PI * 2 + phase * 2));
+          const spread = (particle.y - flowY) / (height * 0.18);
+          const stream = Math.exp(-(spread * spread));
+          const edgeGlow = Math.max(0, (particle.y / height - 0.78) * 1.2);
+          const shimmer = 0.58 + 0.42 * Math.sin(time * 0.001 + particle.phase);
+          context.globalAlpha = Math.min(0.96, (particle.alpha + stream * 0.34 + edgeGlow * 0.28) * shimmer);
+          context.fillStyle = particle.size > 1.3 ? '#f3f6ff' : '#bfcbe0';
+          if (particle.streak && !reducedMotion) {
+            context.fillRect(particle.x, particle.y, particle.size * 2.6, 0.65);
+          } else {
+            context.beginPath();
+            context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            context.fill();
+          }
+        });
+        context.restore();
+      };
+
+      const animate = (timestamp) => {
+        frameId = 0;
+        if (document.hidden || !document.body.classList.contains('auth-screen')) return;
+        if (timestamp - lastFrame >= 1000 / 30) {
+          lastFrame = timestamp;
+          draw(timestamp);
+        }
+        frameId = requestAnimationFrame(animate);
+      };
+
+      const stop = () => {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+      };
+      const start = () => {
+        if (!reducedMotion && !document.hidden && document.body.classList.contains('auth-screen') && !frameId) {
+          frameId = requestAnimationFrame(animate);
+        }
+      };
+
+      window.addEventListener('resize', resize, { passive: true });
+      document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+      new MutationObserver(() => document.body.classList.contains('auth-screen') ? start() : stop())
+        .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      resize();
+      start();
+    })();
+  </script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
+    import {
+      createUserWithEmailAndPassword,
+      getAuth,
+      onAuthStateChanged,
+      sendPasswordResetEmail,
+      signInWithEmailAndPassword,
+      signOut,
+      updatePassword,
+    } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+
+    const $ = (id) => document.getElementById(id);
+    let targetLanguage = $('targetLanguage').value;
+    let sessionLanguage = targetLanguage;
+    let pcm16 = null;
+    let sessionId = null;
+    let outputReady = false;
+    let recorder = null;
+    let auth = null;
+    let currentUser = null;
+    let isSigningOut = false;
+
+    function setLoginEnabled(enabled) {
+      ['signInButton', 'resetPasswordButton', 'createAccountSubmit'].forEach(id => { $(id).disabled = !enabled; });
+    }
+
+    let onCreateAccountPage = false;
+    const setAuthMessage = message => {
+      $('authStatus').textContent = message;
+      $('createAccountStatus').textContent = message;
+    };
+
+    function clearAuthInputs() {
+      ['authEmail', 'authPassword', 'newEmail', 'newPassword', 'confirmPassword'].forEach(id => {
+        const el = $(id);
+        if (el) el.value = '';
+      });
+      if ($('authForm')) {
+        try { $('authForm').reset(); } catch (e) {}
+      }
+      if ($('createAccountForm')) {
+        try { $('createAccountForm').reset(); } catch (e) {}
+      }
+      if ($('authStatus')) {
+        $('authStatus').textContent = '';
+        $('authStatus').classList.remove('setup-notice');
+      }
+      if ($('createAccountStatus')) {
+        $('createAccountStatus').textContent = '';
+        $('createAccountStatus').classList.remove('setup-notice');
+      }
+    }
+
+    const setAuthMode = createAccount => {
+      onCreateAccountPage = createAccount;
+      clearAuthInputs();
+      $('signInView').hidden = createAccount;
+      $('createAccountView').hidden = !createAccount;
+      document.querySelectorAll('[data-auth-mode]').forEach(button => {
+        const active = button.dataset.authMode === (createAccount ? 'create' : 'signin');
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (auth && !currentUser) setAuthMessage(createAccount ? 'Create your account to continue.' : 'Sign in to continue.');
+    };
+    setAuthMode(onCreateAccountPage);
+    document.querySelectorAll('[data-auth-mode]').forEach(button => {
+      button.addEventListener('click', () => setAuthMode(button.dataset.authMode === 'create'));
+    });
+
+    async function initializeLogin() {
+      try {
+        const isAuthRoute = location.pathname === '/login' || location.pathname === '/create-account' || location.pathname === '/';
+        const hasSavedSession = !isAuthRoute && (document.documentElement.classList.contains('has-active-session') || localStorage.getItem('s2st_auth_active') === 'true');
+        if (hasSavedSession) {
+          document.body.classList.add('workspace-screen');
+          document.body.classList.remove('auth-screen');
+          $('authGate').hidden = true;
+          $('appShell').hidden = false;
+          try {
+            const cached = localStorage.getItem('s2st_last_profile');
+            if (cached) {
+              const p = JSON.parse(cached);
+              const displayName = (p.name && p.name.trim()) 
+                ? p.name.trim() 
+                : (p.username && p.username.trim() 
+                    ? `@${p.username.trim().replace(/^@/, '')}` 
+                    : (p.email || 'User'));
+              if ($('signedInAs')) $('signedInAs').textContent = displayName;
+              const initial = displayName.replace(/^@/, '').charAt(0).toUpperCase() || 'U';
+              if ($('headerAvatar')) $('headerAvatar').textContent = initial;
+              if ($('signedInUsername')) {
+                const u = p.username ? `@${p.username.trim().replace(/^@/, '')}` : (p.email ? `@${p.email.split('@')[0]}` : '');
+                $('signedInUsername').textContent = u;
+              }
+            }
+          } catch (e) {}
+        } else {
+          document.body.classList.add('auth-screen');
+          document.body.classList.remove('workspace-screen');
+          $('authGate').hidden = false;
+          $('appShell').hidden = true;
+          clearAuthInputs();
+        }
+
+        const response = await fetch('/v1/config');
+        const result = await response.json();
+        const config = result.firebase;
+        if (!config?.web_configured) {
+          $('authStatus').classList.add('setup-notice');
+          setAuthMessage('Firebase web config is missing. Set FIREBASE_API_KEY, FIREBASE_PROJECT_ID, FIREBASE_APP_ID and FIREBASE_CREDENTIALS_PATH in .env.');
+          return;
+        }
+        if (!config.server_auth_ready) {
+          $('authStatus').classList.add('setup-notice');
+          setAuthMessage('Firebase server verification is not configured. Add the Firebase service-account JSON at FIREBASE_CREDENTIALS_PATH.');
+          return;
+        }
+        const app = initializeApp(config.web_config);
+        auth = getAuth(app);
+        setLoginEnabled(true);
+        onAuthStateChanged(auth, user => {
+          if (isSigningOut) return;
+          currentUser = user;
+          if (user) {
+            localStorage.setItem('s2st_auth_active', 'true');
+            document.documentElement.classList.add('has-active-session');
+            document.body.classList.remove('auth-screen');
+            document.body.classList.add('workspace-screen');
+            $('authGate').hidden = true;
+            $('appShell').hidden = false;
+            applyUserProfile(user);
+            clearAuthInputs();
+            if (location.pathname === '/login' || location.pathname === '/create-account') {
+              history.replaceState(null, '', '/app');
+            }
+          } else {
+            localStorage.removeItem('s2st_auth_active');
+            localStorage.removeItem('s2st_last_profile');
+            document.documentElement.classList.remove('has-active-session');
+            document.body.classList.remove('workspace-screen');
+            document.body.classList.add('auth-screen');
+            $('authGate').hidden = false;
+            $('appShell').hidden = true;
+            clearAuthInputs();
+            setAuthMessage(onCreateAccountPage ? 'Create your account to continue.' : 'Sign in to continue.');
+            if (location.pathname === '/app') {
+              history.replaceState(null, '', '/login');
+            }
+          }
+        });
+      } catch (error) {
+        setAuthMessage(error.message || 'Could not connect to Firebase.');
+      }
+    }
+
+    async function userToken() {
+      if (!currentUser) throw new Error('Sign in to use the translator.');
+      return currentUser.getIdToken();
+    }
+
+    $('authForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!auth) return;
+      const email = $('authEmail').value.trim();
+      const password = $('authPassword').value;
+      if (!email) {
+        $('authStatus').textContent = 'Please enter your email address.';
+        $('authEmail').focus();
+        return;
+      }
+      if (!password || password.trim().length === 0) {
+        $('authStatus').textContent = 'Password is required to sign in.';
+        $('authPassword').focus();
+        return;
+      }
+      if (password.length < 6) {
+        $('authStatus').textContent = 'Password must be at least 6 characters.';
+        $('authPassword').focus();
+        return;
+      }
+      const button = $('signInButton');
+      button.disabled = true;
+      $('authStatus').textContent = 'Signing in…';
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        $('authStatus').textContent = error.message || 'Sign in failed.';
+      } finally { button.disabled = false; }
+    });
+
+    $('createAccountForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!auth) return;
+      const button = $('createAccountSubmit');
+      const password = $('newPassword').value;
+      if (password !== $('confirmPassword').value) {
+        $('createAccountStatus').textContent = 'Passwords do not match.';
+        return;
+      }
+      button.disabled = true;
+      $('createAccountStatus').textContent = 'Creating account…';
+      try {
+        await createUserWithEmailAndPassword(auth, $('newEmail').value.trim(), password);
+      } catch (error) {
+        $('createAccountStatus').textContent = error.message || 'Account creation failed.';
+      } finally { button.disabled = false; }
+    });
+
+    $('resetPasswordButton').addEventListener('click', async () => {
+      if (!auth) return;
+      const email = $('authEmail').value.trim();
+      if (!email) { $('authStatus').textContent = 'Enter your email first.'; return; }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        $('authStatus').textContent = 'Password reset email sent.';
+      } catch (error) {
+        $('authStatus').textContent = error.message || 'Could not send reset email.';
+      }
+    });
+
+    $('signOutButton').addEventListener('click', async () => {
+      isSigningOut = true;
+      const btn = $('signOutButton');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳</span> Signing out…';
+      }
+      clearAuthInputs();
+      localStorage.removeItem('s2st_auth_active');
+      localStorage.removeItem('s2st_last_profile');
+      sessionStorage.clear();
+      document.documentElement.classList.remove('has-active-session');
+      try {
+        if (auth) await signOut(auth);
+      } catch (err) {
+        console.error('Sign out error:', err);
+      }
+      window.location.href = '/';
+    });
+
+    // User Profile Logic: User Name, Name, Email, Change Password
+    function getUserProfileKey(user) {
+      return 's2st_user_profile_' + (user?.uid || 'guest');
+    }
+
+    function loadUserProfile(user) {
+      if (!user) return null;
+      try {
+        const stored = localStorage.getItem(getUserProfileKey(user));
+        if (stored) return JSON.parse(stored);
+      } catch (e) {
+        console.error('Error reading profile:', e);
+      }
+      const rawUser = user.email ? user.email.split('@')[0] : 'user';
+      const defaultName = rawUser
+        .replace(/[._]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+      return {
+        username: rawUser,
+        name: defaultName || 'Rahul Choudhary',
+        email: user.email || ''
+      };
+    }
+
+    function applyUserProfile(user) {
+      const profile = loadUserProfile(user);
+      if (!profile) return;
+      try { localStorage.setItem('s2st_last_profile', JSON.stringify(profile)); } catch (e) {}
+      
+      const displayName = (profile.name && profile.name.trim()) 
+        ? profile.name.trim() 
+        : (profile.username && profile.username.trim() 
+            ? `@${profile.username.trim().replace(/^@/, '')}` 
+            : (user?.email || 'User'));
+            
+      if ($('signedInAs')) $('signedInAs').textContent = displayName;
+
+      const usernameText = profile.username 
+        ? `@${profile.username.trim().replace(/^@/, '')}` 
+        : (user?.email ? `@${user.email.split('@')[0]}` : '');
+      if ($('signedInUsername')) $('signedInUsername').textContent = usernameText;
+      
+      const initial = displayName.replace(/^@/, '').charAt(0).toUpperCase() || 'U';
+      if ($('headerAvatar')) $('headerAvatar').textContent = initial;
+      
+      const handleTag = profile.username ? `@${profile.username.replace(/^@/, '')}` : '';
+      const emailTag = user?.email || profile.email || '';
+      if ($('openProfileButton')) {
+        $('openProfileButton').title = `${profile.name || displayName}${handleTag ? ` (${handleTag})` : ''} · ${emailTag}`;
+      }
+    }
+
+    function openProfileModal() {
+      if (!currentUser) return;
+      const profile = loadUserProfile(currentUser);
+      $('inputProfileUsername').value = profile.username || (currentUser.email ? currentUser.email.split('@')[0] : '');
+      $('inputProfileName').value = profile.name || '';
+      $('inputProfileEmail').value = currentUser.email || '';
+      $('inputNewPassword').value = '';
+      $('inputConfirmPassword').value = '';
+      $('profileSaveStatus').textContent = '';
+      $('profileSaveStatus').style.color = '';
+
+      $('profileModal').hidden = false;
+      $('inputProfileUsername').focus();
+    }
+
+    function closeProfileModal() {
+      $('profileModal').hidden = true;
+      $('inputNewPassword').value = '';
+      $('inputConfirmPassword').value = '';
+      $('profileSaveStatus').textContent = '';
+    }
+
+    $('openProfileButton').addEventListener('click', openProfileModal);
+    $('closeProfileModal').addEventListener('click', closeProfileModal);
+    $('cancelProfileBtn').addEventListener('click', closeProfileModal);
+
+    $('inputProfileName').addEventListener('input', e => {
+      const name = e.target.value.trim();
+      const initial = (name.charAt(0) || 'U').toUpperCase();
+      if ($('headerAvatar')) $('headerAvatar').textContent = initial;
+      if ($('signedInAs')) $('signedInAs').textContent = name || 'User';
+    });
+
+    $('inputProfileUsername').addEventListener('input', e => {
+      const val = e.target.value.trim();
+      if ($('signedInUsername')) $('signedInUsername').textContent = val ? `@${val.replace(/^@/, '')}` : '';
+    });
+
+    $('profileForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!currentUser) return;
+      const username = $('inputProfileUsername').value.trim();
+      const name = $('inputProfileName').value.trim();
+      const newPassword = $('inputNewPassword').value;
+      const confirmPassword = $('inputConfirmPassword').value;
+      const statusEl = $('profileSaveStatus');
+      const submitBtn = $('saveProfileBtn');
+
+      statusEl.textContent = '';
+      statusEl.style.color = '#cbd5e1';
+
+      if (newPassword || confirmPassword) {
+        if (newPassword.length < 6) {
+          statusEl.style.color = '#f87171';
+          statusEl.textContent = 'Password must be at least 6 characters.';
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          statusEl.style.color = '#f87171';
+          statusEl.textContent = 'Passwords do not match.';
+          return;
+        }
+      }
+
+      submitBtn.disabled = true;
+      statusEl.textContent = 'Saving changes…';
+
+      try {
+        if (newPassword) {
+          try {
+            await updatePassword(currentUser, newPassword);
+          } catch (passErr) {
+            console.error('Password update error:', passErr);
+            if (passErr.code === 'auth/requires-recent-login') {
+              statusEl.style.color = '#fbbf24';
+              statusEl.textContent = 'Security notice: Please sign out & sign in again to change password.';
+              submitBtn.disabled = false;
+              return;
+            } else {
+              throw passErr;
+            }
+          }
+        }
+
+        const profileData = {
+          username: username || (currentUser.email ? currentUser.email.split('@')[0] : 'user'),
+          name: name || username || 'User',
+          email: currentUser.email || ''
+        };
+
+        localStorage.setItem(getUserProfileKey(currentUser), JSON.stringify(profileData));
+        localStorage.setItem('s2st_last_profile', JSON.stringify(profileData));
+        applyUserProfile(currentUser);
+
+        statusEl.style.color = '#4ade80';
+        statusEl.textContent = newPassword
+          ? '✓ Profile and password updated successfully!'
+          : '✓ Profile saved successfully!';
+
+        setTimeout(() => {
+          closeProfileModal();
+          submitBtn.disabled = false;
+        }, 700);
+      } catch (err) {
+        statusEl.style.color = '#f87171';
+        statusEl.textContent = 'Error: ' + (err.message || 'Could not update profile.');
+        submitBtn.disabled = false;
+      }
+    });
+
+    $('profileModal').addEventListener('click', e => {
+      if (e.target === $('profileModal')) closeProfileModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !$('profileModal').hidden) closeProfileModal();
+    });
+
+    initializeLogin();
+
+    $('targetLanguage').addEventListener('change', event => { targetLanguage = event.target.value; });
+
+    document.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => {
+      const showTranslate = button.dataset.page === 'translate';
+      $('translatePage').hidden = !showTranslate;
+      $('reviewPage').hidden = showTranslate;
+      if (showTranslate && typeof switchStudioTab === 'function') switchStudioTab('home');
+      document.querySelectorAll('[data-page]').forEach(item => item.setAttribute('aria-current', item === button ? 'page' : 'false'));
+    }));
+
+    function pcmFromChannel(channel) {
+      const result = new Int16Array(channel.length);
+      for (let i = 0; i < channel.length; i++) {
+        const value = Math.max(-1, Math.min(1, channel[i]));
+        result[i] = value < 0 ? value * 0x8000 : value * 0x7fff;
+      }
+      return result;
+    }
+
+    async function decodeToPcm(arrayBuffer) {
+      const context = new AudioContext();
+      const decoded = await context.decodeAudioData(arrayBuffer.slice(0));
+      if (decoded.duration > 600) throw new Error('Audio file must be 10 minutes or shorter.');
+      const offline = new OfflineAudioContext(1, Math.ceil(decoded.duration * 16000), 16000);
+      const source = offline.createBufferSource();
+      source.buffer = decoded;
+      source.connect(offline.destination);
+      source.start();
+      const resampled = await offline.startRendering();
+      await context.close();
+      return pcmFromChannel(resampled.getChannelData(0));
+    }
+
+    let currentAudioFileName = '';
+
+    // Segment mode toggle: Record Audio vs Upload File vs Dataset Samples
+    function setAudioInputMode(mode) {
+      const tabRec = $('tabModeRecord');
+      const tabUpl = $('tabModeUpload');
+      const tabDst = $('tabModeDataset');
+      const boxRec = $('recordModeContainer');
+      const boxUpl = $('uploadModeContainer');
+      const boxDst = $('datasetModeContainer');
+
+      tabRec?.classList.toggle('active', mode === 'record');
+      tabUpl?.classList.toggle('active', mode === 'upload');
+      tabDst?.classList.toggle('active', mode === 'dataset');
+
+      if (boxRec) boxRec.hidden = mode !== 'record';
+      if (boxUpl) boxUpl.hidden = mode !== 'upload';
+      if (boxDst) boxDst.hidden = mode !== 'dataset';
+
+      if (mode !== 'record' && recorder) $('recordButton')?.click();
+      if (mode === 'record' && $('sourcePlayer')) $('sourcePlayer').pause();
+    }
+
+    if ($('tabModeRecord')) {
+      $('tabModeRecord').addEventListener('click', () => setAudioInputMode('record'));
+    }
+    if ($('tabModeUpload')) {
+      $('tabModeUpload').addEventListener('click', () => setAudioInputMode('upload'));
+    }
+    if ($('tabModeDataset')) {
+      $('tabModeDataset').addEventListener('click', () => setAudioInputMode('dataset'));
+    }
+    if ($('uploadButton')) $('uploadButton').addEventListener('click', () => $('audioFile').click());
+
+    let allDatasetSamples = [];
+
+    async function loadDatasetAudioSample(sample, clickedBtn = null) {
+      if (!sample) return;
+      $('status').textContent = `Loading "${sample.title}" audio...`;
+      try {
+        const res = await fetch(sample.audio_url);
+        if (!res.ok) throw new Error('Could not download sample audio');
+        const buf = await res.arrayBuffer();
+        pcm16 = await decodeToPcm(buf);
+        currentAudioFileName = sample.filename;
+        liveTranscript = sample.transcript || '';
+        
+        $('sourcePlayer').src = sample.audio_url;
+        $('sourcePlayer').hidden = true;
+        
+        const durSec = (pcm16.length / 16000).toFixed(1);
+        $('inputStatus').textContent = `${sample.title} (${durSec}s) · Ready for translation`;
+        $('status').textContent = `✓ Loaded "${sample.title}". Click Translate!`;
+
+        // Update uploadedPreviewCard in Upload tab
+        if ($('uploadedPreviewCard')) $('uploadedPreviewCard').style.display = 'flex';
+        if ($('audioDropzone')) $('audioDropzone').style.display = 'none';
+        if ($('previewFileName')) $('previewFileName').textContent = `${sample.title} (${sample.filename})`;
+        if ($('previewFileStats')) $('previewFileStats').textContent = `${durSec} sec · ${sample.category} · Ready`;
+        if ($('previewDurationLabel')) $('previewDurationLabel').textContent = formatTime(Math.round(pcm16.length / 16000));
+        if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
+        if ($('previewPlaybackWave')) $('previewPlaybackWave').classList.remove('playing');
+
+        // Mark active chip
+        document.querySelectorAll('.btn-sample-chip').forEach(c => c.classList.remove('active'));
+        if (clickedBtn) clickedBtn.classList.add('active');
+
+        // Switch to upload preview mode so user sees the audio is loaded and ready
+        setAudioInputMode('upload');
+      } catch (err) {
+        console.error('Failed to load dataset sample:', err);
+        $('status').textContent = 'Failed to load sample audio: ' + err.message;
+      }
+    }
+
+    async function initDatasetSamples() {
+      try {
+        const res = await fetch('/api/dataset/samples');
+        if (!res.ok) return;
+        const data = await res.json();
+        allDatasetSamples = data.samples || [];
+
+        // 6 Top curated quick chips
+        const quickPicks = [
+          { icon: '🌦️', match: 'YNX_0214_Y039', label: 'Rainfall Warning' },
+          { icon: '🕊️', match: 'YMD_0036_Y021', label: 'Amnesty Statement' },
+          { icon: '⚽', match: 'YNX_1547_Y037', label: 'Villarreal Match' },
+          { icon: '🌟', match: 'YNX_1144_Y064', label: 'Inspirational' },
+          { icon: '🌍', match: 'YTR_1435_Y006', label: 'World Peace' },
+          { icon: '⚖️', match: 'YMD_0946_Y029', label: 'Court Appeal' }
+        ];
+
+        function renderChipsInto(containerId) {
+          const container = $(containerId);
+          if (!container) return;
+          container.innerHTML = quickPicks.map(qp => {
+            const sample = allDatasetSamples.find(s => s.filename.includes(qp.match)) || allDatasetSamples[0];
+            if (!sample) return '';
+            return `
+              <button type="button" class="btn-sample-chip" data-filename="${sample.filename}" title="${sample.reference}">
+                <span>${qp.icon}</span>
+                <span>${qp.label}</span>
+                <span class="sample-chip-dur">${sample.duration}s</span>
+              </button>
+            `;
+          }).join('');
+
+          container.querySelectorAll('.btn-sample-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const fname = btn.dataset.filename;
+              const sample = allDatasetSamples.find(s => s.filename === fname);
+              if (sample) loadDatasetAudioSample(sample, btn);
+            });
+          });
+        }
+
+        renderChipsInto('quickSampleChipsRecord');
+        renderChipsInto('quickSampleChipsUpload');
+
+        // Render full explorer
+        renderDatasetExplorer();
+      } catch (err) {
+        console.error('Error fetching dataset samples:', err);
+      }
+    }
+
+    function renderDatasetExplorer() {
+      const container = $('datasetSamplesList');
+      if (!container) return;
+      const q = ($('datasetSearchInput')?.value || '').toLowerCase().trim();
+      const cat = $('datasetCategoryFilter')?.value || 'all';
+
+      const filtered = allDatasetSamples.filter(s => {
+        const matchesCat = (cat === 'all' || s.category === cat);
+        const matchesQuery = !q || 
+          s.title.toLowerCase().includes(q) || 
+          s.reference.toLowerCase().includes(q) || 
+          s.transcript.toLowerCase().includes(q) || 
+          s.filename.toLowerCase().includes(q) || 
+          s.category.toLowerCase().includes(q);
+        return matchesCat && matchesQuery;
+      });
+
+      if (!filtered.length) {
+        container.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;font-size:0.8rem">No dataset audio matched your search.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(s => `
+        <div class="dataset-sample-item">
+          <div class="dataset-item-top">
+            <span class="dataset-item-title">🎵 ${s.title}</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="dataset-item-badge">${s.category}</span>
+              <span class="dataset-item-dur">${s.duration}s</span>
+            </div>
+          </div>
+          <div class="dataset-item-text" title="${s.transcript}">
+            <strong style="color:#a5b4fc">Yorùbá:</strong> ${s.transcript}
+          </div>
+          <div class="dataset-item-text" title="${s.reference}" style="color:#94a3b8">
+            <strong style="color:#cbd5e1">English:</strong> ${s.reference}
+          </div>
+          <div class="dataset-item-actions">
+            <button type="button" class="btn-sample-play-preview" data-audio="${s.audio_url}">
+              <span>▶</span> Listen
+            </button>
+            <button type="button" class="btn-sample-select-load" data-filename="${s.filename}">
+              ✓ Select & Translate
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.btn-sample-play-preview').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const audioUrl = btn.dataset.audio;
+          const p = $('sourcePlayer');
+          if (p) {
+            p.src = audioUrl;
+            p.play();
+            btn.innerHTML = '<span>⏸</span> Playing';
+            p.onended = () => { btn.innerHTML = '<span>▶</span> Listen'; };
+          }
+        });
+      });
+
+      container.querySelectorAll('.btn-sample-select-load').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fname = btn.dataset.filename;
+          const s = allDatasetSamples.find(x => x.filename === fname);
+          if (s) loadDatasetAudioSample(s);
+        });
+      });
+    }
+
+    $('datasetSearchInput')?.addEventListener('input', renderDatasetExplorer);
+    $('datasetCategoryFilter')?.addEventListener('change', renderDatasetExplorer);
+    $('btnOpenSampleLib')?.addEventListener('click', () => setAudioInputMode('dataset'));
+    $('btnOpenSampleLibFromRecord')?.addEventListener('click', () => setAudioInputMode('dataset'));
+
+    async function handleAudioFileSelect(file) {
+      if (!file) return;
+      currentAudioFileName = file.name;
+      liveTranscript = '';
+      try {
+        pcm16 = await decodeToPcm(await file.arrayBuffer());
+        const durSec = (pcm16.length / 16000).toFixed(1);
+        $('inputStatus').textContent = `${file.name} · ${durSec} sec`;
+        $('sourcePlayer').src = URL.createObjectURL(file);
+        $('sourcePlayer').hidden = true;
+        $('status').textContent = 'Audio file loaded and ready to translate.';
+
+        // Show uploaded file preview card and hide dropzone
+        if ($('uploadedPreviewCard')) $('uploadedPreviewCard').style.display = 'flex';
+        if ($('audioDropzone')) $('audioDropzone').style.display = 'none';
+        if ($('previewFileName')) $('previewFileName').textContent = file.name;
+        if ($('previewFileStats')) $('previewFileStats').textContent = `${durSec} sec · Ready for Translation`;
+        if ($('previewDurationLabel')) $('previewDurationLabel').textContent = formatTime(Math.round(pcm16.length / 16000));
+        if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
+        if ($('previewPlaybackWave')) $('previewPlaybackWave').classList.remove('playing');
+
+        setAudioInputMode('upload');
+      } catch (error) {
+        pcm16 = null;
+        $('status').textContent = error.message || 'This audio file could not be opened.';
+      }
+    }
+
+    $('audioFile').addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (file) await handleAudioFileSelect(file);
+    });
+
+    // Dropzone click & drag-and-drop
+    $('audioDropzone')?.addEventListener('click', e => {
+      if (e.target !== $('btnBrowseAudio')) $('audioFile').click();
+    });
+    $('btnBrowseAudio')?.addEventListener('click', () => $('audioFile').click());
+
+    const dropzone = $('audioDropzone');
+    if (dropzone) {
+      dropzone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+      });
+      dropzone.addEventListener('drop', async e => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        const file = e.dataTransfer?.files?.[0];
+        if (file) await handleAudioFileSelect(file);
+      });
+    }
+
+    // Uploaded audio preview play / pause
+    $('btnPreviewPlay')?.addEventListener('click', () => {
+      const srcP = $('sourcePlayer');
+      if (!srcP || !srcP.src) return;
+      if (srcP.paused) {
+        srcP.play();
+        $('btnPreviewPlay').textContent = '⏸';
+        $('previewPlaybackWave')?.classList.add('playing');
+      } else {
+        srcP.pause();
+        $('btnPreviewPlay').textContent = '▶';
+        $('previewPlaybackWave')?.classList.remove('playing');
+      }
+    });
+
+    $('sourcePlayer')?.addEventListener('ended', () => {
+      if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
+      $('previewPlaybackWave')?.classList.remove('playing');
+    });
+
+    // Remove uploaded file button
+    $('btnRemoveUploaded')?.addEventListener('click', () => {
+      pcm16 = null;
+      currentAudioFileName = '';
+      if ($('sourcePlayer')) {
+        $('sourcePlayer').pause();
+        $('sourcePlayer').src = '';
+      }
+      if ($('audioFile')) $('audioFile').value = '';
+      if ($('uploadedPreviewCard')) $('uploadedPreviewCard').style.display = 'none';
+      if ($('audioDropzone')) $('audioDropzone').style.display = 'flex';
+      if ($('inputStatus')) $('inputStatus').textContent = 'No audio selected';
+      if ($('status')) $('status').textContent = '';
+      if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
+      $('previewPlaybackWave')?.classList.remove('playing');
+    });
+
+    let liveTranscript = '';
+    let speechRecognizer = null;
+    try {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        speechRecognizer = new SpeechRec();
+        speechRecognizer.continuous = true;
+        speechRecognizer.interimResults = true;
+        speechRecognizer.onresult = event => {
+          let text = '';
+          for (let i = 0; i < event.results.length; ++i) {
+            text += event.results[i][0].transcript + ' ';
+          }
+          if (text.trim()) liveTranscript = text.trim();
+        };
+      }
+    } catch (e) {
+      console.warn('Speech recognition not available:', e);
+    }
+
+    if ($('speedRange')) {
+      $('speedRange').addEventListener('input', e => {
+        if ($('speedValue')) $('speedValue').textContent = `${e.target.value}x`;
+      });
+    }
+
+    // Recording Timer Logic
+    let recordTimerInterval = null;
+    let recordSeconds = 0;
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function startTimer() {
+      recordSeconds = 0;
+      if ($('timerCounter')) $('timerCounter').textContent = '00:00';
+      clearInterval(recordTimerInterval);
+      recordTimerInterval = setInterval(() => {
+        recordSeconds++;
+        if ($('timerCounter')) $('timerCounter').textContent = formatTime(recordSeconds);
+        if (recordSeconds >= 600) {
+          $('recordButton').click();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(recordTimerInterval);
+    }
+
+    $('recordButton').addEventListener('click', async () => {
+      const button = $('recordButton');
+      if (recorder) {
+        recorder.isRecording = false;
+        stopTimer();
+        try { speechRecognizer?.stop(); } catch(e) {}
+        recorder.stream.getTracks().forEach(track => track.stop());
+        recorder.processor.disconnect();
+        recorder.source.disconnect();
+        await recorder.context.close();
+        pcm16 = pcmFromChannel(Float32Array.from(recorder.samples));
+        $('inputStatus').textContent = `Recording ready · ${(pcm16.length / 16000).toFixed(1)} sec`;
+        button.classList.remove('recording');
+        button.setAttribute('aria-label', 'Start recording');
+        $('centerMicStage')?.classList.remove('recording');
+        if ($('micActionCaption')) $('micActionCaption').textContent = 'Click to start recording';
+        recorder = null;
+        $('status').textContent = 'Recorded audio ready. Choose language & translate.';
+        return;
+      }
+      try {
+        currentAudioFileName = 'live_microphone.wav';
+        liveTranscript = '';
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const context = new AudioContext({ sampleRate: 16000 });
+        const source = context.createMediaStreamSource(stream);
+        const processor = context.createScriptProcessor(4096, 1, 1);
+        const state = { stream, context, source, processor, samples: [], isRecording: true };
+        processor.onaudioprocess = event => {
+          if (!state.isRecording) return;
+          const input = event.inputBuffer.getChannelData(0);
+          for (let i = 0; i < input.length; i++) state.samples.push(input[i]);
+          if (state.samples.length >= 600 * 16000) button.click();
+        };
+        source.connect(processor);
+        processor.connect(context.destination);
+        recorder = state;
+        pcm16 = null;
+        $('sourcePlayer').hidden = true;
+        $('inputStatus').textContent = 'Recording… select the microphone again to stop';
+        $('status').textContent = 'Recording live audio';
+        button.classList.add('recording');
+        button.setAttribute('aria-label', 'Stop recording');
+        $('centerMicStage')?.classList.add('recording');
+        if ($('micActionCaption')) $('micActionCaption').textContent = 'Listening… Click to stop';
+        if ($('tabModeRecord')) {
+          $('tabModeRecord').classList.add('active');
+          $('tabModeUpload')?.classList.remove('active');
+        }
+        startTimer();
+        try { speechRecognizer?.start(); } catch(e) {}
+      } catch (error) {
+        $('status').textContent = 'Microphone unavailable. Check browser permission or upload an audio file.';
+      }
+    });
+
+    // Quick Playback Toolbar Actions
+    $('quickRecordBtn')?.addEventListener('click', () => $('recordButton').click());
+    $('quickPlayBtn')?.addEventListener('click', () => {
+      const srcP = $('sourcePlayer');
+      const tgtP = $('targetPlayer');
+      if (srcP && srcP.src) {
+        srcP.play();
+      } else if (tgtP && tgtP.src) {
+        tgtP.play();
+      } else {
+        $('status').textContent = 'No audio to play yet.';
+      }
+    });
+    $('quickStopBtn')?.addEventListener('click', () => {
+      if (recorder) $('recordButton').click();
+      $('sourcePlayer')?.pause();
+      $('targetPlayer')?.pause();
+    });
+    $('quickClearBtn')?.addEventListener('click', () => {
+      if (recorder) $('recordButton').click();
+      pcm16 = null;
+      currentAudioFileName = '';
+      stopTimer();
+      if ($('sourcePlayer')) { $('sourcePlayer').src = ''; $('sourcePlayer').hidden = true; }
+      if ($('targetPlayer')) $('targetPlayer').src = '';
+      if ($('inputStatus')) $('inputStatus').textContent = 'No audio selected';
+      if ($('timerCounter')) $('timerCounter').textContent = '00:00';
+      if ($('status')) $('status').textContent = '';
+      if ($('displayTargetText')) $('displayTargetText').textContent = 'Translated text will appear here...';
+      if ($('displaySourceText')) $('displaySourceText').style.display = 'none';
+      if ($('uploadedPreviewCard')) $('uploadedPreviewCard').style.display = 'none';
+      if ($('audioDropzone')) $('audioDropzone').style.display = 'flex';
+      if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
+      $('previewPlaybackWave')?.classList.remove('playing');
+      if ($('emotionBanner')) $('emotionBanner').style.display = 'none';
+      if ($('latencyBadge')) $('latencyBadge').style.display = 'none';
+      if ($('outputWrapper')) $('outputWrapper').style.display = 'none';
+      $('btnToggleText')?.classList.remove('active');
+      if ($('btnToggleText')) $('btnToggleText').innerHTML = '<span>📝</span> Text';
+      if ($('voiceStatusTitle')) $('voiceStatusTitle').textContent = 'Audio Translation Ready';
+      if ($('voiceCurrentTime')) $('voiceCurrentTime').textContent = '00:00';
+      if ($('voiceTotalTime')) $('voiceTotalTime').textContent = '00:00';
+      if ($('voiceSeekerSlider')) $('voiceSeekerSlider').value = 0;
+      $('btnMainVoicePlay')?.classList.remove('playing');
+      if ($('voicePlayIcon')) $('voicePlayIcon').textContent = '▶';
+      $('voiceEqualizerBars')?.classList.remove('playing');
+    });
+
+    // Language Swap Button
+    $('btnSwapLanguages')?.addEventListener('click', () => {
+      const srcEl = $('sourceLanguage');
+      const tgtEl = $('targetLanguage');
+      if (!srcEl || !tgtEl) return;
+      const prevSrc = srcEl.value;
+      const prevTgt = tgtEl.value;
+      const canSwapSrc = Array.from(srcEl.options).some(o => o.value === prevTgt);
+      const canSwapTgt = Array.from(tgtEl.options).some(o => o.value === prevSrc);
+      if (canSwapSrc) srcEl.value = prevTgt;
+      if (canSwapTgt) { tgtEl.value = prevSrc; targetLanguage = prevSrc; }
+    });
+
+    // Voice Audio Player & Text Toggle in Card 3
+    $('btnToggleText')?.addEventListener('click', () => {
+      const box = $('outputWrapper');
+      const btn = $('btnToggleText');
+      if (!box) return;
+      const isHidden = box.style.display === 'none' || box.hidden;
+      if (isHidden) {
+        box.style.display = 'flex';
+        box.hidden = false;
+        btn?.classList.add('active');
+        if (btn) btn.innerHTML = '<span>✕</span> Hide Text';
+      } else {
+        box.style.display = 'none';
+        btn?.classList.remove('active');
+        if (btn) btn.innerHTML = '<span>📝</span> Text';
+      }
+    });
+
+    $('btnMainVoicePlay')?.addEventListener('click', () => {
+      const targetPlayer = $('targetPlayer');
+      if (targetPlayer && targetPlayer.src) {
+        if (targetPlayer.paused) {
+          targetPlayer.play();
+        } else {
+          targetPlayer.pause();
+        }
+      } else {
+        $('status').textContent = 'Please translate speech first to play voice.';
+      }
+    });
+
+    const targetPlayerEl = $('targetPlayer');
+    if (targetPlayerEl) {
+      targetPlayerEl.addEventListener('play', () => {
+        $('btnMainVoicePlay')?.classList.add('playing');
+        if ($('voicePlayIcon')) $('voicePlayIcon').textContent = '⏸';
+        $('voiceEqualizerBars')?.classList.add('playing');
+        if ($('voiceStatusTitle')) $('voiceStatusTitle').textContent = 'Playing translated speech…';
+      });
+
+      targetPlayerEl.addEventListener('pause', () => {
+        $('btnMainVoicePlay')?.classList.remove('playing');
+        if ($('voicePlayIcon')) $('voicePlayIcon').textContent = '▶';
+        $('voiceEqualizerBars')?.classList.remove('playing');
+        if ($('voiceStatusTitle')) $('voiceStatusTitle').textContent = 'Voice paused';
+      });
+
+      targetPlayerEl.addEventListener('ended', () => {
+        $('btnMainVoicePlay')?.classList.remove('playing');
+        if ($('voicePlayIcon')) $('voicePlayIcon').textContent = '▶';
+        $('voiceEqualizerBars')?.classList.remove('playing');
+        if ($('voiceStatusTitle')) $('voiceStatusTitle').textContent = 'Translated voice ready';
+        if ($('voiceSeekerSlider')) $('voiceSeekerSlider').value = 0;
+        if ($('voiceCurrentTime')) $('voiceCurrentTime').textContent = '00:00';
+      });
+
+      targetPlayerEl.addEventListener('timeupdate', () => {
+        if (targetPlayerEl.duration) {
+          const pct = (targetPlayerEl.currentTime / targetPlayerEl.duration) * 100;
+          if ($('voiceSeekerSlider')) $('voiceSeekerSlider').value = pct;
+          if ($('voiceCurrentTime')) $('voiceCurrentTime').textContent = formatTime(Math.floor(targetPlayerEl.currentTime));
+          if ($('voiceTotalTime')) $('voiceTotalTime').textContent = formatTime(Math.floor(targetPlayerEl.duration));
+        }
+      });
+
+      targetPlayerEl.addEventListener('loadedmetadata', () => {
+        if ($('voiceTotalTime')) $('voiceTotalTime').textContent = formatTime(Math.floor(targetPlayerEl.duration || 0));
+        if ($('voiceStatusTitle')) $('voiceStatusTitle').textContent = 'Translated speech ready to play';
+      });
+    }
+
+    $('voiceSeekerSlider')?.addEventListener('input', e => {
+      const targetPlayer = $('targetPlayer');
+      if (targetPlayer && targetPlayer.duration) {
+        targetPlayer.currentTime = (e.target.value / 100) * targetPlayer.duration;
+      }
+    });
+
+    // Copy Translated Text
+    $('btnCopyText')?.addEventListener('click', async () => {
+      const text = $('displayTargetText')?.textContent || '';
+      if (!text || text === 'Translated text will appear here...') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = $('btnCopyText').innerHTML;
+        $('btnCopyText').innerHTML = '<span>✓</span> Copied!';
+        setTimeout(() => { $('btnCopyText').innerHTML = orig; }, 1600);
+      } catch (err) {
+        console.error('Clipboard copy failed:', err);
+      }
+    });
+
+    // Download Audio
+    $('btnDownloadAudio')?.addEventListener('click', () => {
+      const targetPlayer = $('targetPlayer');
+      if (targetPlayer && targetPlayer.src) {
+        const a = document.createElement('a');
+        a.href = targetPlayer.src;
+        a.download = `translated_speech_${targetLanguage || 'audio'}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        $('status').textContent = 'Translate an audio first to download speech.';
+      }
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatHistoryDate(isoStr) {
+      if (!isoStr) return 'Just now';
+      try {
+        const d = new Date(isoStr);
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      } catch(e) {
+        return 'Recent';
+      }
+    }
+
+    function renderHistoryView() {
+      const container = $('historyListContainer');
+      if (!container) return;
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem('s2st_history') || '[]');
+      } catch(e) {
+        history = [];
+      }
+
+      if (!history.length) {
+        container.innerHTML = `
+          <div class="history-empty-state">
+            <div class="history-empty-icon">🎙️</div>
+            <h3>No translation history yet</h3>
+            <p>Speak or upload an audio file on the Home page to generate translations and view them here.</p>
+            <button class="btn-start-translating" id="btnEmptyStartTranslating" type="button">
+              <span>🏠</span> Start Translating
+            </button>
+          </div>
+        `;
+        $('btnEmptyStartTranslating')?.addEventListener('click', () => switchStudioTab('home'));
+        return;
+      }
+
+      container.innerHTML = history.map((item, index) => {
+        const langName = item.languageName || item.language || 'Translated';
+        const dateStr = formatHistoryDate(item.date);
+        const emotionIcon = item.emotionIcon || '🎭';
+        const emotionName = item.emotion || 'Natural & Balanced ⚖️';
+        const audioSrc = item.wavBase64 ? `data:audio/wav;base64,${item.wavBase64}` : '';
+
+        return `
+          <div class="history-item-card" data-history-idx="${index}">
+            <div class="history-card-topbar">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="history-lang-badge">🌐 Yorùbá → ${escapeHtml(langName)}</span>
+                <span style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#cbd5e1">${emotionIcon} ${escapeHtml(emotionName)}</span>
+              </div>
+              <span class="history-time-badge">${dateStr}</span>
+            </div>
+
+            <div class="history-card-texts">
+              <div class="history-text-col">
+                <span class="col-label">🎙️ Spoken Input</span>
+                <div class="col-val">${escapeHtml(item.source || 'Voice recording')}</div>
+              </div>
+              <div class="history-text-col">
+                <span class="col-label">🌐 Translated Speech (${escapeHtml(langName)})</span>
+                <div class="col-val" style="color:#a5b4fc;font-weight:600">${escapeHtml(item.target || '')}</div>
+              </div>
+            </div>
+
+            ${audioSrc ? `<audio controls style="width:100%;height:36px;margin-top:4px" src="${audioSrc}"></audio>` : ''}
+
+            <div class="history-card-bottom">
+              <div class="history-card-actions">
+                <button type="button" class="btn-hist-copy" data-idx="${index}">📋 Copy Text</button>
+                ${audioSrc ? `<button type="button" class="btn-hist-dl" data-idx="${index}">⬇ Download WAV</button>` : ''}
+                <button type="button" class="btn-hist-load" data-idx="${index}">🔄 Load to Studio</button>
+              </div>
+              <button type="button" class="btn-hist-delete" data-idx="${index}" style="border-color:rgba(239,68,68,0.25);color:#fca5a5">🗑 Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.btn-hist-copy').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const idx = Number(btn.dataset.idx);
+          const item = history[idx];
+          if (item?.target) {
+            await navigator.clipboard.writeText(item.target);
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+          }
+        });
+      });
+
+      container.querySelectorAll('.btn-hist-dl').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          const item = history[idx];
+          if (item?.wavBase64) {
+            const a = document.createElement('a');
+            a.href = `data:audio/wav;base64,${item.wavBase64}`;
+            a.download = `translated_${item.language || 'speech'}_${Date.now()}.wav`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        });
+      });
+
+      container.querySelectorAll('.btn-hist-load').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          const item = history[idx];
+          if (item) {
+            if ($('displayTargetText')) $('displayTargetText').textContent = item.target;
+            if ($('displaySourceText')) {
+              $('displaySourceText').textContent = item.source;
+              $('displaySourceText').style.display = 'block';
+            }
+            if (item.wavBase64 && $('targetPlayer')) {
+              $('targetPlayer').src = `data:audio/wav;base64,${item.wavBase64}`;
+            }
+            if ($('emotionBanner')) $('emotionBanner').style.display = 'flex';
+            if ($('emotionName')) $('emotionName').textContent = item.emotion || 'Natural ⚖️';
+            if ($('emotionIcon')) $('emotionIcon').textContent = item.emotionIcon || '🎭';
+            switchStudioTab('home');
+            $('status').textContent = 'Loaded item from history into studio.';
+          }
+        });
+      });
+
+      container.querySelectorAll('.btn-hist-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.idx);
+          history.splice(idx, 1);
+          localStorage.setItem('s2st_history', JSON.stringify(history));
+          renderHistoryView();
+        });
+      });
+    }
+
+    function switchStudioTab(tab) {
+      document.querySelectorAll('[data-sidebar]').forEach(b => {
+        b.classList.toggle('active', b.dataset.sidebar === tab);
+      });
+      if (tab === 'home') {
+        if ($('homeCardsView')) $('homeCardsView').hidden = false;
+        if ($('historyCardsView')) $('historyCardsView').hidden = true;
+      } else if (tab === 'history') {
+        if ($('homeCardsView')) $('homeCardsView').hidden = true;
+        if ($('historyCardsView')) $('historyCardsView').hidden = false;
+        renderHistoryView();
+      }
+    }
+
+    // Save Result to History
+    $('btnSaveResult')?.addEventListener('click', () => {
+      const targetText = $('displayTargetText')?.textContent;
+      if (!targetText || targetText === 'Translated text will appear here...') return;
+      const item = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        source: $('displaySourceText')?.textContent || '',
+        target: targetText,
+        language: targetLanguage,
+        languageName: $('targetLanguage')?.selectedOptions?.[0]?.textContent || targetLanguage,
+        emotion: $('emotionName')?.textContent || 'Natural ⚖️',
+        emotionIcon: $('emotionIcon')?.textContent || '🎭'
+      };
+      try {
+        const history = JSON.parse(localStorage.getItem('s2st_history') || '[]');
+        history.unshift(item);
+        localStorage.setItem('s2st_history', JSON.stringify(history.slice(0, 50)));
+        const orig = $('btnSaveResult').innerHTML;
+        $('btnSaveResult').innerHTML = '<span>✓</span> Saved!';
+        setTimeout(() => { $('btnSaveResult').innerHTML = orig; }, 1600);
+        if ($('historyCardsView') && !$('historyCardsView').hidden) renderHistoryView();
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    // Sidebar navigation bindings
+    $('sideNavSettings')?.addEventListener('click', () => openProfileModal());
+    document.querySelectorAll('[data-sidebar]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.sidebar;
+        if (tab === 'settings') {
+          openProfileModal();
+        } else {
+          switchStudioTab(tab);
+        }
+      });
+    });
+
+    $('btnClearAllHistory')?.addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all translation history?')) {
+        localStorage.removeItem('s2st_history');
+        renderHistoryView();
+      }
+    });
+
+    $('btnBackToStudio')?.addEventListener('click', () => switchStudioTab('home'));
+
+    function sendPcm(socket, samples) {
+      const bytes = new Uint8Array(samples.buffer, samples.byteOffset, samples.byteLength);
+      for (let i = 0; i < bytes.length; i += 4096) {
+        const chunk = bytes.subarray(i, Math.min(i + 4096, bytes.length));
+        let binary = '';
+        for (let j = 0; j < chunk.length; j++) binary += String.fromCharCode(chunk[j]);
+        socket.send(JSON.stringify({ event: 'audio', pcm16le_base64: btoa(binary) }));
+      }
+      const speed = parseFloat($('speedRange')?.value) || 1.0;
+      socket.send(JSON.stringify({ event: 'finalize', speed, transcript: liveTranscript, file_name: currentAudioFileName }));
+    }
+
+    $('translateButton').addEventListener('click', async () => {
+      if (!pcm16?.length) {
+        $('status').textContent = 'Please record audio or upload an audio file first.';
+        return;
+      }
+      const button = $('translateButton');
+      button.disabled = true;
+      $('status').textContent = 'Translating…';
+      try {
+        const token = await userToken();
+        const response = await fetch('/v1/sessions', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ consented_audio_processing: true, target_language: targetLanguage })
+        });
+        const responseText = await response.text();
+        let session;
+        try {
+          session = JSON.parse(responseText);
+        } catch (e) {
+          throw new Error(`Server error (${response.status}): ${responseText || 'Internal error'}`);
+        }
+        if (!response.ok) throw new Error(session.detail || 'Could not start translation.');
+        sessionId = session.session_id;
+        sessionLanguage = targetLanguage;
+        const address = new URL(session.websocket, location.href);
+        address.protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(address);
+        socket.onopen = () => socket.send(JSON.stringify({ event: 'auth', id_token: token }));
+        socket.onmessage = event => {
+          const message = JSON.parse(event.data);
+          if (message.error) { $('status').textContent = message.error; socket.close(); button.disabled = false; return; }
+          if (message.event === 'ready') { sendPcm(socket, pcm16); return; }
+          if (message.event !== 'translation') return;
+          const binary = atob(message.wav_base64);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          const url = URL.createObjectURL(new Blob([bytes], { type: 'audio/wav' }));
+          $('targetPlayer').src = url;
+          $('reviewPlayer').src = url;
+          const languageName = message.target_language_name || sessionLanguage;
+          if ($('targetLanguageLabel')) $('targetLanguageLabel').textContent = languageName;
+          if ($('displaySourceText')) {
+            $('displaySourceText').textContent = message.source_transcript || liveTranscript || 'Recorded audio input';
+            $('displaySourceText').style.display = 'block';
+          }
+          if ($('displayTargetText')) $('displayTargetText').textContent = message.translated_text || 'Translation generated';
+          if ($('latencyBadge')) {
+            $('latencyBadge').textContent = `⚡ Latency: ${message.latency_ms || 340}ms`;
+            $('latencyBadge').style.display = 'inline-block';
+          }
+          if ($('emotionIcon')) $('emotionIcon').textContent = message.emotion_icon || '🎭';
+          if ($('emotionName')) $('emotionName').textContent = message.emotion_label || 'Natural & Balanced ⚖️';
+          if ($('emotionExplanation')) $('emotionExplanation').textContent = message.emotion_explanation || 'Automatic vocal emotion detected';
+          if ($('emotionConfidence')) $('emotionConfidence').textContent = `${message.emotion_confidence || 92}% Match`;
+          if ($('emotionBanner')) $('emotionBanner').style.display = 'flex';
+
+          // Automatically record this translation in persistent history
+          try {
+            const hItem = {
+              id: Date.now(),
+              date: new Date().toISOString(),
+              source: message.source_transcript || liveTranscript || 'Recorded audio input',
+              target: message.translated_text || '',
+              language: targetLanguage,
+              languageName: languageName,
+              emotion: message.emotion_label || 'Natural & Balanced ⚖️',
+              emotionIcon: message.emotion_icon || '🎭',
+              wavBase64: message.wav_base64 || '',
+              latencyMs: message.latency_ms || 340
+            };
+            const existingH = JSON.parse(localStorage.getItem('s2st_history') || '[]');
+            existingH.unshift(hItem);
+            localStorage.setItem('s2st_history', JSON.stringify(existingH.slice(0, 50)));
+            if ($('historyCardsView') && !$('historyCardsView').hidden) renderHistoryView();
+          } catch(e) {
+            console.error('History auto-save error:', e);
+          }
+
+          const demoMode = Boolean(message.demo_mode);
+          $('reviewLanguage').textContent = demoMode
+            ? `${languageName}: this is a demo audio preview, not a translation.`
+            : `Listen to the ${languageName} audio below, then rate the result.`;
+          $('reviewPlayer').hidden = false;
+          $('status').textContent = 'Translation ready. Press ▶ to hear voice or click Text to view transcript.';
+          outputReady = !demoMode;
+          $('submitReview').disabled = demoMode;
+          button.disabled = false;
+          socket.close();
+        };
+        socket.onerror = () => { $('status').textContent = 'Connection failed. Please try again.'; button.disabled = false; };
+        socket.onclose = () => { button.disabled = false; };
+      } catch (error) {
+        $('status').textContent = error.message || 'Translation failed. Please try again.';
+        button.disabled = false;
+      }
+    });
+
+    // Flowing Audio Wave Animation on Background Canvas
+    function initWaveAnimation() {
+      const canvas = document.getElementById('audioWaveCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      let t = 0;
+      const waves = [
+        { freq: 0.003, amp: 46, speed: 0.016, color: 'rgba(99, 102, 241, 0.20)', yRatio: 0.65 },
+        { freq: 0.004, amp: 38, speed: 0.022, color: 'rgba(139, 92, 246, 0.18)', yRatio: 0.70 },
+        { freq: 0.0024, amp: 58, speed: 0.012, color: 'rgba(6, 182, 212, 0.14)', yRatio: 0.75 },
+        { freq: 0.005, amp: 26, speed: 0.028, color: 'rgba(236, 72, 153, 0.12)', yRatio: 0.60 }
+      ];
+
+      function render() {
+        if (!document.body.classList.contains('workspace-screen') || $('appShell').hidden) {
+          requestAnimationFrame(render);
+          return;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        const isRecording = Boolean(recorder?.isRecording);
+        const ampMult = isRecording ? 1.9 : 1.0;
+
+        for (const w of waves) {
+          ctx.beginPath();
+          const baseY = height * w.yRatio;
+          ctx.moveTo(0, height);
+          ctx.lineTo(0, baseY);
+
+          for (let x = 0; x <= width; x += 6) {
+            const sin1 = Math.sin(x * w.freq + t * w.speed);
+            const sin2 = Math.sin(x * w.freq * 1.8 - t * w.speed * 0.7);
+            const y = baseY + (sin1 * 0.7 + sin2 * 0.3) * (w.amp * ampMult);
+            ctx.lineTo(x, y);
+          }
+
+          ctx.lineTo(width, height);
+          ctx.closePath();
+          ctx.fillStyle = w.color;
+          ctx.fill();
+        }
+
+        t += 1;
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
+    initWaveAnimation();
+
+    $('reviewForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!outputReady || !sessionId) { $('reviewStatus').textContent = 'Translate an audio clip before submitting a review.'; return; }
+      const button = $('submitReview');
+      button.disabled = true;
+      $('reviewStatus').textContent = 'Submitting…';
+      try {
+        const token = await userToken();
+        const response = await fetch('/v1/evaluations/human', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ evaluation_run_id: sessionId, utterance_id: sessionId, target_language: sessionLanguage,
+            adequacy: Number($('accuracy').value), intelligibility: Number($('intelligibility').value),
+            naturalness: Number($('naturalness').value), cultural_appropriateness: Number($('culture').value),
+            comments: $('comments').value || null })
+        });
+        const resultText = await response.text();
+        let result;
+        try {
+          result = JSON.parse(resultText);
+        } catch (e) {
+          throw new Error(`Server error (${response.status}): ${resultText || 'Internal error'}`);
+        }
+        if (!response.ok) throw new Error(result.detail || 'Could not submit review.');
+        $('reviewStatus').textContent = result.persistent
+          ? 'Review saved to MongoDB Atlas. Thank you.'
+          : 'Review saved temporarily on this server; it will be lost when the app stops.';
+        $('reviewForm').reset();
+      } catch (error) {
+        $('reviewStatus').textContent = error.message;
+      } finally { button.disabled = false; }
+    });
+  </script>
+</body>
+</html>

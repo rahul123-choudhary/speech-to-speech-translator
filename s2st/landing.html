@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="description" content="A research project exploring direct Yorùbá speech-to-speech translation while keeping oral language and community voices at the centre.">
+  <title>Speech Translator — Let every voice travel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..1000&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#1b211c;--muted:#646d62;--paper:#f7f7f2;--card:#fff;--line:#e6e8df;--green:#315f49;--green-deep:#1f4433;--lime:#d5ed91;--orange:#f7a47d;--serif:Georgia,'Times New Roman',serif}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,a{-webkit-tap-highlight-color:transparent}.wrap{width:min(1160px,calc(100% - 64px));margin-left:auto;margin-right:auto;position:relative;z-index:1}.wave-backdrop{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 75% 19%,#e9efdc70,transparent 48%),radial-gradient(ellipse at 13% 69%,#f3e9d84a,transparent 43%)}.wave-backdrop svg{width:100%;height:100%;position:absolute;inset:0}.wave-line{fill:none;stroke-linecap:round;stroke-width:1.35;vector-effect:non-scaling-stroke;animation:wave-drift 14s ease-in-out infinite alternate}.wave-line.one{stroke:#74956c;opacity:.20}.wave-line.two{stroke:#adbd81;opacity:.25;animation-duration:19s;animation-delay:-6s}.wave-line.three{stroke:#d29471;opacity:.15;animation-duration:17s;animation-delay:-3s}.wave-line.four{stroke:#829b75;opacity:.13;animation-duration:22s;animation-delay:-11s}@keyframes wave-drift{from{transform:translate3d(0,-10px,0)}to{transform:translate3d(-34px,13px,0)}}
+    .topbar{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e6e8df99}.brand{display:inline-flex;align-items:center;gap:11px;font:800 17px/1 'Manrope',sans-serif;letter-spacing:-.7px}.brand-mark{width:36px;height:36px;border-radius:12px;background:var(--green);display:grid;place-items:center;color:var(--lime);font:700 20px var(--serif);transform:rotate(-4deg)}.nav{display:flex;align-items:center;gap:34px;color:#586157;font-size:14px;font-weight:600}.nav a:hover{color:var(--green)}.nav-actions{display:flex;align-items:center;gap:19px;font-size:14px;font-weight:700}.login-link{color:#4d584c}.button{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 20px;border-radius:999px;background:var(--green);color:white;font-weight:700;transition:transform .2s,background .2s;box-shadow:0 7px 18px #315f4923}.button:hover{background:var(--green-deep);transform:translateY(-2px)}.button-light{background:var(--lime);color:var(--ink);box-shadow:none}.button-light:hover{background:#c9e37d;color:var(--ink)}.arrow{font-size:18px;line-height:0}
+    .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:55px;align-items:center;padding:80px 0 78px;min-height:590px}.eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:1.25px;text-transform:uppercase}.eyebrow-dot{width:7px;height:7px;background:#81a95e;border-radius:50%;box-shadow:0 0 0 4px #81a95e1c}.hero h1{max-width:610px;margin:22px 0 18px;font:600 clamp(50px,6.3vw,78px)/1.04 'Manrope',sans-serif;letter-spacing:-5.5px}.hero h1 em{font-family:var(--serif);font-weight:400;color:var(--green);letter-spacing:-4px}.hero-copy{max-width:490px;color:var(--muted);font-size:17px;line-height:1.75}.hero-actions{display:flex;align-items:center;gap:21px;margin-top:30px}.text-link{font-size:14px;font-weight:700;color:#4a584b}.text-link span{display:inline-block;margin-left:5px;transition:transform .2s}.text-link:hover span{transform:translateX(4px)}.hero-note{margin-top:32px;display:flex;align-items:center;gap:10px;color:#788073;font-size:12px}.note-icon{display:grid;place-items:center;width:23px;height:23px;border:1px solid #cbd2c4;border-radius:50%;font-size:12px}
+    .visual{height:425px;position:relative;display:grid;place-items:center}.halo{position:absolute;width:min(390px,85%);aspect-ratio:1;border-radius:50%;background:#edf0dc}.halo:before,.halo:after{content:'';position:absolute;border:1px solid #d7ddc6;border-radius:50%;inset:22px}.halo:after{inset:47px;border-style:dashed;border-color:#cdd5bd}.sound-card{position:relative;width:min(378px,88%);padding:25px 25px 21px;background:var(--green-deep);color:white;border-radius:24px;box-shadow:0 27px 55px #253e302d;transform:rotate(-2.2deg)}.sound-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#d2ddcf}.live{display:inline-flex;align-items:center;gap:7px}.live:before{content:'';width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px #d5ed9125}.language-pair{display:flex;align-items:center;gap:11px;margin-top:25px;font:600 20px 'Manrope',sans-serif;letter-spacing:-.5px}.language-pair .swap{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#ffffff19;color:var(--lime);font-size:13px}.wave{height:80px;display:flex;align-items:center;justify-content:center;gap:4px;margin:16px 0 9px}.wave i{display:block;width:4px;border-radius:9px;background:#c5e38c;height:var(--h);opacity:var(--o,1)}.sound-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ffffff23;padding-top:15px;color:#d0dbcd;font-size:11px}.play{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--lime);color:var(--green-deep);font-size:12px;padding-left:2px}.float-note{position:absolute;left:-2px;top:64px;width:168px;padding:14px 15px;background:#fff;border:1px solid #ecede6;border-radius:15px;box-shadow:0 12px 26px #27332610;transform:rotate(4deg)}.float-note small{display:block;color:#808878;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px}.float-note strong{display:block;margin-top:5px;font:600 15px 'Manrope',sans-serif}.float-note .mini-wave{display:flex;align-items:center;gap:3px;margin-top:9px;height:16px}.mini-wave i{width:3px;border-radius:4px;background:#8eaa71;height:var(--h)}.community-chip{position:absolute;right:-1px;bottom:50px;padding:13px 16px;background:var(--orange);border-radius:14px;font-size:11px;line-height:1.4;box-shadow:0 12px 28px #bb704226;transform:rotate(3deg)}.community-chip strong{display:block;font:700 13px 'Manrope',sans-serif}.orbit-label{position:absolute;right:8px;top:36px;display:grid;place-items:center;width:59px;height:59px;border-radius:50%;background:var(--lime);color:var(--green-deep);font:700 11px/1.25 'Manrope',sans-serif;text-align:center;transform:rotate(10deg)}
+    .proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0;display:flex;align-items:center;justify-content:space-between;gap:25px;color:#667064;font-size:13px}.proof-title{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#889082}.proof-item{display:flex;align-items:center;gap:9px;font-weight:600}.proof-item b{color:var(--green);font-size:18px;font-weight:500}.section{padding:100px 0}.section-head{max-width:630px;margin-bottom:42px}.section-kicker{font-size:11px;color:var(--green);font-weight:800;letter-spacing:1.25px;text-transform:uppercase}.section h2{margin:13px 0 12px;font:600 clamp(35px,4.2vw,50px)/1.14 'Manrope',sans-serif;letter-spacing:-2.3px}.section-head p{max-width:560px;margin:0;color:var(--muted);font-size:16px;line-height:1.75}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.step{min-height:223px;padding:25px 26px;background:var(--card);border:1px solid var(--line);border-radius:19px}.step-num{width:37px;height:37px;display:grid;place-items:center;background:#eef2e6;color:var(--green);border-radius:12px;font:700 14px 'Manrope',sans-serif}.step h3{margin:24px 0 7px;font:700 18px 'Manrope',sans-serif;letter-spacing:-.5px}.step p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}.research{padding:0 0 92px}.research-card{display:grid;grid-template-columns:1.15fr .85fr;gap:35px;align-items:center;overflow:hidden;position:relative;padding:41px 44px;background:#e9eee1;border-radius:24px}.research-card:after{content:'Y';position:absolute;right:25%;top:-140px;font:400 470px/.9 var(--serif);color:#dce4d1;pointer-events:none}.research-copy{position:relative;z-index:1}.research-copy .section-kicker{color:#526c47}.research-copy h2{max-width:510px;margin:14px 0;font:600 34px/1.18 'Manrope',sans-serif;letter-spacing:-1.7px}.research-copy p{max-width:500px;color:#66705f;font-size:14px;line-height:1.75}.research-meta{position:relative;z-index:1;justify-self:end;width:min(100%,310px);padding:20px;background:#fff;border:1px solid #dce3d3;border-radius:17px;box-shadow:0 15px 35px #44563a10}.meta-top{display:flex;justify-content:space-between;align-items:center;color:#798273;font-size:11px;font-weight:700}.status-tag{padding:6px 9px;background:#fbf0d9;color:#98641f;border-radius:20px;font-size:10px}.meta-title{margin:17px 0 5px;font:700 17px 'Manrope',sans-serif}.meta-text{margin:0;color:#74806f;font-size:12px;line-height:1.55}.meta-rule{height:1px;background:#edf0e8;margin:15px 0}.meta-foot{display:flex;justify-content:space-between;color:#7a8474;font-size:10px}.cta{padding:0 0 95px}.cta-box{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:30px;padding:39px 43px;background:var(--green-deep);border-radius:23px;color:white}.cta-box:after{content:'';position:absolute;width:330px;height:330px;right:23%;top:-250px;border:1px solid #ffffff21;border-radius:50%;box-shadow:0 0 0 27px #ffffff09,0 0 0 55px #ffffff08}.cta-copy{position:relative;z-index:1}.cta-copy h2{margin:0 0 7px;font:600 31px/1.18 'Manrope',sans-serif;letter-spacing:-1.3px}.cta-copy p{margin:0;color:#cfdbcf;font-size:14px}.cta-box .button{position:relative;z-index:1;white-space:nowrap}.footer{border-top:1px solid var(--line);padding:24px 0 30px;display:flex;align-items:center;justify-content:space-between;color:#7b8377;font-size:12px}.footer-right{display:flex;gap:20px}.footer a:hover{color:var(--green)}
+    @media(max-width:850px){.wrap{width:min(100% - 42px,680px)}.nav{gap:19px}.hero{grid-template-columns:1fr;gap:12px;padding:67px 0 42px}.hero-copy{max-width:560px}.visual{height:400px}.float-note{left:4%}.community-chip{right:4%}.orbit-label{right:8%}.proof{flex-wrap:wrap;justify-content:flex-start}.proof-title{width:100%}.research-card{grid-template-columns:1fr}.research-meta{justify-self:start}.research-card:after{right:0}}@media(max-width:560px){.wrap{width:calc(100% - 36px)}.topbar{height:70px}.brand{font-size:15px}.brand-mark{width:33px;height:33px}.nav{display:none}.nav-actions{gap:13px;font-size:13px}.nav-actions .button{min-height:41px;padding:0 15px}.hero{padding:55px 0 24px}.hero h1{font-size:52px;letter-spacing:-3.8px}.hero h1 em{letter-spacing:-3px}.hero-copy{font-size:15px}.hero-actions{gap:15px;flex-wrap:wrap}.hero-actions .button{min-height:44px;padding:0 16px}.hero-note{margin-top:23px;font-size:11px}.visual{height:340px;margin:0 -10px}.sound-card{padding:20px;width:82%;border-radius:21px}.language-pair{font-size:17px;margin-top:19px}.wave{height:63px}.float-note{left:0;top:36px;width:147px;padding:11px}.community-chip{right:0;bottom:24px;padding:10px 12px}.orbit-label{right:1%;top:19px;width:49px;height:49px;font-size:9px}.proof{gap:14px 22px;font-size:11px}.proof-item b{font-size:15px}.section{padding:73px 0}.section-head{margin-bottom:26px}.section h2{font-size:37px;letter-spacing:-1.8px}.steps{grid-template-columns:1fr;gap:11px}.step{min-height:unset;padding:21px}.step h3{margin-top:17px}.research{padding-bottom:70px}.research-card{padding:27px 22px;border-radius:19px;gap:19px}.research-copy h2{font-size:29px}.cta{padding-bottom:68px}.cta-box{display:block;padding:28px 22px;border-radius:19px}.cta-copy h2{font-size:27px}.cta-box .button{margin-top:21px}.footer{align-items:flex-start;gap:15px;flex-direction:column}.footer-right{gap:15px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+  </style>
+  <style>
+    :root{--ink:#f4f1ec;--muted:#a5a19e;--paper:#09090b;--card:#111113;--line:#282729;--green:#ff7138;--green-deep:#141313;--lime:#ff9a57;--orange:#ff783d}
+    html{background:#09090b}body{background:#09090b;color:#f4f1ec}.wave-backdrop{background:radial-gradient(ellipse at 78% 15%,#a6401f20,transparent 42%),radial-gradient(ellipse at 25% 53%,#51221416,transparent 46%),linear-gradient(180deg,#09090b,#0a090a 65%,#09090b)}.wave-line.one{stroke:#ff814b;opacity:.13}.wave-line.two{stroke:#d6d0c7;opacity:.07}.wave-line.three{stroke:#e36531;opacity:.1}.wave-line.four{stroke:#f5ad78;opacity:.055}
+    .topbar{border-bottom-color:#ffffff12}.brand{color:#f6f4f0}.brand-mark{background:#171719;border:1px solid #ffffff20;color:#ff8951;box-shadow:0 0 18px #fb6a3024}.nav{color:#aaa6a1}.nav a:hover,.login-link:hover{color:#fff}.login-link{color:#d6d2ce}.button{background:#ff6e35;color:#fff;box-shadow:0 0 28px #ff6b3540,0 7px 18px #0008}.button:hover{background:#ff814b;color:#fff;box-shadow:0 0 35px #ff6b3566}.button-light{background:#f4f0ea;color:#161514;box-shadow:none}.button-light:hover{background:#fff;color:#161514}
+    .hero{display:block;min-height:unset;padding:66px 0 48px;text-align:center}.hero-copybox{max-width:780px;margin:0 auto}.eyebrow{color:#ff9868;justify-content:center;font-size:11px;letter-spacing:1.5px}.eyebrow-dot{background:#ff7840;box-shadow:0 0 13px #ff7138}.hero h1{max-width:none;margin:19px 0 15px;font-size:clamp(46px,7vw,78px);line-height:1.06;letter-spacing:-4.8px}.hero h1 em{font-family:'Manrope',sans-serif;font-weight:500;color:#fff;letter-spacing:-4.8px;background:linear-gradient(100deg,#fff3e9 10%,#ff9a61 54%,#ff672f 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero-copy{max-width:610px;margin:0 auto;color:#a9a4a0;font-size:15px;line-height:1.75}.hero-actions{justify-content:center;gap:25px;margin-top:24px}.text-link{color:#ded9d4}.hero-note{justify-content:center;margin-top:22px;color:#88837f;font-size:11px}.note-icon{border-color:#49413b;color:#ff9a65}
+    .visual{width:min(970px,100%);height:clamp(310px,39vw,430px);display:block;margin:45px auto 0;overflow:hidden;isolation:isolate;border:1px solid #ffffff19;border-radius:13px;background:radial-gradient(ellipse at 78% 7%,#ea501f44,transparent 33%),radial-gradient(ellipse at 50% 94%,#a53d2018,transparent 48%),linear-gradient(135deg,#101012 0%,#080809 54%,#100b09 100%);box-shadow:0 25px 90px #000b,0 0 80px #e859281f;transform:perspective(1400px) rotateX(1deg)}.visual:before{content:'';position:absolute;z-index:-1;inset:-2px;background:radial-gradient(ellipse at 85% 0%,#ff692d3b,transparent 36%);filter:blur(12px);animation:orange-glow 7s ease-in-out infinite alternate}.visual-bar{height:43px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid #ffffff10;color:#8d8884;font-size:9px;font-weight:700;letter-spacing:1px}.visual-bar span:first-child{display:flex;align-items:center;gap:9px}.visual-bar i{width:6px;height:6px;border-radius:50%;background:#ff8247;box-shadow:0 0 9px #ff723b;display:inline-block}.visual-bar b,.visual-footer b{margin-left:5px;color:#ff8247;font-size:8px;text-shadow:0 0 8px #ff7138}.visual-bar span:last-child{color:#aaa19a}.network-stage{height:calc(100% - 79px);position:relative;max-width:900px;margin:auto}.network-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.signal-line{fill:none;stroke:url(#signal);stroke-width:1.5;filter:url(#glow);stroke-dasharray:9 12;animation:signal-flow 2.8s linear infinite}.line-b{animation-duration:3.6s;animation-delay:-1s;opacity:.7}.line-c{animation-duration:4.2s;animation-delay:-2s;opacity:.65}.signal-dot{fill:#ff945b;filter:url(#glow);animation:dot-pulse 2.5s ease-in-out infinite}.dot-two{animation-delay:.5s}.dot-three{animation-delay:1s}.system-node{position:absolute;top:50%;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translate(-50%,-50%);color:#eee9e5}.node-source{left:14%}.node-target{left:86%}.node-engine{left:50%;width:112px;height:112px;border:1px solid #ffffff30;border-radius:25px;background:linear-gradient(145deg,#1e1c1c,#0c0b0c);box-shadow:0 0 55px #fb67353a,inset 0 0 28px #ff71380c}.node-icon{width:45px;height:45px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#282626,#151415);border:1px solid #ffffff13;color:#ff8d54;font-size:26px;margin-bottom:10px;text-shadow:0 0 18px #ff7138}.system-node b{font-size:9px;letter-spacing:1px;font-weight:700}.system-node small{margin-top:5px;color:#77716d;font-size:8px;letter-spacing:1.25px}.engine-core{font:700 27px 'Manrope',sans-serif;letter-spacing:-2px;text-shadow:0 0 22px #ff713866}.engine-core span{color:#ff864d}.node-engine b{margin-top:8px;color:#b9b2ac;font-size:7px;letter-spacing:1.1px}.engine-halo{position:absolute;inset:-13px;border:1px solid #ff783942;border-radius:31px;animation:halo-pulse 3s ease-out infinite}.node-bars{height:27px;display:flex;align-items:center;justify-content:center;gap:3px;margin-top:11px}.node-bars i{width:2px;height:var(--bar,8px);border-radius:3px;background:#ff8450;opacity:.82;animation:audio-bars .8s ease-in-out infinite alternate}.node-bars i:nth-child(3n){animation-delay:-.3s}.node-bars i:nth-child(2n){animation-delay:-.55s}.node-bars i:nth-child(4n){animation-delay:-.15s}.node-bars i:nth-child(1){--bar:6px}.node-bars i:nth-child(2){--bar:12px}.node-bars i:nth-child(3){--bar:17px}.node-bars i:nth-child(4){--bar:9px}.node-bars i:nth-child(5){--bar:22px}.node-bars i:nth-child(6){--bar:13px}.node-bars i:nth-child(7){--bar:18px}.node-bars i:nth-child(8){--bar:8px}.node-bars i:nth-child(9){--bar:20px}.node-bars i:nth-child(10){--bar:11px}.node-bars i:nth-child(11){--bar:16px}.node-bars i:nth-child(12){--bar:7px}.node-bars i:nth-child(13){--bar:13px}.target-bars i{background:#ffad72}.orbit{position:absolute;left:30%;top:50%;width:54px;height:54px;display:grid;place-items:center;border:1px solid #ffffff17;border-radius:50%;background:#111012;color:#99908a;text-align:center;font-size:7px;line-height:1.3;letter-spacing:.7px;transform:translate(-50%,-50%)}.orbit-bottom{left:70%;border-color:#ff8a4c34;color:#e49c74}.node-label{position:absolute;left:50%;color:#716b67;font-size:8px;letter-spacing:1.35px;white-space:nowrap;transform:translateX(-50%)}.label-top{top:17%}.label-bottom{bottom:13%}.visual-footer{height:36px;display:flex;align-items:center;justify-content:center;gap:16px;border-top:1px solid #ffffff10;color:#8a837e;font-size:8px;font-weight:700;letter-spacing:1.1px}.footer-line{width:min(22vw,160px);height:1px;background:linear-gradient(90deg,#ff743500,#ff7435,#ff743500)}@keyframes signal-flow{to{stroke-dashoffset:-84}}@keyframes dot-pulse{50%{opacity:.35;transform:scale(.7)}}@keyframes halo-pulse{0%{transform:scale(.9);opacity:.15}55%{opacity:.8}100%{transform:scale(1.18);opacity:0}}@keyframes audio-bars{to{transform:scaleY(.35);opacity:.5}}@keyframes orange-glow{to{opacity:.55;transform:translateX(-2%)}}
+    .proof{border-color:#ffffff13;color:#b6b0aa}.proof-title{color:#76716d}.proof-item b{color:#ff8a50}.section-kicker{color:#ff9565}.section-head p{color:#a5a09b}.step{background:linear-gradient(145deg,#121214,#0d0d0e);border-color:#ffffff13}.step-num{background:#201714;color:#ff9a67}.step p{color:#9d9792}.research-card{background:linear-gradient(120deg,#131211,#0b0b0c);border:1px solid #ffffff13}.research-card:after{color:#ff713808}.research-copy .section-kicker{color:#ff9565}.research-copy p{color:#a39d97}.research-meta{background:#131213;border-color:#ffffff17;box-shadow:0 20px 55px #0007}.meta-top,.meta-foot{color:#948d87}.status-tag{background:#382014;color:#ffad79}.meta-text{color:#a8a09a}.meta-rule{background:#ffffff13}.cta-box{background:radial-gradient(ellipse at 85% 0%,#f7663030,transparent 42%),linear-gradient(120deg,#171313,#0e0d0e);border:1px solid #ffffff17}.cta-copy p{color:#b1aaa4}.footer{border-color:#ffffff15;color:#8d8782}.footer-right a:hover{color:#ff9a65}
+    @media(max-width:850px){.hero{padding-top:54px}.visual{height:370px}.network-stage{max-width:700px}.node-source{left:11%}.node-target{left:89%}.orbit{left:31%}.orbit-bottom{left:69%}}
+    @media(max-width:560px){.topbar{height:68px}.hero{padding:43px 0 37px}.hero h1{font-size:43px;letter-spacing:-2.8px}.hero h1 em{letter-spacing:-2.8px}.hero-copy{font-size:13px}.hero-actions{gap:15px;margin-top:20px}.hero-actions .button{font-size:12px}.hero-note{font-size:9px}.visual{height:310px;margin-top:32px;border-radius:10px}.visual-bar{height:35px;padding:0 12px;font-size:7px;letter-spacing:.6px}.network-stage{height:calc(100% - 65px)}.node-source{left:13%}.node-target{left:87%}.node-icon{width:36px;height:36px;border-radius:11px;font-size:20px}.system-node b{font-size:7px;letter-spacing:.6px}.system-node small{font-size:6px;letter-spacing:.7px}.node-engine{width:75px;height:75px;border-radius:19px}.engine-halo{inset:-9px;border-radius:24px}.engine-core{font-size:21px}.node-engine b{font-size:6px;margin-top:5px}.node-bars{gap:2px;height:20px;margin-top:7px}.node-bars i{width:1.5px}.orbit{width:39px;height:39px;font-size:6px;left:31%}.orbit-bottom{left:69%}.node-label{font-size:6px;letter-spacing:.7px}.label-top{top:16%}.label-bottom{bottom:13%}.visual-footer{height:30px;font-size:6px;gap:8px;letter-spacing:.7px}.footer-line{width:13vw}.proof{gap:12px 18px}.section{padding:66px 0}.research-card{background:linear-gradient(120deg,#131211,#0b0b0c)}}
+    @media(prefers-reduced-motion:reduce){.wave-line,.signal-line,.signal-dot,.engine-halo,.node-bars i,.visual:before{animation:none!important}}
+  </style>
+  <style>
+    .wrap{width:100%;max-width:none;padding-left:clamp(22px,5vw,88px);padding-right:clamp(22px,5vw,88px)}
+    .hero{display:flex;min-height:calc(100svh - 82px);flex-direction:column;justify-content:center;padding-top:clamp(42px,6vh,78px);padding-bottom:clamp(42px,6vh,78px)}
+    .hero-copybox{width:min(100%,900px);margin-inline:auto}.visual{width:100%;max-width:1440px;height:clamp(330px,43vh,500px)}
+    .proof{padding-top:24px;padding-bottom:24px}.section{padding-top:clamp(75px,10vh,118px);padding-bottom:clamp(75px,10vh,118px)}.section-head{max-width:760px}.steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,28px)}.step{min-height:240px;padding:clamp(23px,3vw,38px)}
+    .research{padding-bottom:clamp(70px,9vh,110px)}.research-card{grid-template-columns:minmax(0,1.1fr) minmax(300px,.75fr);padding:clamp(32px,5vw,65px);min-height:390px}.cta{padding-bottom:clamp(70px,9vh,110px)}.cta-box{min-height:190px;padding:clamp(30px,5vw,58px)}
+    @media(max-width:850px){.wrap{width:100%;padding-left:26px;padding-right:26px}.hero{min-height:unset}.visual{height:clamp(330px,44vh,420px)}.research-card{grid-template-columns:1fr}.steps{grid-template-columns:1fr}}
+    @media(max-width:560px){.wrap{width:100%;padding-left:18px;padding-right:18px}.topbar{height:70px}.hero{padding-top:44px;padding-bottom:37px}.visual{height:310px;margin-top:29px}.proof{padding-top:20px;padding-bottom:20px}.section{padding-top:65px;padding-bottom:65px}.research{padding-bottom:65px}.research-card{padding:25px 20px;min-height:unset}.cta{padding-bottom:65px}.cta-box{min-height:unset}}
+    .hero{justify-content:flex-start;min-height:calc(100svh - 82px);padding-top:clamp(20px,3vh,34px);padding-bottom:24px}
+    .hero h1{margin-top:12px;margin-bottom:11px;font-size:clamp(43px,5.4vw,68px);letter-spacing:-3.6px}.hero h1 em{letter-spacing:-3.6px}.hero-copy{font-size:14px}.hero-actions{margin-top:17px}.visual{max-width:none;height:clamp(390px,46vh,530px);margin-top:22px}.hero-note{display:none}
+    @media(max-width:850px){.hero{min-height:unset;padding-top:27px;padding-bottom:22px}.visual{height:clamp(360px,45vh,450px);margin-top:20px}}
+    @media(max-width:560px){.hero{padding-top:22px;padding-bottom:20px}.hero h1{font-size:40px;letter-spacing:-2.7px}.hero h1 em{letter-spacing:-2.7px}.hero-copy{font-size:13px}.hero-actions{margin-top:15px}.visual{height:clamp(330px,42vh,390px);margin-top:17px}}
+  </style>
+  <style>
+    @media(max-width:850px){.orbit,.node-label{display:none}.node-source{left:7%;width:88px}.node-target{left:93%;width:88px}.node-engine{width:clamp(76px,10vw,100px);height:clamp(76px,10vw,100px)}.engine-halo{inset:-8px}.node-bars{gap:2px}}
+    @media(max-width:560px){.node-source{left:8%;width:62px}.node-target{left:92%;width:62px}.node-source b,.node-source small,.node-target b,.node-target small{display:none}.node-icon{width:34px;height:34px;margin-bottom:4px}.node-engine{width:74px;height:74px}.engine-core{font-size:20px}.node-engine b{font-size:6px}.node-bars{height:15px;margin-top:5px}.node-bars i{width:2px}}
+  </style>
+  <style>
+    .topbar{padding-left:clamp(18px,2vw,30px);padding-right:clamp(18px,2vw,30px)}
+    .hero{min-height:calc(100svh - 82px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 clamp(18px,5vw,70px)}
+    .hero-copybox{width:min(100%,760px);text-align:center}.hero .eyebrow{display:none}.hero h1{max-width:none;margin:0 0 14px;font-size:clamp(40px,6vw,76px);line-height:1.08;letter-spacing:-3.8px}.hero h1 em{letter-spacing:-3.8px}.hero-copy{margin:0 auto;color:#aaa5a1;font-size:clamp(14px,1.5vw,17px)}.hero-actions{justify-content:center;margin-top:27px}.hero .visual{display:block}.hero .hero-note{display:none}
+    @media(max-width:560px){.topbar{padding-left:16px;padding-right:16px}.hero{min-height:calc(100svh - 70px);padding-left:20px;padding-right:20px}.hero h1{font-size:clamp(38px,10vw,48px);letter-spacing:-2.5px}.hero h1 em{letter-spacing:-2.5px}.hero-actions{margin-top:23px}}
+  </style>
+  <style>
+    [data-scroll-reveal] .scroll-reveal-word{display:inline-block;will-change:opacity,filter}
+    .network-stage>.node-source{left:4%;transform:translateY(-50%)}
+    .network-stage>.node-target{left:auto;right:4%;transform:translateY(-50%)}
+    .network-stage>.node-engine{left:50%;transform:translate(-50%,-50%);z-index:2}
+    .node-engine .engine-core{display:block;white-space:nowrap;line-height:1;letter-spacing:-.04em}
+    .node-engine>.engine-halo{pointer-events:none}
+    .hero h1.variable-proximity-title,.hero h1.variable-proximity-title em{font-family:'Roboto Flex','Manrope',sans-serif;font-variation-settings:'wght' 560,'opsz' 48}
+    .variable-proximity-word{display:inline-block;white-space:nowrap}
+    .variable-proximity-letter{display:inline-block;font-variation-settings:'wght' 560,'opsz' 48;will-change:font-variation-settings}
+    .hero h1.variable-proximity-title em .variable-proximity-letter{background:linear-gradient(100deg,#fff3e9 10%,#ff9a61 54%,#ff672f 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .wave-backdrop{background:radial-gradient(ellipse at 82% 14%,#d9e2f222,transparent 39%),radial-gradient(ellipse at 20% 76%,#8793a21c,transparent 42%),linear-gradient(180deg,#090b10,#0b0d12 55%,#080a0f)}
+    .wave-backdrop:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#080a0f12,#080a0f42 68%,#080a0f24);pointer-events:none}
+    .wave-backdrop .particle-field{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .proof{overflow:hidden}
+    .proof-marquee{width:100%;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+    .proof-rail{display:flex;width:max-content;align-items:center;animation:proof-marquee 34s linear infinite;will-change:transform}
+    .proof-group{display:flex;flex:0 0 auto;align-items:center;gap:clamp(27px,5vw,78px);padding-right:clamp(27px,5vw,78px)}
+    .proof-group .proof-title{width:auto;flex:0 0 auto}
+    .proof-group .proof-item{flex:0 0 auto;white-space:nowrap}
+    @keyframes proof-marquee{to{transform:translateX(-50%)}}
+    .gsap-proof-marquee .proof-rail{animation:none}
+    @media(prefers-reduced-motion:reduce){.variable-proximity-letter{will-change:auto}}
+    @media(prefers-reduced-motion:reduce){.proof-rail{animation:none}.proof-marquee{overflow-x:auto;mask-image:none}}
+    @media(prefers-reduced-motion:reduce){[data-scroll-reveal] .scroll-reveal-word{opacity:1!important;filter:none!important;will-change:auto}}
+  </style>
+</head>
+<body>
+  <div class="wave-backdrop" aria-hidden="true">
+    <canvas class="particle-field" aria-hidden="true"></canvas>
+  </div>
+  <header class="wrap topbar">
+    <a class="brand" href="/" aria-label="Speech Translator home"><span class="brand-mark" aria-hidden="true">S</span><span>Speech Translator</span></a>
+    <div class="nav-actions"><a class="login-link" href="/login">Sign in</a></div>
+  </header>
+  <main>
+    <section class="wrap hero">
+      <div class="hero-copybox">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Yorùbá speech · English output</div>
+        <h1 class="variable-proximity-title" aria-label="Speech that travels."><span class="variable-proximity-word" aria-hidden="true">Speech</span> <span class="variable-proximity-word" aria-hidden="true">that</span> <em><span class="variable-proximity-word" aria-hidden="true">travels.</span></em></h1>
+        <p class="hero-copy">Yorùbá to English, voice to voice.</p>
+        <div class="hero-actions"><a class="button" href="/login">Explore the project <span class="arrow" aria-hidden="true">↗</span></a></div>
+      </div>
+      <div class="hero-note"><span class="note-icon">✳</span> Early research preview · Community voices at the centre</div>
+    </section>
+    <section class="wrap proof" aria-label="Project principles">
+      <div class="proof-marquee">
+        <div class="proof-rail">
+          <div class="proof-group">
+            <span class="proof-title">Grounded in</span><span class="proof-item"><b>◎</b> Oral language</span><span class="proof-item"><b>↔</b> Direct speech research</span><span class="proof-item"><b>✳</b> Community review</span><span class="proof-item"><b>⌁</b> Meaningful connection</span>
+          </div>
+          <div class="proof-group" aria-hidden="true">
+            <span class="proof-title">Grounded in</span><span class="proof-item"><b>◎</b> Oral language</span><span class="proof-item"><b>↔</b> Direct speech research</span><span class="proof-item"><b>✳</b> Community review</span><span class="proof-item"><b>⌁</b> Meaningful connection</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="wrap section" id="approach">
+        <div class="section-head"><span class="section-kicker">Simple by design</span><h2 data-scroll-reveal>From a spoken thought<br>to another voice.</h2><p data-scroll-reveal>The experience is meant to feel simple. The research behind it takes care to honour speech, meaning and the people who speak it.</p></div>
+      <div class="steps">
+        <article class="step"><span class="step-num">01</span><h3>Speak naturally</h3><p>Record a short Yorùbá phrase or choose an audio file to begin.</p></article>
+        <article class="step"><span class="step-num">02</span><h3>Carry the meaning</h3><p>The project is researching direct speech-to-speech translation, without relying on text as the final experience.</p></article>
+        <article class="step"><span class="step-num">03</span><h3>Listen and review</h3><p>Hear the output and share a human review to help guide the work.</p></article>
+      </div>
+    </section>
+    <section class="wrap research" id="research">
+      <div class="research-card">
+        <div class="research-copy"><span class="section-kicker">Language is more than words</span><h2 data-scroll-reveal>Technology should listen with respect.</h2><p data-scroll-reveal>Yorùbá carries knowledge through everyday conversation, stories and generations of speaking. This project explores speech technology designed with that living oral tradition in mind.</p><a class="text-link" href="/app">Visit the research workspace <span aria-hidden="true">→</span></a></div>
+        <aside class="research-meta" aria-label="Research status"><div class="meta-top"><span>PROJECT STATUS</span><span class="status-tag">Early research</span></div><div class="meta-title">Yorùbá → English</div><p class="meta-text">The research workspace is being prepared. Translation requires a trained model; the live model is not available yet.</p><div class="meta-rule"></div><div class="meta-foot"><span>Oral language</span><span>Community-led review</span></div></aside>
+      </div>
+    </section>
+    <section class="wrap cta"><div class="cta-box"><div class="cta-copy"><h2 data-scroll-reveal>Come hear what we’re building.</h2><p data-scroll-reveal>Join the research workspace and follow the project’s progress.</p></div><a class="button button-light" href="/login">Create an account <span class="arrow" aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="wrap footer"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">S</span><span>Speech Translator</span></a><span>Research in progress · Yorùbá speech, shared with care.</span><div class="footer-right"><a href="/login">Log in</a><a href="/app">Workspace</a></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Observer.min.js"></script>
+  <script>
+    (() => {
+      const rail = document.querySelector('.proof-rail');
+      if (!rail || !window.gsap || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      if (window.Observer) gsap.registerPlugin(Observer);
+      document.documentElement.classList.add('gsap-proof-marquee');
+      rail.style.animation = 'none';
+      const loop = gsap.to(rail, {
+        xPercent: -50,
+        duration: 34,
+        ease: 'none',
+        repeat: -1
+      });
+
+      if (!window.Observer) return;
+      let speedTween;
+      Observer.create({
+        target: window,
+        type: 'wheel,touch',
+        onChangeY(self) {
+          if (Math.abs(self.deltaY) < 2) return;
+          const direction = self.deltaY < 0 ? -1 : 1;
+          speedTween?.kill();
+          speedTween = gsap.timeline({ defaults: { ease: 'power1.out' } })
+            .to(loop, { timeScale: direction * 2.5, duration: 0.18, overwrite: true })
+            .to(loop, { timeScale: direction, duration: 0.8 }, '+=0.12');
+        }
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      const heading = document.querySelector('.variable-proximity-title');
+      if (!heading || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const letters = [];
+      heading.querySelectorAll('.variable-proximity-word').forEach((word) => {
+        const characterSpans = Array.from(word.textContent, (character) => {
+          const letter = document.createElement('span');
+          letter.className = 'variable-proximity-letter';
+          letter.textContent = character;
+          letters.push(letter);
+          return letter;
+        });
+        word.replaceChildren(...characterSpans);
+      });
+
+      const radius = 190;
+      const baseWeight = 560;
+      const baseOpticalSize = 48;
+      let pointer = null;
+      let frame = 0;
+
+      const updateLetters = () => {
+        frame = 0;
+        letters.forEach((letter) => {
+          const bounds = letter.getBoundingClientRect();
+          const dx = (bounds.left + bounds.width / 2) - (pointer?.x ?? -10000);
+          const dy = (bounds.top + bounds.height / 2) - (pointer?.y ?? -10000);
+          const distance = Math.hypot(dx, dy);
+          const proximity = distance < radius ? (1 - distance / radius) ** 2 : 0;
+          const weight = baseWeight + 340 * proximity;
+          const opticalSize = baseOpticalSize + 72 * proximity;
+          letter.style.fontVariationSettings = "'wght' " + weight.toFixed(1) + ", 'opsz' " + opticalSize.toFixed(1);
+        });
+      };
+
+      const scheduleUpdate = () => {
+        if (!frame) frame = requestAnimationFrame(updateLetters);
+      };
+
+      window.addEventListener('pointermove', (event) => {
+        pointer = { x: event.clientX, y: event.clientY };
+        scheduleUpdate();
+      }, { passive: true });
+      window.addEventListener('pointerleave', () => {
+        pointer = null;
+        scheduleUpdate();
+      }, { passive: true });
+      window.addEventListener('scroll', scheduleUpdate, { passive: true });
+      window.addEventListener('resize', scheduleUpdate, { passive: true });
+    })();
+  </script>
+  <script>
+    (() => {
+      const canvas = document.querySelector('.particle-field');
+      const context = canvas?.getContext('2d', { alpha: true });
+      if (!canvas || !context) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0;
+      let height = 0;
+      let scale = 1;
+      let particles = [];
+      let frameId = 0;
+      let lastFrame = 0;
+      let elapsed = 0;
+
+      const resize = () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        scale = Math.min(window.devicePixelRatio || 1, 1.35);
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        context.setTransform(scale, 0, 0, scale, 0, 0);
+
+        const count = Math.min(900, Math.max(320, Math.round(width * height / 1000)));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: 0.4 + Math.random() ** 1.5 * 1.8,
+          alpha: 0.2 + Math.random() * 0.48,
+          phase: Math.random() * Math.PI * 2,
+          drift: 0.04 + Math.random() * 0.22,
+          streak: Math.random() > 0.965
+        }));
+        render(elapsed);
+      };
+
+      const paintGlow = (x, y, radius, opacity) => {
+        const glow = context.createRadialGradient(x, y, 0, x, y, radius);
+        glow.addColorStop(0, 'rgba(234,241,255,' + opacity + ')');
+        glow.addColorStop(0.28, 'rgba(163,181,211,' + (opacity * 0.48) + ')');
+        glow.addColorStop(1, 'rgba(120,140,175,0)');
+        context.fillStyle = glow;
+        context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+      };
+
+      const render = (time) => {
+        context.clearRect(0, 0, width, height);
+        context.save();
+        context.globalCompositeOperation = 'screen';
+
+        const drift = time * 0.00032;
+        paintGlow(width * (0.91 + Math.sin(drift) * 0.025), height * (0.11 + Math.cos(drift * 1.4) * 0.035), Math.max(width, height) * 0.32, 0.3);
+        paintGlow(width * (0.37 + Math.sin(drift * 1.7) * 0.035), height * (0.49 + Math.cos(drift) * 0.045), Math.max(width, height) * 0.24, 0.18);
+        paintGlow(width * (0.61 + Math.cos(drift * 1.2) * 0.04), height * (0.91 + Math.sin(drift) * 0.025), Math.max(width, height) * 0.29, 0.26);
+
+        context.save();
+        context.filter = 'blur(' + Math.max(5, width * 0.006) + 'px)';
+        context.lineWidth = Math.max(5, width * 0.008);
+        context.lineCap = 'round';
+        for (let index = 0; index < 3; index++) {
+          const phase = drift * (index + 1) + index * 1.7;
+          const startY = height * (0.32 + index * 0.22);
+          const ribbon = context.createLinearGradient(0, startY - 80, width, startY + 80);
+          ribbon.addColorStop(0, 'rgba(220,231,250,0)');
+          ribbon.addColorStop(0.35, 'rgba(190,207,233,0.22)');
+          ribbon.addColorStop(0.62, 'rgba(246,249,255,0.28)');
+          ribbon.addColorStop(1, 'rgba(220,231,250,0)');
+          context.strokeStyle = ribbon;
+          context.globalAlpha = 0.7;
+          context.beginPath();
+          context.moveTo(-width * 0.08, startY + Math.sin(phase) * height * 0.12);
+          context.bezierCurveTo(width * 0.24, startY - height * 0.2 + Math.cos(phase) * height * 0.12, width * 0.68, startY + height * 0.2 + Math.sin(phase * 0.8) * height * 0.1, width * 1.08, startY - Math.cos(phase) * height * 0.1);
+          context.stroke();
+        }
+        context.restore();
+
+        particles.forEach((particle) => {
+          if (!reducedMotion) {
+            particle.x += particle.drift * 1.9;
+            particle.y += Math.sin(time * 0.00035 + particle.phase) * 0.18;
+            if (particle.x > width + 2) particle.x = -2;
+          }
+          const flowY = height * (0.5 + 0.16 * Math.sin((particle.x / Math.max(width, 1)) * Math.PI * 2 + drift * 2));
+          const streamDistance = (particle.y - flowY) / (height * 0.18);
+          const stream = Math.exp(-(streamDistance * streamDistance));
+          const edgeGlow = Math.max(0, (particle.y / height - 0.78) * 1.2);
+          const twinkle = 0.58 + 0.42 * Math.sin(time * 0.001 + particle.phase);
+          context.globalAlpha = Math.min(0.96, (particle.alpha + stream * 0.34 + edgeGlow * 0.28) * twinkle);
+          context.fillStyle = particle.size > 1.3 ? '#f3f6ff' : '#bfcbe0';
+          if (particle.streak && !reducedMotion) {
+            context.fillRect(particle.x, particle.y, particle.size * 2.6, 0.65);
+          } else {
+            context.beginPath();
+            context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            context.fill();
+          }
+        });
+        context.restore();
+      };
+
+      const animate = (timestamp) => {
+        frameId = 0;
+        if (document.hidden) return;
+        if (timestamp - lastFrame >= 1000 / 30) {
+          elapsed = timestamp;
+          lastFrame = timestamp;
+          render(elapsed);
+        }
+        frameId = requestAnimationFrame(animate);
+      };
+
+      const stop = () => {
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+      };
+      const start = () => {
+        if (!reducedMotion && !document.hidden && !frameId) frameId = requestAnimationFrame(animate);
+      };
+
+      window.addEventListener('resize', resize, { passive: true });
+      document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+      resize();
+      start();
+    })();
+  </script>
+  <script>
+    (() => {
+      if (!window.gsap || !window.ScrollTrigger || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('[data-scroll-reveal]').forEach((element) => {
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+        const words = [];
+        textNodes.forEach((node) => {
+          const fragment = document.createDocumentFragment();
+          (node.textContent.match(/\s+|[^\s]+/gu) || []).forEach((part) => {
+            if (/^\s+$/u.test(part)) fragment.append(document.createTextNode(part));
+            else {
+              const word = document.createElement('span');
+              word.className = 'scroll-reveal-word';
+              word.textContent = part;
+              words.push(word);
+              fragment.append(word);
+            }
+          });
+          node.replaceWith(fragment);
+        });
+
+        if (!words.length) return;
+        gsap.fromTo(words, { opacity: 0.16, filter: 'blur(4px)' }, {
+          opacity: 1,
+          filter: 'blur(0px)',
+          ease: 'none',
+          stagger: 0.035,
+          scrollTrigger: {
+            trigger: element,
+            start: 'top 88%',
+            end: 'bottom 56%',
+            scrub: 0.7,
+            invalidateOnRefresh: true
+          }
+        });
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      if (!window.gsap || !window.ScrollTrigger || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const panels = gsap.utils.toArray('main > section:not(.hero):not(.proof), footer');
+      const reveal = (panel, fromY) => gsap.fromTo(panel,
+        { autoAlpha: 0, y: fromY },
+        { autoAlpha: 1, y: 0, duration: .34, ease: 'power2.out', overwrite: 'auto' }
+      );
+      const conceal = (panel, toY) => gsap.to(panel,
+        { autoAlpha: 0, y: toY, duration: .24, ease: 'power1.in', overwrite: 'auto' }
+      );
+      panels.forEach(panel => {
+        gsap.set(panel, { autoAlpha: 0, y: 34, force3D: true, willChange: 'transform, opacity' });
+        ScrollTrigger.create({
+          trigger: panel,
+          start: 'top 84%',
+          end: 'bottom 16%',
+          onEnter: () => reveal(panel, 48),
+          onLeave: () => conceal(panel, -44),
+          onEnterBack: () => reveal(panel, -48),
+          onLeaveBack: () => conceal(panel, 44),
+        });
+      });
+      ScrollTrigger.refresh();
+    })();
+  </script>
+</body>
+</html>

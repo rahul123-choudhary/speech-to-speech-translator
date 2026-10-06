@@ -66,4 +66,4 @@ def test_iwslt_candidate_maps_matching_target_path_and_writes_review_template(tm
     template = tmp_path / "review.csv"
     write_review_template(records, template)
     assert "\nno," in template.read_text(encoding="utf-8")
-    assert read_approvals(template)["iwslt24_train_clip"]["reviewer_id"] == ""
+    assert read_approvals(template)["iwslt26_train_clip"]["reviewer_id"] == ""

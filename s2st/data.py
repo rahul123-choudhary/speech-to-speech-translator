@@ -1,5 +1,4 @@
-from pathlib import Path
-
+import soundfile
 import torch
 import torchaudio
 from torch.utils.data import Dataset
@@ -8,10 +7,12 @@ from .manifest import Utterance, read_manifest
 
 
 def load_mono(path: str, sample_rate: int = 16_000) -> torch.Tensor:
-    waveform, original_rate = torchaudio.load(path)
-    waveform = waveform.mean(dim=0)
+    data, original_rate = soundfile.read(path, dtype="float32")
+    waveform = torch.from_numpy(data)
+    if waveform.ndim > 1:
+        waveform = waveform.mean(dim=-1)
     if original_rate != sample_rate:
-        waveform = torchaudio.functional.resample(waveform, original_rate, sample_rate)
+        waveform = torchaudio.functional.resample(waveform.unsqueeze(0), original_rate, sample_rate).squeeze(0)
     return waveform.clamp(-1, 1)
 
 

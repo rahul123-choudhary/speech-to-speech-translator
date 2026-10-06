@@ -1,11 +1,12 @@
 [project]
-name = "quechua-direct-s2st"
-version = "0.1.0"
-description = "Parameter-efficient direct Quechua-speech to Spanish-speech translation"
+name = "yoruba-direct-s2st"
+version = "0.5.0"
+description = "Direct speech-to-speech translation from Yorùbá to English and multilingual targets"
 requires-python = ">=3.10"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

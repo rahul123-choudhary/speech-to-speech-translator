@@ -1,8 +1,6 @@
-"""Review-gated data preparation for non-Spanish direct S2ST targets.
+"""Review-gated data preparation for direct S2ST targets.
 
-The included corpus provides Quechua speech and Spanish references only. This
-module creates the review workflow for a *separate* target language; it never
-derives target speech through Spanish during training or inference.
+This module creates the review workflow for target languages.
 """
 
 import argparse
@@ -30,7 +28,7 @@ REFERENCE_COLUMN_ORDER = [
     "reference_status",
     "notes",
 ]
-NON_SPANISH_TARGETS = {"en", "hi", "fr", "pt"}
+NON_SPANISH_TARGETS = {code for code in TARGET_LANGUAGES if code != "es"}
 
 
 def validate_target_language(target_language: str) -> str:
@@ -40,8 +38,9 @@ def validate_target_language(target_language: str) -> str:
     return target_language
 
 
+
 def write_reference_template(source_candidates: list[Utterance], path: Path) -> None:
-    """Write one human-translation review row per Quechua source utterance."""
+    """Write one human-translation review row per source utterance."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=REFERENCE_COLUMN_ORDER, delimiter="\t")

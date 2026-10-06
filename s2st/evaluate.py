@@ -8,7 +8,6 @@ from pathlib import Path
 import sacrebleu
 import soundfile
 import torch
-import whisper
 
 from .codec import NeuralCodec
 from .data import load_mono
@@ -40,19 +39,49 @@ def run(
     output_dir: str = "artifacts/evaluation",
     target_language: str | None = None,
 ) -> dict:
+    records = list(read_manifest(manifest_path))
+    if not records:
+        raise ValueError(f"No test records in {manifest_path}")
+    unauthorized = [
+        record.id
+        for record in records
+        if record.extra.get("dataset_status") != "approved_for_training"
+        or not record.consent_id
+        or not record.extra.get("native_review")
+        or not record.target_audio
+        or not Path(record.target_audio).is_file()
+    ]
+    if unauthorized:
+        raise ValueError(
+            f"Evaluation requires authorized, native-reviewed test rows with target audio; "
+            f"{len(unauthorized)} are not approved (for example: {', '.join(unauthorized[:5])})."
+        )
+    missing_references = [record.id for record in records if not record.reference_translation.strip()]
+    if missing_references:
+        preview = ", ".join(missing_references[:5])
+        raise ValueError(
+            f"ASR-BLEU needs a reviewed reference translation for every test item; "
+            f"{len(missing_references)} are blank (for example: {preview}). "
+            "Do not score ASR hypotheses against missing references."
+        )
+    try:
+        import whisper
+    except ImportError:
+        raise ImportError("openai-whisper is required for ASR evaluation. Install with: pip install openai-whisper")
     settings = get_settings()
     device = torch.device(settings.device if torch.cuda.is_available() else "cpu")
     model = load_model(checkpoint_path, device)
     codec = NeuralCodec(str(device))
     asr = whisper.load_model(settings.asr_model.replace("openai/whisper-", ""), device=str(device))
+
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
     store = ResearchStore(settings)
     run_id = str(uuid.uuid4())
     hypotheses, references, latencies = [], [], []
     evaluated_language = target_language
-    for record in read_manifest(manifest_path):
-        record_language = record.extra.get("target_language", "es")
+    for record in records:
+        record_language = record.extra.get("target_language", "en")
         selected_language = evaluated_language or record_language
         if selected_language not in TARGET_LANGUAGES:
             raise ValueError(f"Unsupported target language in evaluation: {selected_language}")
@@ -88,24 +117,28 @@ def run(
                 "generated_waveform_sha256": file_sha256(wav_path),
             }
         )
-    if not hypotheses:
-        raise ValueError(f"No test records in {manifest_path}")
     bleu = sacrebleu.corpus_bleu(hypotheses, [references])
+
+    # Benchmarking comparisons
     summary = {
         "run_id": run_id,
         "metric": "ASR-BLEU",
         "asr_model": settings.asr_model,
-        "target_language": evaluated_language or "es",
-        "bleu": bleu.score,
+        "target_language": evaluated_language or "en",
+        "bleu": round(bleu.score, 2),
         "signature": str(bleu.signature),
-        "mean_latency_ms": sum(latencies) / len(latencies),
-        "p50_latency_ms": sorted(latencies)[max(0, int(len(latencies) * 0.50) - 1)],
-        "p95_latency_ms": sorted(latencies)[max(0, int(len(latencies) * 0.95) - 1)],
+        "literature_baseline": None,
+        "relative_to_literature_benchmark": None,
+        "mean_latency_ms": round(sum(latencies) / len(latencies), 2),
+        "p50_latency_ms": round(sorted(latencies)[max(0, int(len(latencies) * 0.50) - 1)], 2),
+        "p95_latency_ms": round(sorted(latencies)[max(0, int(len(latencies) * 0.95) - 1)], 2),
         "utterances": len(hypotheses),
     }
     (destination / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    store.record_evaluation({"type": "summary", **summary})
     print(json.dumps(summary, indent=2))
     return summary
+
 
 
 if __name__ == "__main__":

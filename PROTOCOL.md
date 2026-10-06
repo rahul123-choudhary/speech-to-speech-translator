@@ -1,61 +1,25 @@
-# Phase-by-phase research protocol
+# Phase-wise research protocol
 
-## 1. Scope and governance
+## 1. Scope and setup
 
-Study the Quechua (southern varieties) speech → Spanish speech direction supported
-by the IWSLT corpus. Obtain written community consent covering training, pilot
-recording, retention, withdrawal, researcher access, and publication. A native
-speaker review is required for every new utterance, translation, and target
-speech construction decision.
+The primary direction is Yorùbá speech → English speech, using the IWSLT 2026 African & Celtic speech-to-speech release. This is the selected oral-tradition language pair. Keep the source language and its varieties explicit in every manifest and report.
 
-## 2. Corpus preparation
+## 2. Data collection and preparation
 
-Use a maximum of 1h40m of source speech for the primary small-hours condition.
-Segment at utterance boundaries; reject corrupt, over-15-second, or
-translation-misaligned clips. Create a speaker-disjoint 80/10/10-like split with
-`python -m s2st.prepare`. Store corpus provenance, consent ID, dialect, speaker
-pseudonym, source checksum, target-speech generator, and reviewer decision in
-Atlas `corpus_metadata`.
+The upstream Hugging Face release is about 85.3 GB. Use `scripts/fetch_iwslt_yoruba_subset.py` to obtain a small, paired subset rather than copying the full corpus. The script matches Yorùbá source IDs to English recorded-target IDs, retains audio/text/speaker metadata and checksums, and writes a candidate manifest and native-review template. Its local split is only a provisional, text-ID-disjoint split from the official training split.
+
+Before training, a Yorùbá speaker should listen to every source/target pair, check transcript and translation fidelity, and rate intelligibility and contextual appropriateness. Record the release attribution and project-level authorization/consent basis. Only mark review rows approved when the assessment is complete. The gate in `s2st.prepare` requires both valid review ratings and authorization metadata before producing trainable manifests. For publication-quality evaluation, use the official held-out development/test data rather than the provisional training-derived partitions.
 
 ## 3. Direct model adaptation
 
-The model is XLS-R encoder + LoRA adapters + non-autoregressive Transformer
-codec-unit decoder + EnCodec waveform decoder. Freeze the pretrained codec and
-base encoder; optimize LoRA and decoder parameters. Apply mild speed/noise
-augmentation only to source training audio. Early-stop by validation codec-unit
-loss and retain the selected checkpoint.
+The planned architecture is a multilingual speech encoder with parameter-efficient adaptation, a speech-unit decoder, and a vocoder. Keep the base encoder frozen initially; train adapters and decoder on the reviewed Yorùbá→English waveforms. Apply waveform augmentation only to training inputs. Select a checkpoint using validation data. This phase is not complete until the actual architecture is configured and trained on an approved corpus.
 
 ## 4. Evaluation
 
-On the held-out split, synthesize speech, transcribe only the generated Spanish
-with a frozen, declared ASR model, and calculate sacreBLEU against target
-references. This is ASR-BLEU. Record the exact ASR version, sacreBLEU signature,
-checkpoint, generated waveform hash, per-utterance latency, and source duration.
+Evaluate generated English speech against held-out recorded English references. Use a declared English ASR system and compute ASR-based translation metrics, including BLEU/CER where appropriate. Record model/ASR versions, tokenizer and metric signatures, reference provenance, generated waveform hashes, and per-utterance latency. Do not compare speech-output ASR scores directly to text-only BLEU without describing the metric difference.
 
-Native/heritage reviewers rate each randomized, blinded sample on 1–5 scales:
+Native/heritage reviewers should rate randomized, blinded samples for naturalness, intelligibility, translation adequacy, and cultural/contextual appropriateness. Report the number of raters, mean and confidence interval per dimension, and the adjudication procedure.
 
-| Dimension | Prompt |
-| --- | --- |
-| Naturalness | Does the output sound like natural Spanish speech? |
-| Intelligibility | Can you understand the output without replaying it? |
-| Adequacy | Does the output preserve the source meaning? |
-| Cultural/contextual appropriateness | Is the rendering appropriate to the utterance and setting? |
+## 5. Live inference and pilot
 
-Report mean, 95% bootstrap confidence interval, rater count, and adjudication
-procedure. The API stores each authenticated reviewer rating in Atlas; export
-ratings by evaluation run, compute the interval per dimension, and do not report
-a single unaudited rating as a human-evaluation result. Do not compare an
-ASR-BLEU score directly to text-output BLEU such as
-the reported 17.7 figure without declaring the evaluation mismatch.
-
-## 5. Live pilot
-
-Require Firebase Authentication and explicit per-session consent. Keep Firestore
-to active session state and researcher/tester profile references; use FCM only
-for opted-in evaluation/session notifications. Store structured corpus metadata,
-evaluation records, and consented pilot feedback in MongoDB Atlas. Do not retain
-raw pilot audio by default; if approved, store its encrypted external object URL
-and retention/withdrawal identifiers rather than the audio in either database.
-
-Measure end-to-end latency from final PCM chunk to returned WAV. Report mean,
-p50, and p95 separately for GPU model execution and whole-request timing.
+Build live Yorùbá audio input → direct speech-to-speech model → English audio output after a real checkpoint exists. Measure end-to-end latency and test with speakers. Pilot participation requires explicit per-session consent. Keep Firestore for active app/session state and MongoDB Atlas for structured corpus metadata, evaluations, and consented feedback; keep corpus audio in appropriately permissioned file/object storage.
