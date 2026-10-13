@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f7fb">
   <title>Speech Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     (function() {
       try {
@@ -189,9 +192,9 @@
     html.has-active-session body, body.workspace-screen {
       --ink: #f8fafc;
       --muted: #94a3b8;
-      --bg: #07080d;
-      --card-bg: rgba(14, 17, 27, 0.72);
-      --card-border: rgba(255, 255, 255, 0.08);
+      --bg: #05060b;
+      --card-bg: rgba(14, 18, 32, 0.76);
+      --card-border: rgba(255, 255, 255, 0.1);
       --primary-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
       --accent-cyan: #06b6d4;
       --accent-pink: #ec4899;
@@ -200,10 +203,11 @@
       color-scheme: dark;
       margin: 0;
       min-height: 100vh;
-      background: #07080d !important;
+      background: #05060b !important;
       color: var(--ink);
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
       overflow-x: hidden;
+      perspective: 1400px;
     }
 
     /* Ambient Audio Wave Canvas Background - ONLY visible in Workspace Studio */
@@ -536,18 +540,72 @@
       font-weight: 500;
     }
 
+    /* WORKSPACE MIDDLE SINGLE AUTHOR LINK - 3D HOLOGRAPHIC PILL */
+    .workspace-center-footer {
+      grid-column: 1 / -1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 0 28px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+    .workspace-center-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(22, 28, 48, 0.88), rgba(12, 16, 30, 0.94));
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      color: #e0e7ff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-decoration: none;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6), 0 0 24px rgba(99, 102, 241, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform-style: preserve-3d;
+      position: relative;
+      left: -48px; /* 3 steps left */
+      top: 48px;  /* 3 steps down (niche) */
+    }
+    .workspace-center-badge:hover {
+      transform: translateY(-3px) scale(1.05);
+      border-color: rgba(129, 140, 248, 0.75);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 40px rgba(99, 102, 241, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+      color: #fff;
+    }
+    .badge-dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8;
+      animation: dotPulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes dotPulse {
+      0% { transform: scale(0.8); opacity: 0.7; }
+      100% { transform: scale(1.25); opacity: 1; }
+    }
+
     /* RIGHT STUDIO CONTENT */
     .studio-content-column {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 22px;
     }
 
     /* 3 CARDS ROW GRID - Full Width Fluid */
     .studio-cards-row {
       display: grid;
       grid-template-columns: 1fr 1.15fr;
-      gap: 22px;
+      gap: 24px;
       align-items: stretch;
       width: 100%;
       box-sizing: border-box;
@@ -556,21 +614,39 @@
     .studio-subcolumn {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 22px;
     }
 
-    /* COMMON CARD STYLE */
+    /* COMMON CARD STYLE - 3D GLASSMORPHISM */
     .studio-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 22px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      background: linear-gradient(145deg, rgba(16, 21, 38, 0.82), rgba(9, 12, 22, 0.90));
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 22px;
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      padding: 24px;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), 0 0 40px -8px rgba(99, 102, 241, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.24);
       display: flex;
       flex-direction: column;
       position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .studio-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(99, 102, 241, 0.45) 35%, rgba(6, 182, 212, 0.3) 70%, transparent 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .studio-card:hover {
+      border-color: rgba(99, 102, 241, 0.45);
+      box-shadow: 0 28px 65px -12px rgba(0, 0, 0, 0.85), 0 0 50px -5px rgba(99, 102, 241, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.4);
     }
 
     .card-step-header {
@@ -649,19 +725,85 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
-    /* Center Mic Stage with Equalizer Bars */
+    /* Center Mic Stage with 3D Holographic Gyroscopic Rings */
     .center-mic-stage {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
-      padding: 16px 0 10px;
+      gap: 22px;
+      padding: 24px 0 16px;
+      perspective: 900px;
     }
+    .mic-3d-hologram-stage {
+      position: relative;
+      width: 144px;
+      height: 144px;
+      display: grid;
+      place-items: center;
+      transform-style: preserve-3d;
+    }
+    .gyro-ring {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transform-style: preserve-3d;
+    }
+    .gyro-ring-1 {
+      width: 134px;
+      height: 134px;
+      border: 1.5px dashed rgba(99, 102, 241, 0.65);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+      animation: gyroRotate1 13s linear infinite;
+    }
+    .gyro-ring-2 {
+      width: 148px;
+      height: 148px;
+      border: 1.5px solid rgba(6, 182, 212, 0.5);
+      border-left-color: transparent;
+      border-right-color: transparent;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+      animation: gyroRotate2 17s linear infinite;
+    }
+    .gyro-ring-3 {
+      width: 120px;
+      height: 120px;
+      border: 1.5px dotted rgba(236, 72, 153, 0.55);
+      box-shadow: 0 0 14px rgba(236, 72, 153, 0.25);
+      animation: gyroRotate3 9.5s linear infinite;
+    }
+    .mic-hologram-aura {
+      position: absolute;
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, rgba(6, 182, 212, 0.15) 50%, transparent 75%);
+      filter: blur(8px);
+      pointer-events: none;
+      animation: auraBreathe 3.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes gyroRotate1 {
+      0% { transform: rotateX(68deg) rotateY(18deg) rotateZ(0deg); }
+      100% { transform: rotateX(68deg) rotateY(18deg) rotateZ(360deg); }
+    }
+    @keyframes gyroRotate2 {
+      0% { transform: rotateX(24deg) rotateY(72deg) rotateZ(360deg); }
+      100% { transform: rotateX(24deg) rotateY(72deg) rotateZ(0deg); }
+    }
+    @keyframes gyroRotate3 {
+      0% { transform: rotateX(82deg) rotateY(42deg) rotateZ(0deg); }
+      100% { transform: rotateX(82deg) rotateY(42deg) rotateZ(360deg); }
+    }
+    @keyframes auraBreathe {
+      0% { transform: scale(0.92); opacity: 0.6; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+
     .waveform-viz {
       display: flex;
       align-items: center;
-      gap: 3px;
-      height: 38px;
+      gap: 3.5px;
+      height: 42px;
     }
     .waveform-viz span {
       width: 3.5px;
@@ -686,32 +828,50 @@
 
     .pulsing-mic-btn {
       position: relative;
-      width: 90px;
-      height: 90px;
+      z-index: 2;
+      width: 94px;
+      height: 94px;
       border-radius: 50%;
       border: 0;
-      background: var(--primary-grad);
+      background: radial-gradient(circle at 35% 32%, #818cf8 0%, #4f46e5 45%, #312e81 85%, #1e1b4b 100%);
       color: #fff;
       cursor: pointer;
       display: grid;
       place-items: center;
-      box-shadow: 0 0 35px rgba(99, 102, 241, 0.5), 0 0 0 8px rgba(99, 102, 241, 0.15);
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 35px rgba(99, 102, 241, 0.6), inset -6px -6px 14px rgba(0, 0, 0, 0.6), inset 4px 4px 12px rgba(255, 255, 255, 0.6);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+      transform-style: preserve-3d;
     }
     .pulsing-mic-btn:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 45px rgba(99, 102, 241, 0.65), 0 0 0 10px rgba(99, 102, 241, 0.22);
+      transform: scale(1.08) translateZ(10px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75), 0 0 55px rgba(99, 102, 241, 0.85), inset -6px -6px 14px rgba(0, 0, 0, 0.6), inset 4px 4px 14px rgba(255, 255, 255, 0.8);
     }
     .pulsing-mic-btn.recording {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      box-shadow: 0 0 45px rgba(239, 68, 68, 0.65), 0 0 0 10px rgba(239, 68, 68, 0.25);
-      animation: pulse-glow 1.2s infinite;
+      background: radial-gradient(circle at 35% 32%, #f87171 0%, #dc2626 48%, #991b1b 85%, #7f1d1d 100%);
+      box-shadow: 0 18px 45px rgba(220, 38, 38, 0.65), 0 0 60px rgba(239, 68, 68, 0.85), inset -6px -6px 14px rgba(0, 0, 0, 0.6), inset 4px 4px 14px rgba(255, 255, 255, 0.7);
+      animation: pulse-3d-orb 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    @keyframes pulse-glow {
-      50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), 0 0 0 16px rgba(239, 68, 68, 0.12); }
+    @keyframes pulse-3d-orb {
+      0%, 100% { transform: scale(1.04); box-shadow: 0 18px 45px rgba(220, 38, 38, 0.65), 0 0 50px rgba(239, 68, 68, 0.8), inset -6px -6px 14px rgba(0, 0, 0, 0.6), inset 4px 4px 14px rgba(255, 255, 255, 0.7); }
+      50% { transform: scale(1.12); box-shadow: 0 22px 55px rgba(220, 38, 38, 0.85), 0 0 75px rgba(239, 68, 68, 1), inset -6px -6px 14px rgba(0, 0, 0, 0.6), inset 5px 5px 16px rgba(255, 255, 255, 0.9); }
+    }
+    .center-mic-stage.recording .gyro-ring-1 {
+      animation-duration: 4s;
+      border-color: rgba(239, 68, 68, 0.85);
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+    }
+    .center-mic-stage.recording .gyro-ring-2 {
+      animation-duration: 5s;
+      border-color: rgba(249, 115, 22, 0.75);
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.5);
+    }
+    .center-mic-stage.recording .gyro-ring-3 {
+      animation-duration: 3s;
+      border-color: rgba(236, 72, 153, 0.85);
+      box-shadow: 0 0 25px rgba(236, 72, 153, 0.6);
     }
     .mic-icon-inner {
-      font-size: 34px;
+      font-size: 36px;
     }
 
     .mic-caption-group {
@@ -1197,64 +1357,272 @@
     .lang-selector-pair {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
-      gap: 10px;
+      gap: 12px;
       align-items: flex-end;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
+      position: relative;
     }
     .lang-box {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 7px;
+      position: relative;
     }
     .lang-field-title {
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.74rem;
+      font-weight: 650;
       color: #94a3b8;
+      letter-spacing: 0.3px;
     }
-    .lang-input-shell {
+
+    /* CUSTOM LUXURY 3D GLASSMORPHIC LANGUAGE DROPDOWN */
+    .custom-lang-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .custom-lang-trigger {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 12px;
+      color: #f8fafc;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 14px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      text-align: left;
+    }
+    .custom-lang-trigger:hover,
+    .custom-lang-trigger.open {
+      border-color: rgba(129, 140, 248, 0.7);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(255, 255, 255, 0.04));
+      box-shadow: 0 0 22px rgba(99, 102, 241, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .trigger-flag {
+      font-size: 1.18rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .trigger-label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #e2e8f0;
+      letter-spacing: 0.2px;
+      font-size: 0.86rem;
+    }
+    .trigger-chevron {
+      font-size: 0.75rem;
+      color: #818cf8;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .custom-lang-trigger.open .trigger-chevron {
+      transform: rotate(180deg);
+      color: #a5b4fc;
+    }
+    
+    /* Custom Popover */
+    .custom-lang-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      min-width: 290px;
+      max-width: 380px;
+      background: rgba(12, 16, 33, 0.97);
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+      border: 1px solid rgba(129, 140, 248, 0.42);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.88), 0 0 40px rgba(99, 102, 241, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      z-index: 1000;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: popoverFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .custom-lang-search-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.04);
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 0 12px;
-      min-height: 46px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
     }
-    .globe-prefix {
-      font-size: 15px;
+    .custom-lang-search-bar:focus-within {
+      border-color: rgba(129, 140, 248, 0.75);
+      background: rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.28);
     }
-    .lang-dropdown {
-      flex: 1;
-      border: 0;
+    .custom-lang-search-bar .search-icon {
+      font-size: 0.84rem;
+      opacity: 0.75;
+    }
+    .custom-lang-search-input {
+      width: 100%;
       background: transparent;
-      color: #f8fafc;
-      font-size: 0.88rem;
-      font-weight: 600;
+      border: 0;
+      color: #fff;
+      font-size: 0.82rem;
       outline: none;
-      cursor: pointer;
+      font-family: inherit;
     }
-    .lang-dropdown option {
-      background: #0f131f;
-      color: #f8fafc;
+    .custom-lang-search-input::placeholder {
+      color: #64748b;
+    }
+    .custom-lang-options-list {
+      max-height: 280px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(99, 102, 241, 0.6) rgba(255, 255, 255, 0.02);
+    }
+    .custom-lang-options-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-lang-options-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+    }
+    .custom-lang-options-list::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.6);
+      border-radius: 8px;
+    }
+    .custom-lang-options-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(129, 140, 248, 0.85);
+    }
+    .custom-lang-group-header {
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #818cf8;
+      padding: 9px 8px 4px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .custom-lang-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      background: transparent;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .custom-lang-option:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.12));
+      border-color: rgba(129, 140, 248, 0.35);
+      color: #fff;
+      transform: translateX(3px);
+    }
+    .custom-lang-option.selected {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.34), rgba(139, 92, 246, 0.22));
+      border-color: rgba(129, 140, 248, 0.65);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+    .custom-lang-option .opt-flag {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+    .custom-lang-option .opt-text-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .custom-lang-option .opt-name {
+      font-weight: 600;
+      color: #f1f5f9;
+      font-size: 0.82rem;
+    }
+    .custom-lang-option .opt-native {
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+    .custom-lang-option.selected .opt-native {
+      color: #a5b4fc;
+    }
+    .custom-lang-option .opt-check {
+      color: #38bdf8;
+      font-size: 0.88rem;
+      font-weight: 700;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: all 0.15s ease;
+    }
+    .custom-lang-option.selected .opt-check {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .custom-lang-empty {
+      padding: 16px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.78rem;
+    }
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
     }
     .btn-swap-langs {
-      width: 38px;
-      height: 46px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: 44px;
+      height: 48px;
+      border: 1px solid rgba(129, 140, 248, 0.3);
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      color: #94a3b8;
-      font-size: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      color: #818cf8;
+      font-size: 18px;
       cursor: pointer;
       display: grid;
       place-items: center;
-      transition: all 0.18s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
     .btn-swap-langs:hover {
-      background: rgba(99, 102, 241, 0.18);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.16));
+      border-color: rgba(129, 140, 248, 0.75);
       color: #fff;
-      border-color: rgba(99, 102, 241, 0.4);
+      transform: scale(1.08) rotate(180deg);
+      box-shadow: 0 0 24px rgba(99, 102, 241, 0.45);
     }
 
     .btn-translate-big {
@@ -1983,7 +2351,6 @@
             <div class="input-segment-switch">
               <button class="segment-tab active" id="tabModeRecord" type="button">🎙 Record Audio</button>
               <button class="segment-tab" id="tabModeUpload" type="button">☁ Upload File</button>
-              <button class="segment-tab" id="tabModeDataset" type="button">⚡ Sample Audios (57)</button>
             </div>
             <input id="audioFile" type="file" accept="audio/*" hidden>
 
@@ -1993,9 +2360,15 @@
                 <div class="waveform-viz" aria-hidden="true">
                   <span></span><span></span><span></span><span></span><span></span>
                 </div>
-                <button class="pulsing-mic-btn" id="recordButton" type="button" aria-label="Start recording" title="Click to start recording">
-                  <span class="mic-icon-inner">🎙</span>
-                </button>
+                <div class="mic-3d-hologram-stage">
+                  <div class="gyro-ring gyro-ring-1" aria-hidden="true"></div>
+                  <div class="gyro-ring gyro-ring-2" aria-hidden="true"></div>
+                  <div class="gyro-ring gyro-ring-3" aria-hidden="true"></div>
+                  <div class="mic-hologram-aura" aria-hidden="true"></div>
+                  <button class="pulsing-mic-btn" id="recordButton" type="button" aria-label="Start recording" title="Click to start recording">
+                    <span class="mic-icon-inner">🎙</span>
+                  </button>
+                </div>
                 <div class="waveform-viz" aria-hidden="true">
                   <span></span><span></span><span></span><span></span><span></span>
                 </div>
@@ -2014,17 +2387,6 @@
                 <button class="btn-tool" id="quickStopBtn" type="button" title="Stop audio">⏹</button>
                 <button class="btn-tool" id="quickClearBtn" type="button" title="Clear audio">🗑</button>
               </div>
-
-              <!-- Quick Presets in Record View -->
-              <div class="dataset-quick-bar">
-                <div class="quick-bar-header">
-                  <span class="quick-bar-title">⚡ Instant Test Audios (No files needed)</span>
-                  <button type="button" class="btn-view-all-samples" id="btnOpenSampleLibFromRecord">View All 57 →</button>
-                </div>
-                <div class="quick-sample-chips" id="quickSampleChipsRecord">
-                  <!-- Populated by JS -->
-                </div>
-              </div>
             </div>
 
             <!-- 2. UPLOAD FILE INTERFACE (Active when Upload tab is selected) -->
@@ -2037,17 +2399,6 @@
                 <button class="btn-browse-file" type="button" id="btnBrowseAudio">
                   <span>📂</span> Browse from computer
                 </button>
-              </div>
-
-              <!-- Quick Presets in Upload View -->
-              <div class="dataset-quick-bar">
-                <div class="quick-bar-header">
-                  <span class="quick-bar-title">⚡ Or Click an Instant Dataset Audio</span>
-                  <button type="button" class="btn-view-all-samples" id="btnOpenSampleLib">View All 57 →</button>
-                </div>
-                <div class="quick-sample-chips" id="quickSampleChipsUpload">
-                  <!-- Populated by JS -->
-                </div>
               </div>
 
               <!-- Uploaded file active preview card -->
@@ -2077,25 +2428,6 @@
                   </div>
                   <span style="font-size:0.75rem;color:#818cf8;font-family:monospace" id="previewDurationLabel">00:00</span>
                 </div>
-              </div>
-            </div>
-
-            <!-- 3. DATASET SAMPLE LIBRARY INTERFACE (Active when Sample tab is selected) -->
-            <div id="datasetModeContainer" hidden>
-              <div class="dataset-controls-row">
-                <input type="text" class="dataset-search-input" id="datasetSearchInput" placeholder="🔍 Search samples (weather, sports, peace...)">
-                <select class="dataset-category-filter" id="datasetCategoryFilter">
-                  <option value="all">All Categories (57)</option>
-                  <option value="Weather & Advisory">🌦️ Weather</option>
-                  <option value="Sports & Athletics">⚽ Sports</option>
-                  <option value="News & Human Interest">📰 News</option>
-                  <option value="Civic & Government">⚖️ Civic & Law</option>
-                  <option value="Society & Culture">🌍 Society</option>
-                  <option value="General Conversation">💬 Conversation</option>
-                </select>
-              </div>
-              <div class="dataset-samples-scroll" id="datasetSamplesList">
-                <!-- Dynamically rendered -->
               </div>
             </div>
 
@@ -2129,11 +2461,24 @@
               </div>
 
               <div class="lang-selector-pair">
-                <div class="lang-box">
+                <!-- Source Language Custom Dropdown -->
+                <div class="lang-box" id="sourceLangBox">
                   <span class="lang-field-title">From (Source language)</span>
-                  <div class="lang-input-shell">
-                    <span class="globe-prefix">🌐</span>
-                    <select id="sourceLanguage" class="lang-dropdown" aria-label="Source language">
+                  <div class="custom-lang-select-wrapper" id="sourceCustomSelect">
+                    <button type="button" class="custom-lang-trigger" id="sourceLangTrigger" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="trigger-flag" id="sourceFlag">🇳🇬</span>
+                      <span class="trigger-label" id="sourceLabel">Yorùbá</span>
+                      <span class="trigger-chevron">▾</span>
+                    </button>
+                    <div class="custom-lang-popover" id="sourceLangPopover" role="listbox" hidden>
+                      <div class="custom-lang-search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="custom-lang-search-input" id="sourceSearchInput" placeholder="Search language..." autocomplete="off">
+                      </div>
+                      <div class="custom-lang-options-list" id="sourceOptionsList"></div>
+                    </div>
+                    <!-- Underlying select for full JS & API compatibility -->
+                    <select id="sourceLanguage" class="lang-dropdown visually-hidden" aria-label="Source language" tabindex="-1">
                       <option value="yo" selected>Yorùbá</option>
                       <option value="en">English</option>
                     </select>
@@ -2142,11 +2487,24 @@
 
                 <button class="btn-swap-langs" id="btnSwapLanguages" type="button" title="Swap languages">⇄</button>
 
-                <div class="lang-box">
+                <!-- Target Language Custom Dropdown -->
+                <div class="lang-box" id="targetLangBox">
                   <span class="lang-field-title">To (Target language)</span>
-                  <div class="lang-input-shell">
-                    <span class="globe-prefix">🌐</span>
-                    <select id="targetLanguage" class="lang-dropdown" aria-label="Target language">
+                  <div class="custom-lang-select-wrapper" id="targetCustomSelect">
+                    <button type="button" class="custom-lang-trigger" id="targetLangTrigger" aria-haspopup="listbox" aria-expanded="false">
+                      <span class="trigger-flag" id="targetFlag">🇮🇳</span>
+                      <span class="trigger-label" id="targetLabel">Hindi — हिन्दी</span>
+                      <span class="trigger-chevron">▾</span>
+                    </button>
+                    <div class="custom-lang-popover" id="targetLangPopover" role="listbox" hidden>
+                      <div class="custom-lang-search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="custom-lang-search-input" id="targetSearchInput" placeholder="Search 28 languages (Hindi, Spanish, Odia...)" autocomplete="off">
+                      </div>
+                      <div class="custom-lang-options-list" id="targetOptionsList"></div>
+                    </div>
+                    <!-- Underlying select for full JS & API compatibility -->
+                    <select id="targetLanguage" class="lang-dropdown visually-hidden" aria-label="Target language" tabindex="-1">
                       <optgroup label="India & Regional Languages">
                         <option value="hi" selected>Hindi — हिन्दी</option>
                         <option value="or">Odia — ଓଡ଼ିଆ</option>
@@ -2284,6 +2642,14 @@
           <div class="history-list" id="historyListContainer"></div>
         </div>
       </div>
+
+      <!-- EXACT MIDDLE OF WORKSPACE -->
+      <footer class="workspace-center-footer">
+        <a href="/rahul" class="workspace-center-badge" title="Created by Rahul">
+          <span class="badge-dot-live"></span>
+          <span class="badge-author-name">Rahul</span>
+        </a>
+      </footer>
     </div>
   </div>
 
@@ -2916,22 +3282,18 @@
 
     let currentAudioFileName = '';
 
-    // Segment mode toggle: Record Audio vs Upload File vs Dataset Samples
+    // Segment mode toggle: Record Audio vs Upload File
     function setAudioInputMode(mode) {
       const tabRec = $('tabModeRecord');
       const tabUpl = $('tabModeUpload');
-      const tabDst = $('tabModeDataset');
       const boxRec = $('recordModeContainer');
       const boxUpl = $('uploadModeContainer');
-      const boxDst = $('datasetModeContainer');
 
       tabRec?.classList.toggle('active', mode === 'record');
       tabUpl?.classList.toggle('active', mode === 'upload');
-      tabDst?.classList.toggle('active', mode === 'dataset');
 
       if (boxRec) boxRec.hidden = mode !== 'record';
       if (boxUpl) boxUpl.hidden = mode !== 'upload';
-      if (boxDst) boxDst.hidden = mode !== 'dataset';
 
       if (mode !== 'record' && recorder) $('recordButton')?.click();
       if (mode === 'record' && $('sourcePlayer')) $('sourcePlayer').pause();
@@ -2943,177 +3305,9 @@
     if ($('tabModeUpload')) {
       $('tabModeUpload').addEventListener('click', () => setAudioInputMode('upload'));
     }
-    if ($('tabModeDataset')) {
-      $('tabModeDataset').addEventListener('click', () => setAudioInputMode('dataset'));
-    }
     if ($('uploadButton')) $('uploadButton').addEventListener('click', () => $('audioFile').click());
 
-    let allDatasetSamples = [];
 
-    async function loadDatasetAudioSample(sample, clickedBtn = null) {
-      if (!sample) return;
-      $('status').textContent = `Loading "${sample.title}" audio...`;
-      try {
-        const res = await fetch(sample.audio_url);
-        if (!res.ok) throw new Error('Could not download sample audio');
-        const buf = await res.arrayBuffer();
-        pcm16 = await decodeToPcm(buf);
-        currentAudioFileName = sample.filename;
-        liveTranscript = sample.transcript || '';
-        
-        $('sourcePlayer').src = sample.audio_url;
-        $('sourcePlayer').hidden = true;
-        
-        const durSec = (pcm16.length / 16000).toFixed(1);
-        $('inputStatus').textContent = `${sample.title} (${durSec}s) · Ready for translation`;
-        $('status').textContent = `✓ Loaded "${sample.title}". Click Translate!`;
-
-        // Update uploadedPreviewCard in Upload tab
-        if ($('uploadedPreviewCard')) $('uploadedPreviewCard').style.display = 'flex';
-        if ($('audioDropzone')) $('audioDropzone').style.display = 'none';
-        if ($('previewFileName')) $('previewFileName').textContent = `${sample.title} (${sample.filename})`;
-        if ($('previewFileStats')) $('previewFileStats').textContent = `${durSec} sec · ${sample.category} · Ready`;
-        if ($('previewDurationLabel')) $('previewDurationLabel').textContent = formatTime(Math.round(pcm16.length / 16000));
-        if ($('btnPreviewPlay')) $('btnPreviewPlay').textContent = '▶';
-        if ($('previewPlaybackWave')) $('previewPlaybackWave').classList.remove('playing');
-
-        // Mark active chip
-        document.querySelectorAll('.btn-sample-chip').forEach(c => c.classList.remove('active'));
-        if (clickedBtn) clickedBtn.classList.add('active');
-
-        // Switch to upload preview mode so user sees the audio is loaded and ready
-        setAudioInputMode('upload');
-      } catch (err) {
-        console.error('Failed to load dataset sample:', err);
-        $('status').textContent = 'Failed to load sample audio: ' + err.message;
-      }
-    }
-
-    async function initDatasetSamples() {
-      try {
-        const res = await fetch('/api/dataset/samples');
-        if (!res.ok) return;
-        const data = await res.json();
-        allDatasetSamples = data.samples || [];
-
-        // 6 Top curated quick chips
-        const quickPicks = [
-          { icon: '🌦️', match: 'YNX_0214_Y039', label: 'Rainfall Warning' },
-          { icon: '🕊️', match: 'YMD_0036_Y021', label: 'Amnesty Statement' },
-          { icon: '⚽', match: 'YNX_1547_Y037', label: 'Villarreal Match' },
-          { icon: '🌟', match: 'YNX_1144_Y064', label: 'Inspirational' },
-          { icon: '🌍', match: 'YTR_1435_Y006', label: 'World Peace' },
-          { icon: '⚖️', match: 'YMD_0946_Y029', label: 'Court Appeal' }
-        ];
-
-        function renderChipsInto(containerId) {
-          const container = $(containerId);
-          if (!container) return;
-          container.innerHTML = quickPicks.map(qp => {
-            const sample = allDatasetSamples.find(s => s.filename.includes(qp.match)) || allDatasetSamples[0];
-            if (!sample) return '';
-            return `
-              <button type="button" class="btn-sample-chip" data-filename="${sample.filename}" title="${sample.reference}">
-                <span>${qp.icon}</span>
-                <span>${qp.label}</span>
-                <span class="sample-chip-dur">${sample.duration}s</span>
-              </button>
-            `;
-          }).join('');
-
-          container.querySelectorAll('.btn-sample-chip').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const fname = btn.dataset.filename;
-              const sample = allDatasetSamples.find(s => s.filename === fname);
-              if (sample) loadDatasetAudioSample(sample, btn);
-            });
-          });
-        }
-
-        renderChipsInto('quickSampleChipsRecord');
-        renderChipsInto('quickSampleChipsUpload');
-
-        // Render full explorer
-        renderDatasetExplorer();
-      } catch (err) {
-        console.error('Error fetching dataset samples:', err);
-      }
-    }
-
-    function renderDatasetExplorer() {
-      const container = $('datasetSamplesList');
-      if (!container) return;
-      const q = ($('datasetSearchInput')?.value || '').toLowerCase().trim();
-      const cat = $('datasetCategoryFilter')?.value || 'all';
-
-      const filtered = allDatasetSamples.filter(s => {
-        const matchesCat = (cat === 'all' || s.category === cat);
-        const matchesQuery = !q || 
-          s.title.toLowerCase().includes(q) || 
-          s.reference.toLowerCase().includes(q) || 
-          s.transcript.toLowerCase().includes(q) || 
-          s.filename.toLowerCase().includes(q) || 
-          s.category.toLowerCase().includes(q);
-        return matchesCat && matchesQuery;
-      });
-
-      if (!filtered.length) {
-        container.innerHTML = `<div style="text-align:center;padding:20px;color:#94a3b8;font-size:0.8rem">No dataset audio matched your search.</div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(s => `
-        <div class="dataset-sample-item">
-          <div class="dataset-item-top">
-            <span class="dataset-item-title">🎵 ${s.title}</span>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span class="dataset-item-badge">${s.category}</span>
-              <span class="dataset-item-dur">${s.duration}s</span>
-            </div>
-          </div>
-          <div class="dataset-item-text" title="${s.transcript}">
-            <strong style="color:#a5b4fc">Yorùbá:</strong> ${s.transcript}
-          </div>
-          <div class="dataset-item-text" title="${s.reference}" style="color:#94a3b8">
-            <strong style="color:#cbd5e1">English:</strong> ${s.reference}
-          </div>
-          <div class="dataset-item-actions">
-            <button type="button" class="btn-sample-play-preview" data-audio="${s.audio_url}">
-              <span>▶</span> Listen
-            </button>
-            <button type="button" class="btn-sample-select-load" data-filename="${s.filename}">
-              ✓ Select & Translate
-            </button>
-          </div>
-        </div>
-      `).join('');
-
-      container.querySelectorAll('.btn-sample-play-preview').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const audioUrl = btn.dataset.audio;
-          const p = $('sourcePlayer');
-          if (p) {
-            p.src = audioUrl;
-            p.play();
-            btn.innerHTML = '<span>⏸</span> Playing';
-            p.onended = () => { btn.innerHTML = '<span>▶</span> Listen'; };
-          }
-        });
-      });
-
-      container.querySelectorAll('.btn-sample-select-load').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const fname = btn.dataset.filename;
-          const s = allDatasetSamples.find(x => x.filename === fname);
-          if (s) loadDatasetAudioSample(s);
-        });
-      });
-    }
-
-    $('datasetSearchInput')?.addEventListener('input', renderDatasetExplorer);
-    $('datasetCategoryFilter')?.addEventListener('change', renderDatasetExplorer);
-    $('btnOpenSampleLib')?.addEventListener('click', () => setAudioInputMode('dataset'));
-    $('btnOpenSampleLibFromRecord')?.addEventListener('click', () => setAudioInputMode('dataset'));
 
     async function handleAudioFileSelect(file) {
       if (!file) return;
@@ -3365,7 +3559,250 @@
       $('voiceEqualizerBars')?.classList.remove('playing');
     });
 
-    // Language Swap Button
+    // -------------------------------------------------------------
+    // CUSTOM LUXURY 3D LANGUAGE DROPDOWNS CONTROLLER
+    // -------------------------------------------------------------
+    const SOURCE_LANG_CONFIG = [
+      { code: 'yo', name: 'Yorùbá', native: 'Yorùbá', flag: '🇳🇬' },
+      { code: 'en', name: 'English', native: 'English', flag: '🇬🇧' }
+    ];
+
+    const TARGET_LANG_GROUPS = [
+      {
+        title: 'India & Regional Languages',
+        icon: '🇮🇳',
+        items: [
+          { code: 'hi', name: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+          { code: 'or', name: 'Odia', native: 'ଓଡ଼ିଆ', flag: '🇮🇳' },
+          { code: 'bn', name: 'Bengali', native: 'বাংলা', flag: '🇮🇳' },
+          { code: 'te', name: 'Telugu', native: 'తెలుగు', flag: '🇮🇳' },
+          { code: 'ta', name: 'Tamil', native: 'தமிழ்', flag: '🇮🇳' },
+          { code: 'mr', name: 'Marathi', native: 'मराठी', flag: '🇮🇳' },
+          { code: 'gu', name: 'Gujarati', native: 'ગુજરાતી', flag: '🇮🇳' },
+          { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ', flag: '🇮🇳' },
+          { code: 'ml', name: 'Malayalam', native: 'മലയാളം', flag: '🇮🇳' },
+          { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+          { code: 'as', name: 'Assamese', native: 'অসমীয়া', flag: '🇮🇳' },
+          { code: 'ur', name: 'Urdu', native: 'اردو', flag: '🇮🇳' },
+          { code: 'ne', name: 'Nepali', native: 'नेपाली', flag: '🇳🇵' },
+          { code: 'en', name: 'English', native: 'English', flag: '🇬🇧' }
+        ]
+      },
+      {
+        title: 'International Languages',
+        icon: '🌐',
+        items: [
+          { code: 'yo', name: 'Yorùbá', native: 'Yorùbá', flag: '🇳🇬' },
+          { code: 'es', name: 'Spanish', native: 'Español', flag: '🇪🇸' },
+          { code: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+          { code: 'zh', name: 'Chinese (Mandarin)', native: '中文', flag: '🇨🇳' },
+          { code: 'fr', name: 'French', native: 'Français', flag: '🇫🇷' },
+          { code: 'de', name: 'German', native: 'Deutsch', flag: '🇩🇪' },
+          { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇧🇷' },
+          { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺' },
+          { code: 'ja', name: 'Japanese', native: '日本語', flag: '🇯🇵' },
+          { code: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷' },
+          { code: 'id', name: 'Indonesian', native: 'Bahasa Indonesia', flag: '🇮🇩' },
+          { code: 'tr', name: 'Turkish', native: 'Türkçe', flag: '🇹🇷' },
+          { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', flag: '🇻🇳' },
+          { code: 'it', name: 'Italian', native: 'Italiano', flag: '🇮🇹' }
+        ]
+      }
+    ];
+
+    function getLangMeta(code, isSource = false) {
+      if (isSource) {
+        return SOURCE_LANG_CONFIG.find(l => l.code === code) || SOURCE_LANG_CONFIG[0];
+      }
+      for (const grp of TARGET_LANG_GROUPS) {
+        const found = grp.items.find(l => l.code === code);
+        if (found) return found;
+      }
+      return { code, name: code.toUpperCase(), native: '', flag: '🌐' };
+    }
+
+    function syncCustomTriggers() {
+      const srcEl = $('sourceLanguage');
+      const tgtEl = $('targetLanguage');
+      if (srcEl) {
+        const meta = getLangMeta(srcEl.value, true);
+        if ($('sourceFlag')) $('sourceFlag').textContent = meta.flag;
+        if ($('sourceLabel')) $('sourceLabel').textContent = meta.name;
+      }
+      if (tgtEl) {
+        const meta = getLangMeta(tgtEl.value, false);
+        if ($('targetFlag')) $('targetFlag').textContent = meta.flag;
+        if ($('targetLabel')) $('targetLabel').textContent = meta.native ? `${meta.name} — ${meta.native}` : meta.name;
+      }
+    }
+
+    function initCustomLanguageDropdowns() {
+      const srcTrigger = $('sourceLangTrigger');
+      const srcPopover = $('sourceLangPopover');
+      const srcSearch = $('sourceSearchInput');
+      const srcList = $('sourceOptionsList');
+      const srcSelect = $('sourceLanguage');
+
+      const tgtTrigger = $('targetLangTrigger');
+      const tgtPopover = $('targetLangPopover');
+      const tgtSearch = $('targetSearchInput');
+      const tgtList = $('targetOptionsList');
+      const tgtSelect = $('targetLanguage');
+
+      function closeAllPopovers() {
+        if (srcPopover) { srcPopover.hidden = true; srcTrigger?.classList.remove('open'); srcTrigger?.setAttribute('aria-expanded', 'false'); }
+        if (tgtPopover) { tgtPopover.hidden = true; tgtTrigger?.classList.remove('open'); tgtTrigger?.setAttribute('aria-expanded', 'false'); }
+      }
+
+      function renderSourceOptions(q = '') {
+        if (!srcList) return;
+        const query = q.trim().toLowerCase();
+        const filtered = SOURCE_LANG_CONFIG.filter(l => 
+          !query || l.name.toLowerCase().includes(query) || l.native.toLowerCase().includes(query) || l.code.toLowerCase().includes(query)
+        );
+
+        if (!filtered.length) {
+          srcList.innerHTML = `<div class="custom-lang-empty">No languages found</div>`;
+          return;
+        }
+
+        const currentVal = srcSelect?.value || 'yo';
+        srcList.innerHTML = filtered.map(l => {
+          const isSelected = l.code === currentVal;
+          return `
+            <div class="custom-lang-option ${isSelected ? 'selected' : ''}" data-code="${l.code}" role="option" aria-selected="${isSelected}">
+              <span class="opt-flag">${l.flag}</span>
+              <div class="opt-text-wrap">
+                <span class="opt-name">${l.name}</span>
+                <span class="opt-native">${l.native}</span>
+              </div>
+              <span class="opt-check">✓</span>
+            </div>
+          `;
+        }).join('');
+
+        srcList.querySelectorAll('.custom-lang-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            const code = opt.dataset.code;
+            if (srcSelect) {
+              srcSelect.value = code;
+              srcSelect.dispatchEvent(new Event('change'));
+            }
+            syncCustomTriggers();
+            closeAllPopovers();
+          });
+        });
+      }
+
+      function renderTargetOptions(q = '') {
+        if (!tgtList) return;
+        const query = q.trim().toLowerCase();
+        const currentVal = tgtSelect?.value || 'hi';
+        let html = '';
+        let totalMatches = 0;
+
+        TARGET_LANG_GROUPS.forEach(grp => {
+          const matchingItems = grp.items.filter(l =>
+            !query || l.name.toLowerCase().includes(query) || l.native.toLowerCase().includes(query) || l.code.toLowerCase().includes(query)
+          );
+          if (matchingItems.length > 0) {
+            totalMatches += matchingItems.length;
+            html += `<div class="custom-lang-group-header">${grp.icon} ${grp.title} (${matchingItems.length})</div>`;
+            matchingItems.forEach(l => {
+              const isSelected = l.code === currentVal;
+              html += `
+                <div class="custom-lang-option ${isSelected ? 'selected' : ''}" data-code="${l.code}" role="option" aria-selected="${isSelected}">
+                  <span class="opt-flag">${l.flag}</span>
+                  <div class="opt-text-wrap">
+                    <span class="opt-name">${l.name}</span>
+                    <span class="opt-native">${l.native}</span>
+                  </div>
+                  <span class="opt-check">✓</span>
+                </div>
+              `;
+            });
+          }
+        });
+
+        if (totalMatches === 0) {
+          tgtList.innerHTML = `<div class="custom-lang-empty">No languages match "${q}"</div>`;
+          return;
+        }
+
+        tgtList.innerHTML = html;
+
+        tgtList.querySelectorAll('.custom-lang-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            const code = opt.dataset.code;
+            if (tgtSelect) {
+              tgtSelect.value = code;
+              targetLanguage = code;
+              tgtSelect.dispatchEvent(new Event('change'));
+            }
+            syncCustomTriggers();
+            closeAllPopovers();
+          });
+        });
+      }
+
+      // Source dropdown trigger
+      srcTrigger?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isClosed = srcPopover?.hidden;
+        closeAllPopovers();
+        if (isClosed && srcPopover) {
+          srcPopover.hidden = false;
+          srcTrigger.classList.add('open');
+          srcTrigger.setAttribute('aria-expanded', 'true');
+          renderSourceOptions(srcSearch?.value || '');
+          setTimeout(() => srcSearch?.focus(), 50);
+        }
+      });
+
+      // Target dropdown trigger
+      tgtTrigger?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isClosed = tgtPopover?.hidden;
+        closeAllPopovers();
+        if (isClosed && tgtPopover) {
+          tgtPopover.hidden = false;
+          tgtTrigger.classList.add('open');
+          tgtTrigger.setAttribute('aria-expanded', 'true');
+          renderTargetOptions(tgtSearch?.value || '');
+          setTimeout(() => tgtSearch?.focus(), 50);
+        }
+      });
+
+      // Search filters
+      srcSearch?.addEventListener('input', (e) => renderSourceOptions(e.target.value));
+      tgtSearch?.addEventListener('input', (e) => renderTargetOptions(e.target.value));
+
+      // Click outside listener
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#sourceCustomSelect') && !e.target.closest('#targetCustomSelect')) {
+          closeAllPopovers();
+        }
+      });
+
+      // Escape listener
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllPopovers();
+      });
+
+      // Native select change sync
+      srcSelect?.addEventListener('change', syncCustomTriggers);
+      tgtSelect?.addEventListener('change', () => {
+        targetLanguage = tgtSelect.value;
+        syncCustomTriggers();
+      });
+
+      // Initial populate
+      syncCustomTriggers();
+    }
+
+    initCustomLanguageDropdowns();
+
+    // Language Swap Button with smooth sync
     $('btnSwapLanguages')?.addEventListener('click', () => {
       const srcEl = $('sourceLanguage');
       const tgtEl = $('targetLanguage');
@@ -3374,8 +3811,16 @@
       const prevTgt = tgtEl.value;
       const canSwapSrc = Array.from(srcEl.options).some(o => o.value === prevTgt);
       const canSwapTgt = Array.from(tgtEl.options).some(o => o.value === prevSrc);
-      if (canSwapSrc) srcEl.value = prevTgt;
-      if (canSwapTgt) { tgtEl.value = prevSrc; targetLanguage = prevSrc; }
+      if (canSwapSrc) {
+        srcEl.value = prevTgt;
+        srcEl.dispatchEvent(new Event('change'));
+      }
+      if (canSwapTgt) {
+        tgtEl.value = prevSrc;
+        targetLanguage = prevSrc;
+        tgtEl.dispatchEvent(new Event('change'));
+      }
+      syncCustomTriggers();
     });
 
     // Voice Audio Player & Text Toggle in Card 3
@@ -3804,7 +4249,7 @@
       }
     });
 
-    // Flowing Audio Wave Animation on Background Canvas
+    // 3D Perspective Cybernetic Neural Mesh on Background Canvas
     function initWaveAnimation() {
       const canvas = document.getElementById('audioWaveCanvas');
       if (!canvas) return;
@@ -3814,18 +4259,43 @@
       let width = (canvas.width = window.innerWidth);
       let height = (canvas.height = window.innerHeight);
 
+      let targetTiltX = 0;
+      let targetTiltY = 0;
+      let currentTiltX = 0;
+      let currentTiltY = 0;
+
       window.addEventListener('resize', () => {
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
-      });
+      }, { passive: true });
 
-      let t = 0;
-      const waves = [
-        { freq: 0.003, amp: 46, speed: 0.016, color: 'rgba(99, 102, 241, 0.20)', yRatio: 0.65 },
-        { freq: 0.004, amp: 38, speed: 0.022, color: 'rgba(139, 92, 246, 0.18)', yRatio: 0.70 },
-        { freq: 0.0024, amp: 58, speed: 0.012, color: 'rgba(6, 182, 212, 0.14)', yRatio: 0.75 },
-        { freq: 0.005, amp: 26, speed: 0.028, color: 'rgba(236, 72, 153, 0.12)', yRatio: 0.60 }
-      ];
+      window.addEventListener('mousemove', (e) => {
+        const mouseNormX = (e.clientX / width - 0.5) * 2;
+        const mouseNormY = (e.clientY / height - 0.5) * 2;
+        targetTiltX = mouseNormX * 0.12;
+        targetTiltY = mouseNormY * 0.08;
+      }, { passive: true });
+
+      // 3D Stardust Particles
+      const particles = [];
+      const numParticles = 60;
+      for (let i = 0; i < numParticles; i++) {
+        particles.push({
+          x: (Math.random() - 0.5) * 1600,
+          y: (Math.random() - 0.5) * 900,
+          z: Math.random() * 800 + 100,
+          size: Math.random() * 1.8 + 0.8,
+          alpha: Math.random() * 0.65 + 0.35,
+          speed: Math.random() * 0.5 + 0.25
+        });
+      }
+
+      // 3D Isometric Mesh Grid parameters
+      const cols = 28;
+      const rows = 15;
+      const gridSpacingX = 64;
+      const gridSpacingZ = 48;
+      let time = 0;
 
       function render() {
         if (!document.body.classList.contains('workspace-screen') || $('appShell').hidden) {
@@ -3835,34 +4305,123 @@
 
         ctx.clearRect(0, 0, width, height);
 
+        // Smooth camera tilt damping
+        currentTiltX += (targetTiltX - currentTiltX) * 0.05;
+        currentTiltY += (targetTiltY - currentTiltY) * 0.05;
+
         const isRecording = Boolean(recorder?.isRecording);
-        const ampMult = isRecording ? 1.9 : 1.0;
+        const amp = isRecording ? 65 : 28;
+        const speed = isRecording ? 0.038 : 0.016;
 
-        for (const w of waves) {
-          ctx.beginPath();
-          const baseY = height * w.yRatio;
-          ctx.moveTo(0, height);
-          ctx.lineTo(0, baseY);
+        const focalLength = 500;
+        const centerX = width * 0.5;
+        const centerY = height * 0.74;
 
-          for (let x = 0; x <= width; x += 6) {
-            const sin1 = Math.sin(x * w.freq + t * w.speed);
-            const sin2 = Math.sin(x * w.freq * 1.8 - t * w.speed * 0.7);
-            const y = baseY + (sin1 * 0.7 + sin2 * 0.3) * (w.amp * ampMult);
-            ctx.lineTo(x, y);
+        // 1. Draw 3D Floating Cyber Stardust Particles
+        particles.forEach(p => {
+          p.z -= p.speed * (isRecording ? 1.8 : 1.0);
+          if (p.z <= 20) p.z = 900;
+
+          const scale = focalLength / p.z;
+          const px = centerX + (p.x + currentTiltX * 400) * scale;
+          const py = centerY - 160 + (p.y + currentTiltY * 260) * scale;
+
+          if (px >= 0 && px <= width && py >= 0 && py <= height) {
+            const glow = p.alpha * Math.min(1, scale * 1.3);
+            ctx.fillStyle = `rgba(165, 180, 252, ${glow})`;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size * scale, 0, Math.PI * 2);
+            ctx.fill();
           }
+        });
 
-          ctx.lineTo(width, height);
-          ctx.closePath();
-          ctx.fillStyle = w.color;
-          ctx.fill();
+        // 2. Compute 3D Mesh Points in Perspective
+        const points = [];
+        const startX = -((cols - 1) * gridSpacingX) * 0.5;
+
+        for (let r = 0; r < rows; r++) {
+          points[r] = [];
+          const zWorld = 180 + r * gridSpacingZ;
+          for (let c = 0; c < cols; c++) {
+            const xWorld = startX + c * gridSpacingX;
+            const distFromCenter = Math.sqrt(xWorld * xWorld + (zWorld - 300) * (zWorld - 300)) * 0.007;
+            const wave1 = Math.sin(xWorld * 0.006 + time * speed + r * 0.26);
+            const wave2 = Math.cos(zWorld * 0.0075 - time * speed * 1.25);
+            const wave3 = Math.sin(distFromCenter * 3 - time * speed * 2.2);
+            const yWorld = (wave1 * 0.5 + wave2 * 0.3 + wave3 * 0.4) * amp;
+
+            const rotX = xWorld + currentTiltX * 200;
+            const rotY = yWorld + (currentTiltY * (zWorld * 0.45));
+            const rotZ = zWorld;
+
+            const scale = focalLength / rotZ;
+            const projX = centerX + rotX * scale;
+            const projY = centerY + rotY * scale;
+
+            points[r][c] = { x: projX, y: projY, z: rotZ, scale: scale, depthAlpha: Math.max(0.06, 1 - (r / rows) * 0.82) };
+          }
         }
 
-        t += 1;
+        // 3. Render 3D Grid Latitudes (Flowing audio ribbons)
+        for (let r = 0; r < rows; r++) {
+          const rowAlpha = points[r][0].depthAlpha;
+          ctx.beginPath();
+          ctx.moveTo(points[r][0].x, points[r][0].y);
+          for (let c = 1; c < cols; c++) {
+            ctx.lineTo(points[r][c].x, points[r][c].y);
+          }
+          const grad = ctx.createLinearGradient(0, 0, width, 0);
+          grad.addColorStop(0, `rgba(99, 102, 241, 0)`);
+          grad.addColorStop(0.2, `rgba(99, 102, 241, ${0.45 * rowAlpha})`);
+          grad.addColorStop(0.5, `rgba(6, 182, 212, ${0.68 * rowAlpha})`);
+          grad.addColorStop(0.8, `rgba(139, 92, 246, ${0.45 * rowAlpha})`);
+          grad.addColorStop(1, `rgba(99, 102, 241, 0)`);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = Math.max(1, (1.9 * points[r][Math.floor(cols / 2)].scale));
+          ctx.stroke();
+        }
+
+        // 4. Render 3D Grid Longitudes (Perspective depth rays)
+        for (let c = 0; c < cols; c += 2) {
+          ctx.beginPath();
+          ctx.moveTo(points[0][c].x, points[0][c].y);
+          for (let r = 1; r < rows; r++) {
+            ctx.lineTo(points[r][c].x, points[r][c].y);
+          }
+          ctx.strokeStyle = `rgba(99, 102, 241, ${0.16 * (1 - Math.abs(c - cols/2) / (cols/2))})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        time += 1;
         requestAnimationFrame(render);
       }
       requestAnimationFrame(render);
     }
     initWaveAnimation();
+
+    // Interactive 3D Card Tilt Physics (Mouse Tracking)
+    function init3DCardTilt() {
+      const cards = document.querySelectorAll('.studio-card, .studio-sidebar, .sidebar-promo-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -5.5;
+          const rotateY = ((x - centerX) / centerX) * 5.5;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(6px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        });
+      });
+    }
+    init3DCardTilt();
 
     $('reviewForm').addEventListener('submit', async event => {
       event.preventDefault();

@@ -699,7 +699,35 @@ def interactive_web_ui() -> HTMLResponse:
     return HTMLResponse(content=ui_path.read_text(encoding="utf-8"))
 
 
+@app.get("/assets/solar_eclipse.jpg")
+def solar_eclipse_image():
+    local_img = Path(__file__).parent / "assets" / "solar_eclipse.jpg"
+    if local_img.exists():
+        return Response(content=local_img.read_bytes(), media_type="image/jpeg")
+    return Response(status_code=404)
+
+
+@app.get("/rahul", response_class=HTMLResponse)
+@app.get("/404", response_class=HTMLResponse)
+def rahul_page() -> HTMLResponse:
+    """Serve the 404 solar eclipse page requested for Rahul."""
+    not_found_path = Path(__file__).with_name("404.html")
+    if not_found_path.exists():
+        return HTMLResponse(content=not_found_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>404 Not Found</h1>", status_code=404)
+
+
 @app.get("/create-account")
 def legacy_create_account_route() -> RedirectResponse:
     """Keep old links on the single login page; account mode is selected in-page."""
     return RedirectResponse(url="/login", status_code=302)
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request, exc):
+    """Render custom 404 solar eclipse page for any unhandled URLs."""
+    not_found_path = Path(__file__).with_name("404.html")
+    if not_found_path.exists():
+        return HTMLResponse(content=not_found_path.read_text(encoding="utf-8"), status_code=404)
+    return HTMLResponse(content="<h1>404 Not Found</h1>", status_code=404)
+
